@@ -2,9 +2,6 @@
 
 namespace DansMaCulotte\Monetico;
 
-use Carbon\Carbon;
-use Carbon\Traits\Date;
-
 class Client
 {
     const SERVICE_VERSION = '3.0';
@@ -36,12 +33,12 @@ class Client
     /**
      * Construct method
      *
-     * @param string $eptCode     EPT code
+     * @param string $eptCode EPT code
      * @param string $securityKey Security key
      * @param string $companyCode Company code
-     * @param string $returnUrl   Return url after payment process
-     * @param string $successUrl  Return url after successfull payment
-     * @param string $errorUrl    Return url after errored payment
+     * @param string $returnUrl Return url after payment process
+     * @param string $successUrl Return url after successfull payment
+     * @param string $errorUrl Return url after errored payment
      *
      * @throws \Exception
      */
@@ -133,14 +130,14 @@ class Client
     /**
      * Generate seal to prepare payment
      * 
-     * @param string $reference   Unique order reference
+     * @param string $reference Unique order reference
      * @param string $description Text area to include more informations
-     * @param string $language    Language code e.g. FR, EN, ES ...
-     * @param string $email       Customer email
-     * @param string $amount      Amount without currency e.g. 6EUR, 10.55GBP 11USD ...
-     * @param string $currency    Currency
-     * @param string $datetime    Datetime (DD/MM/YYYY:HH:MM:SS)
-     * @param array  $params      Options parameters
+     * @param string $language Language code e.g. FR, EN, ES ...
+     * @param string $email Customer email
+     * @param string $amount Amount without currency e.g. 6EUR, 10.55GBP 11USD ...
+     * @param string $currency Currency
+     * @param \DateTime $datetime Datetime (DD/MM/YYYY:HH:MM:SS)
+     * @param array $params Options parameters
      * 
      * @return string
      */
@@ -192,15 +189,15 @@ class Client
     /**
      * Generate payload to return to customer
      * 
-     * @param string $reference   Unique order reference
+     * @param string $reference Unique order reference
      * @param string $description Text area to include more informations
-     * @param string $language    Language code e.g. FR, EN, ES ...
-     * @param string $email       Customer email
-     * @param float  $amount      Amount order
-     * @param string $currency    Payment currency
-     * @param Date   $datetime    DateTime class object
-     * @param array  $commitments Payment steps if defined
-     * @param array  $options     Optional parameters
+     * @param string $language Language code e.g. FR, EN, ES ...
+     * @param string $email Customer email
+     * @param float $amount Amount order
+     * @param string $currency Payment currency
+     * @param \DateTime $datetime DateTime class object
+     * @param array $commitments Payment steps if defined
+     * @param array $options Optional parameters
      *
      * @return array
      */

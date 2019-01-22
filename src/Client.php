@@ -37,7 +37,7 @@ class Client
      * @param string $securityKey Security key
      * @param string $companyCode Company code
      * @param string $returnUrl Return url after payment process
-     * @param string $successUrl Return url after successfull payment
+     * @param string $successUrl Return url after successful payment
      * @param string $errorUrl Return url after errored payment
      *
      * @throws \Exception
@@ -127,6 +127,34 @@ class Client
         $this->_options['desactivemoyenpaiement'] = join(',', $_ways);
     }
 
+
+    /**
+     * Return the key to be used in the _generateSeal function
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    private function _getUsableKey($key) {
+
+        $hexStrKey = substr($key, 0, 38);
+        $hexFinal = '' . substr($key, 38, 2) . '00';
+
+        $cca0 = ord($hexFinal);
+
+        if ($cca0 > 70 && $cca0 < 97) {
+            $hexStrKey .= chr($cca0 - 23) . substr($hexFinal, 1, 1);
+        } else {
+            if (substr($hexFinal, 1, 1) == 'M') {
+                $hexStrKey .= substr($hexFinal, 0, 1) . '0';
+            } else {
+                $hexStrKey .= substr($hexFinal, 0, 2);
+            }
+        }
+
+        return pack('H*', $hexStrKey);
+    }
+
     /**
      * Generate seal to prepare payment
      * 
@@ -136,7 +164,7 @@ class Client
      * @param string $email Customer email
      * @param string $amount Amount without currency e.g. 6EUR, 10.55GBP 11USD ...
      * @param string $currency Currency
-     * @param \DateTime $datetime Datetime (DD/MM/YYYY:HH:MM:SS)
+     * @param string $datetime Formated date time (DD/MM/YYYY:HH:MM:SS)
      * @param array $params Options parameters
      * 
      * @return string
@@ -162,9 +190,9 @@ class Client
         $commitmentsCount = count($commitments);
 
         // <nbrech>*<dateech1>*<montantech1>*<dateech2>*<montantech2>*<dateech3>*<montantech3>*<dateech4>*<montantech4>*<options>
-        $splitedPaymentFormat = "%s*%s*%s*%s*%s*%s*%s*%s*%s*%s";
-        $splitedPaymentOuput = sprintf(
-            $splitedPaymentFormat,
+        $splittedPaymentFormat = "%s*%s*%s*%s*%s*%s*%s*%s*%s*%s";
+        $splittedPaymentOuput = sprintf(
+            $splittedPaymentFormat,
             ($commitmentsCount > 0) ? $commitmentsCount : '',
             ($commitmentsCount >= 1) ? $commitments[0]['date'] : '',
             ($commitmentsCount >= 1) ? $commitments[0]['amount'] : '',
@@ -180,8 +208,8 @@ class Client
         return strtolower(
             hash_hmac(
                 'sha1',
-                $classicPaymentOutput . $splitedPaymentOuput,
-                $this->_securityKey
+                $classicPaymentOutput . $splittedPaymentOuput,
+                $this->_getUsableKey($this->_securityKey)
             )
         );
     }
@@ -200,9 +228,18 @@ class Client
      * @param array $options Optional parameters
      *
      * @return array
+     * @throws \Exception
      */
     public function generatePayload($reference, $description, $language, $email, $amount, $currency, $datetime, $commitments = array(), $options = array())
     {
+        if (strlen($reference) > 12) {
+            throw new \Exception('Reference is invalid, should be 12 characters long maximum.');
+        }
+
+        if (strlen($language) != 2) {
+            throw new \Exception('Language is invalid, should be 2 characters long');
+        }
+
         $datetime = $datetime->format('d/m/Y:H:i:s');
 
         $seal = $this->_generateSeal(
@@ -283,7 +320,7 @@ class Client
     public function parsePaymentReturn($payload)
     {
         $seal = (isset($payload['MAC']) ? $payload['MAC'] : null);
-        $date = (isset($payload['date']) ? Carbon::createFromFormat('d/m/Y O H:i:s', $payload['date']) : null);
+        $date = (isset($payload['date']) ? Date('d/m/Y O H:i:s', $payload['date']) : null);
         $eptCode = (isset($payload['TPE']) ? $payload['TPE'] : null);
         $amount = (isset($payload['montant']) ? $payload['montant'] : null);
         $reference = (isset($payload['reference']) ? $payload['reference'] : null);

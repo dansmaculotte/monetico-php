@@ -322,6 +322,6 @@ class Response
             )
         );
 
-        return $hash == $this->seal;
+        return $hash == strtolower($this->seal);
     }
 }

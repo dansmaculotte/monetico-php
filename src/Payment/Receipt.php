@@ -4,7 +4,7 @@ namespace DansMaCulotte\Monetico\Payment;
 
 class Receipt
 {
-    const OUPUT_FORMAT = 'version=2\ncdr=%s\n';
+    const OUPUT_FORMAT = "version=2\ncdr=%s\n";
 
     /** @var bool */
     public $status;

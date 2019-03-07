@@ -16,10 +16,10 @@ class PaymentReceiptTest extends TestCase
     {
         $receipt = new Receipt(true);
 
-        $this->assertTrue((string) $receipt === 'version=2\ncdr=0\n');
+        $this->assertTrue((string) $receipt === "version=2\ncdr=0\n");
 
         $receipt = new Receipt(false);
 
-        $this->assertTrue((string) $receipt === 'version=2\ncdr=1\n');
+        $this->assertTrue((string) $receipt === "version=2\ncdr=1\n");
     }
 }

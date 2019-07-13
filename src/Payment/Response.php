@@ -7,6 +7,9 @@ use DateTime;
 
 class Response
 {
+    /** @var string */
+    private $eptCode;
+
     /** @var \DateTime */
     public $datetime;
 
@@ -85,8 +88,9 @@ class Response
     /** @var string */
     public $filteredStatus = null;
 
-    /** @var string */
-    const FORMAT_OUTPUT = '%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*';
+    public $authentication = [];
+
+    public $authenticationHash = null;
 
     /** @var string */
     const DATETIME_FORMAT = 'd/m/Y_\a_H:i:s';
@@ -159,24 +163,23 @@ class Response
     public function __construct($data = array())
     {
         $requiredKeys = array(
+            'TPE',
             'date',
-            'amount',
+            'montant',
             'reference',
             'MAC',
+            'authentification',
             'texte-libre',
             'code-retour',
             'cvx',
             'vld',
             'brand',
-            'status3ds',
             'numauto',
             'originecb',
             'bincb',
             'hpancb',
             'ipclient',
             'originetr',
-            'veres',
-            'pares',
         );
 
         foreach ($requiredKeys as $key) {
@@ -190,13 +193,20 @@ class Response
             throw PaymentException::invalidDatetime();
         }
 
-        // ToDo: Split amount and currency with ISO4217
-        $this->amount = $data['amount'];
+        $this->eptCode = $data['TPE'];
 
+
+        // ToDo: Split amount and currency with ISO4217
+        $this->amount = $data['montant'];
 
         $this->reference = $data['reference'];
+
         $this->seal = $data['MAC'];
+
         $this->description = $data['texte-libre'];
+
+        $this->authenticationHash = $data['authentification'];
+        $this->authentication = json_decode(base64_decode($data['authentification']), true);
 
         $this->returnCode = $data['code-retour'];
         if (!in_array($this->returnCode, self::RETURN_CODES)) {
@@ -215,10 +225,6 @@ class Response
             throw PaymentException::invalidCardBrand($this->cardBrand);
         }
 
-        $this->DDDSStatus = (int) $data['status3ds'];
-        if (!in_array($this->DDDSStatus, self::DDDS_STATUSES)) {
-            throw PaymentException::invalidDDDSStatus($this->DDDSStatus);
-        }
 
         if (isset($data['motifrefus'])) {
             $this->rejectReason = $data['motifrefus'];
@@ -239,9 +245,6 @@ class Response
 
         // ToDo: Check Country
         $this->transactionCountry = $data['originetr'];
-
-        $this->veresStatus = $data['veres'];
-        $this->paresStatus = $data['pares'];
 
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
@@ -290,38 +293,35 @@ class Response
      */
     public function validateSeal($eptCode, $securityKey, $version)
     {
-        $output = sprintf(
-            self::FORMAT_OUTPUT,
-            $eptCode,
-            $this->datetime->format(self::DATETIME_FORMAT),
-            $this->amount,
-            $this->reference,
-            $this->description,
-            $version,
-            $this->returnCode,
-            $this->cardVerificationStatus,
-            $this->cardExpirationDate,
-            $this->cardBrand,
-            $this->DDDSStatus,
-            $this->authNumber,
-            $this->rejectReason,
-            $this->cardCountry,
-            $this->cardBIN,
-            $this->cardHash,
-            $this->clientIp,
-            $this->transactionCountry,
-            $this->veresStatus,
-            $this->paresStatus
-        );
+        $fields = [
+            'TPE' => $eptCode,
+            'authentification' => $this->authenticationHash,
+            'bincb' => $this->cardBIN,
+            'brand' => $this->cardBrand,
+            'code-retour' => $this->returnCode,
+            'cvx' => $this->cardVerificationStatus,
+            'date' => $this->datetime->format(self::DATETIME_FORMAT),
+            'hpancb' => $this->cardHash,
+            'ipclient' => $this->clientIp,
+            'modepaiement' => $this->paymentMethod,
+            'montant' => $this->amount,
+            'numauto' => $this->authNumber,
+            'originecb' => $this->cardCountry,
+            'originetr' => $this->transactionCountry,
+            'reference' => $this->reference,
+            'texte-libre' => $this->description,
+            'vld' => $this->cardExpirationDate,
+        ];
 
-        $hash = strtolower(
-            hash_hmac(
-                'sha1',
-                $output,
-                $securityKey
-            )
-        );
+        ksort($fields);
+        $query = urldecode(http_build_query($fields, null, '*'));
 
-        return $hash == strtolower($this->seal);
+        $hash =  strtoupper(hash_hmac(
+            'sha1',
+            $query,
+            $securityKey
+        ));
+
+        return $hash == $this->seal;
     }
 }

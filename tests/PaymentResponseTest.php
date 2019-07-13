@@ -1,45 +1,44 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\Response;
 use PHPUnit\Framework\TestCase;
+
+require_once 'Credentials.php';
 
 class PaymentResponseTest extends TestCase
 {
     private $data = array(
-        'TPE' => EPT_CODE,
-        'date' => '01/01/2019_a_08:42:42',
-        'amount' => '42.42EUR',
-        'reference' => 'ABCDEF123',
-        'MAC' => 'YOLO',
-        'texte-libre' => 'PHPUnit',
-        'version' => '3.0',
+        'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJQQVJlcyIgOiAiWSIsCiAgICAgICJWRVJlcyIgOiAiWSIsCiAgICAgICJzdGF0dXMzRFMiIDogMQogICB9LAogICAicHJvdG9jb2wiIDogIjNEU2VjdXJlIiwKICAgInN0YXR1cyIgOiAiYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIxLjAuMiIKfQo=',
+        'bincb' => '000003',
+        'brand' => 'MC',
         'code-retour' => 'payetest',
         'cvx' => 'oui',
-        'vld' => '1219',
-        'brand' => 'VI',
-        'status3ds' => '4',
+        'date' => '11/07/2019_a_10:51:19',
+        'hpancb' => '07CDB0331260C06818027855F795C9F726585286',
+        'ipclient' => '80.15.24.220',
+        'MAC' => 'C3E8B0D0F71AABE041F50C240E1821E09CF9AACB',
+        'modepaiement' => 'CB',
+        'montant' => '42.42EUR',
         'numauto' => '000000',
-        'motifrefus' => null,
         'originecb' => 'FRA',
-        'bincb' => '000000',
-        'hpancb' => 'NOPE',
-        'ipclient' => '127.0.0.1',
         'originetr' => 'FRA',
-        'veres' => null,
-        'pares' => null,
+        'reference' => 'D2345677',
+        'texte-libre' => 'PHPUnit',
+        'TPE' => '6784452',
+        'vld' => '1219',
     );
 
     public function testPaymentResponseConstruct()
     {
         $response = new Response($this->data);
-
         $this->assertTrue($response instanceof Response);
     }
 
     public function testPaymentResponseMissingResponseKey()
     {
-        $this->expectExceptionObject(PaymentException::missingResponseKey('date'));
+        $this->expectExceptionObject(PaymentException::missingResponseKey('TPE'));
 
         new Response(array());
     }
@@ -80,16 +79,6 @@ class PaymentResponseTest extends TestCase
 
         $data = $this->data;
         $data['brand'] = 'foo';
-
-        new Response($data);
-    }
-
-    public function testPaymentResponseExceptionDDDSStatus()
-    {
-        $this->expectExceptionObject(PaymentException::invalidDDDSStatus('42'));
-
-        $data = $this->data;
-        $data['status3ds'] = '42';
 
         new Response($data);
     }
@@ -141,5 +130,34 @@ class PaymentResponseTest extends TestCase
         $this->assertTrue($response->filteredStatus === 'test');
         $this->assertTrue($response->cardBookmarked === true);
         $this->assertTrue($response->cardMask === '1234XXXXXXXXXXX1234');
+    }
+
+    public function testSealIsValid()
+    {
+        $data = $this->data;
+
+        $response = new Response($data);
+
+        $sealIsValid = $response->validateSeal(
+            EPT_CODE,
+            Monetico::getUsableKey(SECURITY_KEY),
+            3.0);
+
+        $this->assertTrue($sealIsValid);
+
+    }
+
+    public function testAuthenticationDecode()
+    {
+        $data = $this->data;
+
+        $response = new Response($data);
+
+        $this->assertEquals('3DSecure', $response->authentication['protocol']);
+        $this->assertEquals('authenticated', $response->authentication['status']);
+        $this->assertEquals('1.0.2', $response->authentication['version']);
+        $this->assertEquals('Y', $response->authentication['details']['PARes']);
+        $this->assertEquals('Y', $response->authentication['details']['VERes']);
+        $this->assertEquals('1', $response->authentication['details']['status3DS']);
     }
 }

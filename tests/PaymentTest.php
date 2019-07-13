@@ -2,8 +2,11 @@
 
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\Payment;
 use PHPUnit\Framework\TestCase;
+
+require_once 'Credentials.php';
 
 class PaymentTest extends TestCase
 {
@@ -137,19 +140,19 @@ class PaymentTest extends TestCase
             array(
                 array(
                     'date' => '06/01/2019',
-                    'amount' => '50EUR',
+                    'amount' => 50,
                 ),
                 array(
                     'date' => '12/01/2019',
-                    'amount' => '100EUR',
+                    'amount' => 100,
                 ),
                 array(
                     'date' => '24/01/2019',
-                    'amount' => '20EUR',
+                    'amount' => 20,
                 ),
                 array(
                     'date' => '02/02/2019',
-                    'amount' => '30EUR',
+                    'amount' => 30,
                 ),
             )
         );
@@ -158,7 +161,10 @@ class PaymentTest extends TestCase
             'FOO',
             'BAR',
             '3.0',
-            'FOOBAR'
+            'FOOBAR',
+            'https://127.0.0.1',
+            'https://127.0.0.1/success',
+            'https://127.0.0.1/error'
         );
 
         $fields = $payment->generateFields(
@@ -198,5 +204,124 @@ class PaymentTest extends TestCase
 
         $this->assertArrayHasKey('montantech4', $fields);
         $this->assertTrue($fields['montantech4'] === '30EUR');
+
+
+    }
+
+    public function testSetOrderContext() {
+        $payment = new Payment(array(
+            'reference' => 'ABCDEF123',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'datetime' => Carbon::create(2019, 1, 1),
+        ));
+
+        $payment->setAddressBilling('7 rue melingue', 'Caen', '14000', 'France');
+        $payment->setAddressShipping('7 rue melingue', 'Caen', '14000', 'France');
+
+        $this->assertEquals('7 rue melingue', $payment->shippingAddress['addressLine1']);
+        $this->assertEquals('Caen', $payment->shippingAddress['city']);
+        $this->assertEquals('14000', $payment->shippingAddress['postalCode']);
+        $this->assertEquals('France', $payment->shippingAddress['country']);
+
+        $this->assertEquals('7 rue melingue', $payment->billingAddress['addressLine1']);
+        $this->assertEquals('Caen', $payment->billingAddress['city']);
+        $this->assertEquals('14000', $payment->billingAddress['postalCode']);
+        $this->assertEquals('France', $payment->billingAddress['country']);
+    }
+
+    public function testSet3DSecure() {
+        $payment = new Payment(array(
+            'reference' => 'DDDDDDD',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'datetime' => Carbon::create(2019, 10, 07),
+        ));
+
+        $payment->setThreeDSecureChallenge('challenge_mandated');
+
+        $seal = $payment->generateSeal(
+            EPT_CODE,
+            Monetico::getUsableKey(SECURITY_KEY),
+            '3.0',
+            COMPANY_CODE,
+            'https://dev.dansmaculotte.com',
+            'https://dev.dansmaculotte.com/success',
+            'https://dev.dansmaculotte.com/error'
+        );
+
+        $fields = $payment->generateFields(
+            EPT_CODE,
+            $seal,
+            3.0,
+            COMPANY_CODE,
+            'https://dev.dansmaculotte.com"',
+            'https://dev.dansmaculotte.com/success',
+            'https://dev.dansmaculotte.com/error');
+
+        $this->assertEquals($fields['ThreeDSecureChallenge'], 'challenge_mandated');
+    }
+
+    public function testSet3DSecureInvalid() {
+        $this->expectException(PaymentException::class);
+
+        $payment = new Payment(array(
+            'reference' => 'ABCDEF123',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'datetime' => Carbon::create(2019, 1, 1),
+        ));
+
+        $payment->setThreeDSecureChallenge('invalid_choice');
+    }
+
+    public function testGenerateSeal() {
+
+        $payment = new Payment(array(
+            'reference' => 'H2345677',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'datetime' => Carbon::create(2019, 07, 12),
+        ));
+
+        $payment->setThreeDSecureChallenge('challenge_mandated');
+        $payment->setCardAlias('martin');
+        $payment->setSignLabel('coco');
+
+        $seal = $payment->generateSeal(
+            EPT_CODE,
+            Monetico::getUsableKey(SECURITY_KEY),
+            '3.0',
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+
+        $fields = $payment->generateFields(
+            EPT_CODE,
+            $seal,
+            3.0,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL);
+
+        print_r($fields);
+
+        $this->assertEquals($fields['MAC'],'0DD9FB00DEDCDDF372EB29B997AEF1EC5CC3EEFB');
     }
 }

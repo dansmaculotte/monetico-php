@@ -22,6 +22,16 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
+        $payment = new Payment(array(
+            'reference' => 'ABCDEF123',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'datetime' => Carbon::create(2019, 1, 1),
+        ));
+
         $this->assertTrue($monetico instanceof Monetico);
     }
 
@@ -143,33 +153,28 @@ class MoneticoTest extends TestCase
 
         $data = array(
             'TPE' => EPT_CODE,
-            'date' => '01/01/2019_a_08:42:42',
-            'amount' => '42.42EUR',
-            'reference' => 'ABCDEF123',
-            'texte-libre' => 'PHPUnit',
-            'version' => '3.0',
+            'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJQQVJlcyIgOiAiWSIsCiAgICAgICJWRVJlcyIgOiAiWSIsCiAgICAgICJzdGF0dXMzRFMiIDogMQogICB9LAogICAicHJvdG9jb2wiIDogIjNEU2VjdXJlIiwKICAgInN0YXR1cyIgOiAiYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIxLjAuMiIKfQo=',
+            'bincb' => '000003',
+            'brand' => 'MC',
             'code-retour' => 'payetest',
             'cvx' => 'oui',
-            'vld' => '1219',
-            'brand' => 'VI',
-            'status3ds' => '4',
+            'date' => '11/07/2019_a_10:51:19',
+            'hpancb' => '07CDB0331260C06818027855F795C9F726585286',
+            'ipclient' => '80.15.24.220',
+            'modepaiement' => 'CB',
+            'montant' => '42.42EUR',
             'numauto' => '000000',
-            'motifrefus' => null,
             'originecb' => 'FRA',
-            'bincb' => '000000',
-            'hpancb' => 'NOPE',
-            'ipclient' => '127.0.0.1',
             'originetr' => 'FRA',
-            'veres' => null,
-            'pares' => null,
+            'reference' => 'D2345677',
+            'texte-libre' => 'PHPUnit',
+            'vld' => '1219',
         );
 
-        $output = vsprintf(
-            '%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*',
-            $data
-        );
+        ksort($data);
+        $output = urldecode(http_build_query($data, null, '*'));
 
-        $seal = strtolower(
+        $seal = strtoupper(
             hash_hmac(
                 'sha1',
                 $output,

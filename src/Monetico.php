@@ -121,7 +121,10 @@ class Monetico
             $this->_eptCode,
             $this->_securityKey,
             self::SERVICE_VERSION,
-            $this->_companyCode
+            $this->_companyCode,
+            $this->_returnUrl,
+            $this->_successUrl,
+            $this->_errorUrl
         );
 
         $fields = $input->generateFields(

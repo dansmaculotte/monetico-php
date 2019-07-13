@@ -22,4 +22,12 @@ class Exception extends \Exception
         return new self("Security key is invalid, should be 40 characters long.");
     }
 
+    /**
+     * @return Exception
+     */
+    public static function invalidContextCommandJson()
+    {
+        return new self("JSON Invalid.");
+    }
+
 }

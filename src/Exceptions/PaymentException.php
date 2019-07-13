@@ -111,4 +111,13 @@ class PaymentException extends \Exception
     {
         return new self("filtragecause value is invalid: ${filteredReason}");
     }
+
+    /**
+     * @param $ThreeDSecureChallenge
+     * @return PaymentException
+     */
+    public static function invalidThreeDSecureChallenge($ThreeDSecureChallenge)
+    {
+        return new self("ThreeDSecureChallenge value is invalid: ${ThreeDSecureChallenge}");
+    }
 }

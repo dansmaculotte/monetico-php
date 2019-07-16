@@ -283,45 +283,4 @@ class PaymentTest extends TestCase
 
         $payment->setThreeDSecureChallenge('invalid_choice');
     }
-
-    public function testGenerateSeal() {
-
-        $payment = new Payment(array(
-            'reference' => 'H2345677',
-            'description' => 'PHPUnit',
-            'language' => 'FR',
-            'email' => 'john@english.fr',
-            'amount' => 42.42,
-            'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 07, 12),
-        ));
-
-        $payment->setThreeDSecureChallenge('challenge_mandated');
-        $payment->setCardAlias('martin');
-        $payment->setSignLabel('coco');
-
-        $seal = $payment->generateSeal(
-            EPT_CODE,
-            Monetico::getUsableKey(SECURITY_KEY),
-            '3.0',
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
-        );
-
-
-        $fields = $payment->generateFields(
-            EPT_CODE,
-            $seal,
-            3.0,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL);
-
-        print_r($fields);
-
-        $this->assertEquals($fields['MAC'],'0DD9FB00DEDCDDF372EB29B997AEF1EC5CC3EEFB');
-    }
 }

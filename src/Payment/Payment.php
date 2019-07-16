@@ -501,8 +501,6 @@ class Payment
         ksort($fields);
         $query = urldecode(http_build_query($fields, null, '*'));
 
-        print_r($query);
-
         return strtoupper(hash_hmac(
                 'sha1',
                 $query,

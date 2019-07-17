@@ -3,9 +3,10 @@
 namespace DansMaCulotte\Monetico\Recovery;
 
 
+use DansMaCulotte\Monetico\Recovery\iRecoveryValidation;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 
-class Recovery
+class Recovery implements iRecoveryValidation
 {
 
     /** @var \DateTime */
@@ -88,6 +89,14 @@ class Recovery
         $this->amountRecovered = $data['amountRecovered'];
         $this->amountLeft = $data['amountLeft'];
 
+        $this->validateAmounts();
+    }
+
+    /**
+     * @throws RecoveryException
+     */
+    public function validateAmounts()
+    {
         if ($this->amountLeft + $this->amountRecovered + $this->amountToRecover !== $this->amount) {
             throw RecoveryException::invalidAmounts($this->amount, $this->amountToRecover, $this->amountRecovered, $this->amountLeft);
         }

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class RecoveryResponseTest extends TestCase
 {
-    public function testCaptureResponseConstruct()
+    public function testRecoveryResponseConstruct()
     {
         $response = new RecoveryResponse([
             'version' => '1.0',
@@ -19,7 +19,7 @@ class RecoveryResponseTest extends TestCase
         $this->assertTrue($response instanceof RecoveryResponse);
     }
 
-    public function testCaptureResponseWithAuthorization()
+    public function testRecoveryResponseWithAuthorization()
     {
         $response = new RecoveryResponse([
             'version' => '1.0',
@@ -38,7 +38,7 @@ class RecoveryResponseTest extends TestCase
         $this->assertTrue($response instanceof RecoveryResponse);
     }
 
-    public function testCaptureResponseInvalidReferenceException()
+    public function testRecoveryResponseInvalidReferenceException()
     {
         $this->expectExceptionObject(RecoveryException::invalidReference('thisisawrongreference'));
 
@@ -53,7 +53,7 @@ class RecoveryResponseTest extends TestCase
         $this->assertTrue($response instanceof RecoveryResponse);
     }
 
-    public function testCaptureResponseExceptionInvalidReference()
+    public function testRecoveryResponseExceptionInvalidReference()
     {
         $this->expectExceptionObject(RecoveryException::invalidReference('thisisawrongreference'));
 
@@ -67,7 +67,7 @@ class RecoveryResponseTest extends TestCase
 
     }
 
-    public function testCaptureResponseExceptionInvalidAuthDatetime()
+    public function testRecoveryResponseExceptionInvalidAuthDatetime()
     {
         $this->expectExceptionObject(RecoveryException::invalidDatetime());
 
@@ -82,7 +82,7 @@ class RecoveryResponseTest extends TestCase
 
     }
 
-    public function testCaptureResponseExceptionInvalidDebitDatetime()
+    public function testRecoveryResponseExceptionInvalidDebitDatetime()
     {
         $this->expectExceptionObject(RecoveryException::invalidDatetime());
 
@@ -97,7 +97,7 @@ class RecoveryResponseTest extends TestCase
 
     }
 
-    public function testCaptureResponseExceptionInvalidInvoiceType()
+    public function testRecoveryResponseExceptionInvalidInvoiceType()
     {
         $this->expectExceptionObject(RecoveryException::invalidInvoiceType('invalid'));
 

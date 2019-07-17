@@ -191,7 +191,7 @@ class MoneticoTest extends TestCase
         $this->assertTrue($isValid);
     }
 
-    public function testMoneticoCaptureFields()
+    public function testMoneticoRecoveryFields()
     {
         $monetico = new Monetico(
             EPT_CODE,
@@ -206,15 +206,15 @@ class MoneticoTest extends TestCase
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
-            'amountToCapture' => 0,
-            'amountCaptured' => 0,
+            'amountToRecover' => 0,
+            'amountRecovered' => 0,
             'amountLeft' => 42.42,
             'currency' => 'EUR',
             'orderDatetime' => Carbon::create(2019, 07, 17),
             'datetime' => Carbon::create(2019, 07, 17),
         ));
 
-        $fields = $monetico->getCaptureFields($payment);
+        $fields = $monetico->getRecoveryFields($payment);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);

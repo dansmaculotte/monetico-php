@@ -54,7 +54,7 @@ class Recovery
 
 
     /**
-     * Capture constructor.
+     * Recovery constructor.
      * @param array $data
      * @throws RecoveryException
      */
@@ -84,8 +84,8 @@ class Recovery
         $this->currency = $data['currency'];
 
         $this->amount = $data['amount'];
-        $this->amountToRecover = $data['amountToCapture'];
-        $this->amountRecovered = $data['amountCaptured'];
+        $this->amountToRecover = $data['amountToRecover'];
+        $this->amountRecovered = $data['amountRecovered'];
         $this->amountLeft = $data['amountLeft'];
 
         if ($this->amountLeft + $this->amountRecovered + $this->amountToRecover !== $this->amount) {

@@ -116,7 +116,7 @@ class Monetico
      *
      * @return string
      */
-    public function getCaptureUrl($debug = false) {
+    public function getRecoveryUrl($debug = false) {
         $mainServiceUrl = self::MAIN_SERVICE_URL;
         if ($this->_debug || $debug) {
             $mainServiceUrl .= '/test';
@@ -157,7 +157,7 @@ class Monetico
         return $fields;
     }
 
-    public function getCaptureFields(Recovery $input)
+    public function getRecoveryFields(Recovery $input)
     {
         $seal = $input->generateSeal(
             $this->_eptCode,

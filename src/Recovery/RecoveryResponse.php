@@ -54,7 +54,7 @@ class RecoveryResponse
     ];
 
     /**
-     * CaptureResponse constructor.
+     * RecoveryResponse constructor.
      *
      * @param array $data
      *

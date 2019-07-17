@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class RecoveryTest extends TestCase
 {
-    public function testCaptureConstruct()
+    public function testRecoveryConstruct()
     {
         $recovery = new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
@@ -16,15 +16,15 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
 
         $this->assertTrue($recovery instanceof Recovery);
     }
 
-    public function testCaptureConstructExceptionInvalidAmounts()
+    public function testRecoveryConstructExceptionInvalidAmounts()
     {
         $this->expectExceptionObject(RecoveryException::invalidAmounts(100, 30, 0, 50));
 
@@ -35,13 +35,13 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 30,
-            'amountCaptured' => 0,
+            'amountToRecover' => 30,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
     }
 
-    public function testCaptureConstructExceptionInvalidDatetime()
+    public function testRecoveryConstructExceptionInvalidDatetime()
     {
         $this->expectExceptionObject(RecoveryException::invalidDatetime());
 
@@ -52,13 +52,13 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
     }
 
-    public function testCaptureConstructExceptionInvalidOrderDatetime()
+    public function testRecoveryConstructExceptionInvalidOrderDatetime()
     {
         $this->expectExceptionObject(RecoveryException::invalidOrderDatetime());
 
@@ -69,13 +69,13 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
     }
 
-    public function testCaptureConstructExceptionInvalidReference()
+    public function testRecoveryConstructExceptionInvalidReference()
     {
         $this->expectExceptionObject(RecoveryException::invalidReference('thisisatoolongreference'));
 
@@ -86,13 +86,13 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
     }
 
-    public function testCaptureConstructExceptionInvalidLanguage()
+    public function testRecoveryConstructExceptionInvalidLanguage()
     {
         $this->expectExceptionObject(RecoveryException::invalidLanguage('English'));
 
@@ -103,13 +103,13 @@ class RecoveryTest extends TestCase
             'language' => 'English',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
     }
 
-    public function testCaptureOptions()
+    public function testRecoveryOptions()
     {
         $recovery = new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
@@ -118,8 +118,8 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
 
@@ -150,8 +150,8 @@ class RecoveryTest extends TestCase
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
-            'amountToCapture' => 50,
-            'amountCaptured' => 0,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
 

@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use DansMaCulotte\Monetico\Capture\Capture;
 use DansMaCulotte\Monetico\Monetico;
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
@@ -123,6 +124,7 @@ class MoneticoTest extends TestCase
         ));
 
         $fields = $monetico->getPaymentFields($payment);
+        print_r($fields);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -188,5 +190,43 @@ class MoneticoTest extends TestCase
 
         $isValid = $monetico->validateSeal($response);
         $this->assertTrue($isValid);
+    }
+
+    public function testMoneticoCaptureFields()
+    {
+        $monetico = new Monetico(
+            EPT_CODE,
+            SECURITY_KEY,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+        $payment = new Capture(array(
+            'reference' => 'AXCDEF123',
+            'language' => 'FR',
+            'amount' => 42.42,
+            'amountToCapture' => 0,
+            'amountCaptured' => 0,
+            'amountLeft' => 0,
+            'currency' => 'EUR',
+            'orderDatetime' => Carbon::create(2019, 07, 17),
+            'datetime' => Carbon::create(2019, 07, 17),
+        ));
+
+        $fields = $monetico->getCaptureFields($payment);
+
+        print_r($fields);
+
+        $this->assertIsArray($fields);
+        $this->assertArrayHasKey('version', $fields);
+        $this->assertArrayHasKey('TPE', $fields);
+        $this->assertArrayHasKey('date', $fields);
+        $this->assertArrayHasKey('montant', $fields);
+        $this->assertArrayHasKey('reference', $fields);
+        $this->assertArrayHasKey('MAC', $fields);
+        $this->assertArrayHasKey('lgue', $fields);
+        $this->assertArrayHasKey('societe', $fields);
     }
 }

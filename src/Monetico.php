@@ -2,6 +2,7 @@
 
 namespace DansMaCulotte\Monetico;
 
+use DansMaCulotte\Monetico\Capture\Capture;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;
@@ -109,6 +110,22 @@ class Monetico
     }
 
     /**
+     * Return capture url required to redirect on bank interface
+     *
+     * @param bool $debug
+     *
+     * @return string
+     */
+    public function getCaptureUrl($debug = false) {
+        $mainServiceUrl = self::MAIN_SERVICE_URL;
+        if ($this->_debug || $debug) {
+            $mainServiceUrl .= '/test';
+        }
+
+        return $mainServiceUrl . '/' . self::CAPTURE_URI;
+    }
+
+    /**
      * Return array fields required on bank interface
      *
      * @param Payment $input
@@ -135,6 +152,25 @@ class Monetico
             $this->_returnUrl,
             $this->_successUrl,
             $this->_errorUrl
+        );
+
+        return $fields;
+    }
+
+    public function getCaptureFields(Capture $input)
+    {
+        $seal = $input->generateSeal(
+            $this->_eptCode,
+            $this->_securityKey,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        $fields = $input->generateFields(
+            $this->_eptCode,
+            $seal,
+            self::SERVICE_VERSION,
+            $this->_companyCode
         );
 
         return $fields;

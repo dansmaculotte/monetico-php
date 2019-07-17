@@ -36,9 +36,6 @@ class Payment
     /** @var array */
     public $shippingAddress;
 
-    /** @var string */
-    public $threeDsecureChallenge;
-
     /** @var array */
     public $shoppingCart;
 
@@ -47,9 +44,6 @@ class Payment
 
     /** @var array */
     public $commitments;
-
-    /** @var string */
-    const FORMAT_OUTPUT = '%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s';
 
     /** @var array */
     const PAYMENT_WAYS = array(
@@ -143,12 +137,11 @@ class Payment
      */
     public function setThreeDSecureChallenge($choice)
     {
-
         if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES)) {
             throw PaymentException::invalidThreeDSecureChallenge($choice);
         }
 
-        $this->threeDsecureChallenge = $choice;
+        $this->options['threeDsecureChallenge'] = $choice;
     }
 
 
@@ -419,7 +412,6 @@ class Payment
             'TPE' => $eptCode,
             'date' => $this->datetime->format('d/m/Y:H:i:s'),
             'contexte_commande' => $this->orderContextBase64(),
-            'ThreeDSecureChallenge' => $this->threeDsecureChallenge,
             'lgue' => $this->language,
             'mail' => $this->email,
             'montant' => $this->amount . $this->currency,
@@ -471,6 +463,7 @@ class Payment
      */
     private function optionsFields() {
         return [
+            'ThreeDSecureChallenge' => (isset($this->options['threeDsecureChallenge'])) ? $this->options['threeDsecureChallenge'] : '',
             '3dsdebrayable' => (isset($this->options['3dsdebrayable'])) ? $this->options['3dsdebrayable'] : '',
             'aliascb' => (isset($this->options['aliascb'])) ? $this->options['aliascb'] : '',
             'desactivemoyenpaiement' => (isset($this->options['desactivemoyenpaiement'])) ? $this->options['desactivemoyenpaiement'] : '',

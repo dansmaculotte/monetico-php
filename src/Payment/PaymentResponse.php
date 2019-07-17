@@ -5,7 +5,7 @@ namespace DansMaCulotte\Monetico\Payment;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DateTime;
 
-class Response
+class PaymentResponse
 {
     /** @var string */
     private $eptCode;

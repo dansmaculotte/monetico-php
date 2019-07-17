@@ -268,8 +268,9 @@ class PaymentTest extends TestCase
         $this->assertEquals($fields['ThreeDSecureChallenge'], 'challenge_mandated');
     }
 
-    public function testSet3DSecureInvalid() {
-        $this->expectException(PaymentException::class);
+    public function testPaymentException3DSecure()
+    {
+        $this->expectExceptionObject(PaymentException::invalidThreeDSecureChallenge('invalid_choice'));
 
         $payment = new Payment(array(
             'reference' => 'ABCDEF123',

@@ -4,7 +4,7 @@ use Carbon\Carbon;
 use DansMaCulotte\Monetico\Monetico;
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Payment\PaymentResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.php';
@@ -113,13 +113,13 @@ class MoneticoTest extends TestCase
         );
 
         $payment = new Payment(array(
-            'reference' => 'ABCDEF123',
+            'reference' => 'AYCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'datetime' => Carbon::create(2019, 7, 17),
         ));
 
         $fields = $monetico->getPaymentFields($payment);
@@ -184,7 +184,7 @@ class MoneticoTest extends TestCase
 
         $data['MAC'] = $seal;
 
-        $response = new Response($data);
+        $response = new PaymentResponse($data);
 
         $isValid = $monetico->validateSeal($response);
         $this->assertTrue($isValid);

@@ -4,7 +4,7 @@ namespace DansMaCulotte\Monetico;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Payment\PaymentResponse;
 
 class Monetico
 {
@@ -143,11 +143,11 @@ class Monetico
     /**
      * Validate seal from response
      *
-     * @param Response $response
+     * @param PaymentResponse $response
      *
      * @return bool
      */
-    public function validateSeal(Response $response)
+    public function validateSeal(PaymentResponse $response)
     {
         $seal = $response->validateSeal(
             $this->_eptCode,

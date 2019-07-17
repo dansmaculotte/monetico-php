@@ -1,6 +1,6 @@
 <?php
 
-use DansMaCulotte\Monetico\Capture\RecoveryResponse;
+use DansMaCulotte\Monetico\Recovery\RecoveryResponse;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
 

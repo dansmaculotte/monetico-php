@@ -1,7 +1,7 @@
 <?php
 
 use Carbon\Carbon;
-use DansMaCulotte\Monetico\Capture\Recovery;
+use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
 

@@ -2,7 +2,7 @@
 
 namespace DansMaCulotte\Monetico;
 
-use DansMaCulotte\Monetico\Capture\Recovery;
+use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;

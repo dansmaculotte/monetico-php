@@ -1,6 +1,6 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Capture;
+namespace DansMaCulotte\Monetico\Recovery;
 
 
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;

@@ -3,9 +3,9 @@
 namespace DansMaCulotte\Monetico\Capture;
 
 
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 
-class CaptureResponse
+class RecoveryResponse
 {
     const SERVICE_VERSION = 1.0;
 
@@ -58,7 +58,7 @@ class CaptureResponse
      *
      * @param array $data
      *
-     * @throws CaptureException
+     * @throws RecoveryException
      */
     public function __construct($data = array())
     {
@@ -70,7 +70,7 @@ class CaptureResponse
 
         $this->reference = $data['reference'];
         if (strlen($this->reference) > 12) {
-            throw CaptureException::invalidReference($this->reference);
+            throw RecoveryException::invalidReference($this->reference);
         }
 
         if (isset($data['aut'])) {
@@ -84,7 +84,7 @@ class CaptureResponse
         if (isset($data['date_autorisation'])) {
             $this->authorisationDatetime = date_create($data['date_autorisation']);
             if (!is_a($this->authorisationDatetime, 'DateTime')) {
-                throw CaptureException::invalidDatetime();
+                throw RecoveryException::invalidDatetime();
             }
         }
 
@@ -95,21 +95,21 @@ class CaptureResponse
         if (isset($data['date_debit'])) {
             $this->debitDatetime = date_create($data['date_debit']);
             if (!is_a($this->debitDatetime, 'DateTime')) {
-                throw CaptureException::invalidDatetime();
+                throw RecoveryException::invalidDatetime();
             }
         }
 
         if (isset($data['numero_dossier'])) {
             $this->fileNumber = $data['numero_dossier'];
             if (strlen($this->reference) > 12) {
-                throw CaptureException::invalidReference($this->reference);
+                throw RecoveryException::invalidReference($this->reference);
             }
         }
 
         if (isset($data['type_facture'])) {
             $this->invoiceType = $data['type_facture'];
             if (!in_array($this->invoiceType, self::INVOICE_TYPES)) {
-                throw CaptureException::invalidInvoiceType($this->invoiceType);
+                throw RecoveryException::invalidInvoiceType($this->invoiceType);
             }
         }
 

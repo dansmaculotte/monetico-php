@@ -3,9 +3,9 @@
 namespace DansMaCulotte\Monetico\Capture;
 
 
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 
-class Capture
+class Recovery
 {
 
     /** @var \DateTime */
@@ -21,10 +21,10 @@ class Capture
     public $currency;
 
     /** @var float */
-    public $amountToCapture;
+    public $amountToRecover;
 
     /** @var float */
-    public $amountCaptured;
+    public $amountRecovered;
 
     /** @var float */
     public $amountLeft;
@@ -56,40 +56,40 @@ class Capture
     /**
      * Capture constructor.
      * @param array $data
-     * @throws CaptureException
+     * @throws RecoveryException
      */
     public function __construct($data = array())
     {
 
         $this->datetime = $data['datetime'];
         if (!is_a($this->datetime, 'DateTime')) {
-            throw CaptureException::invalidDatetime();
+            throw RecoveryException::invalidDatetime();
         }
 
         $this->orderDatetime = $data['orderDatetime'];
         if (!is_a($this->orderDatetime, 'DateTime')) {
-            throw CaptureException::invalidOrderDatetime();
+            throw RecoveryException::invalidOrderDatetime();
         }
 
         $this->reference = $data['reference'];
         if (strlen($this->reference) > 12) {
-            throw CaptureException::invalidReference($this->reference);
+            throw RecoveryException::invalidReference($this->reference);
         }
 
         $this->language = $data['language'];
         if (strlen($this->language) != 2) {
-            throw CaptureException::invalidLanguage($this->language);
+            throw RecoveryException::invalidLanguage($this->language);
         }
 
         $this->currency = $data['currency'];
 
         $this->amount = $data['amount'];
-        $this->amountToCapture = $data['amountToCapture'];
-        $this->amountCaptured = $data['amountCaptured'];
+        $this->amountToRecover = $data['amountToCapture'];
+        $this->amountRecovered = $data['amountCaptured'];
         $this->amountLeft = $data['amountLeft'];
 
-        if ($this->amountLeft + $this->amountCaptured + $this->amountToCapture !== $this->amount) {
-            throw CaptureException::invalidAmounts($this->amount, $this->amountToCapture, $this->amountCaptured, $this->amountLeft);
+        if ($this->amountLeft + $this->amountRecovered + $this->amountToRecover !== $this->amount) {
+            throw RecoveryException::invalidAmounts($this->amount, $this->amountToRecover, $this->amountRecovered, $this->amountLeft);
         }
     }
 
@@ -112,12 +112,12 @@ class Capture
     /**
      * @param string $invoiceType
      *
-     * @throws CaptureException
+     * @throws RecoveryException
      */
     public function setInvoiceType(string $invoiceType)
     {
         if (!in_array($invoiceType, self::INVOICE_TYPES)) {
-            throw CaptureException::invalidInvoiceType($invoiceType);
+            throw RecoveryException::invalidInvoiceType($invoiceType);
         }
         $this->invoiceType = $invoiceType;
     }
@@ -139,8 +139,8 @@ class Capture
             'date_commande' => $this->orderDatetime->format('d/m/Y'),
             'lgue' => $this->language,
             'montant' => $this->amount . $this->currency,
-            'montant_a_capturer' => $this->amountToCapture . $this->currency,
-            'montant_deja_capture' => $this->amountCaptured . $this->currency,
+            'montant_a_capturer' => $this->amountToRecover . $this->currency,
+            'montant_deja_capture' => $this->amountRecovered . $this->currency,
             'montant_restant' => $this->amountLeft . $this->currency,
             'reference' => $this->reference,
             'societe' => $companyCode,
@@ -180,7 +180,6 @@ class Capture
         ksort($fields);
         $query = urldecode(http_build_query($fields, null, '*'));
 
-        print_r($query);
         return strtoupper(hash_hmac(
             'sha1',
             $query,

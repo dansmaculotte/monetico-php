@@ -1,14 +1,14 @@
 <?php
 
-use DansMaCulotte\Monetico\Capture\CaptureResponse;
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Capture\RecoveryResponse;
+use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
 
-class CaptureResponseTest extends TestCase
+class RecoveryResponseTest extends TestCase
 {
     public function testCaptureResponseConstruct()
     {
-        $response = new CaptureResponse([
+        $response = new RecoveryResponse([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -16,12 +16,12 @@ class CaptureResponseTest extends TestCase
             'aut' => '123456',
         ]);
 
-        $this->assertTrue($response instanceof CaptureResponse);
+        $this->assertTrue($response instanceof RecoveryResponse);
     }
 
     public function testCaptureResponseWithAuthorization()
     {
-        $response = new CaptureResponse([
+        $response = new RecoveryResponse([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -35,14 +35,14 @@ class CaptureResponseTest extends TestCase
             'type_facture' => 'preauto',
         ]);
 
-        $this->assertTrue($response instanceof CaptureResponse);
+        $this->assertTrue($response instanceof RecoveryResponse);
     }
 
     public function testCaptureResponseInvalidReferenceException()
     {
-        $this->expectExceptionObject(CaptureException::invalidReference('thisisawrongreference'));
+        $this->expectExceptionObject(RecoveryException::invalidReference('thisisawrongreference'));
 
-        $response = new CaptureResponse([
+        $response = new RecoveryResponse([
             'version' => '1.0',
             'reference' => 'thisisawrongreference',
             'cdr' => '1',
@@ -50,14 +50,14 @@ class CaptureResponseTest extends TestCase
             'aut' => '123456',
         ]);
 
-        $this->assertTrue($response instanceof CaptureResponse);
+        $this->assertTrue($response instanceof RecoveryResponse);
     }
 
     public function testCaptureResponseExceptionInvalidReference()
     {
-        $this->expectExceptionObject(CaptureException::invalidReference('thisisawrongreference'));
+        $this->expectExceptionObject(RecoveryException::invalidReference('thisisawrongreference'));
 
-        new CaptureResponse([
+        new RecoveryResponse([
             'version' => '1.0',
             'reference' => 'thisisawrongreference',
             'cdr' => '1',
@@ -69,9 +69,9 @@ class CaptureResponseTest extends TestCase
 
     public function testCaptureResponseExceptionInvalidAuthDatetime()
     {
-        $this->expectExceptionObject(CaptureException::invalidDatetime());
+        $this->expectExceptionObject(RecoveryException::invalidDatetime());
 
-        new CaptureResponse([
+        new RecoveryResponse([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',
@@ -84,9 +84,9 @@ class CaptureResponseTest extends TestCase
 
     public function testCaptureResponseExceptionInvalidDebitDatetime()
     {
-        $this->expectExceptionObject(CaptureException::invalidDatetime());
+        $this->expectExceptionObject(RecoveryException::invalidDatetime());
 
-        new CaptureResponse([
+        new RecoveryResponse([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',
@@ -99,9 +99,9 @@ class CaptureResponseTest extends TestCase
 
     public function testCaptureResponseExceptionInvalidInvoiceType()
     {
-        $this->expectExceptionObject(CaptureException::invalidInvoiceType('invalid'));
+        $this->expectExceptionObject(RecoveryException::invalidInvoiceType('invalid'));
 
-        new CaptureResponse([
+        new RecoveryResponse([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',

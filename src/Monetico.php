@@ -2,7 +2,7 @@
 
 namespace DansMaCulotte\Monetico;
 
-use DansMaCulotte\Monetico\Capture\Capture;
+use DansMaCulotte\Monetico\Capture\Recovery;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;
@@ -15,7 +15,7 @@ class Monetico
     const MISC_SERVICE_URL = 'https://payment-api.e-i.com';
 
     const PAYMENT_URI = 'paiement.cgi';
-    const CAPTURE_URI = 'capture_paiement.cgi';
+    const RECOVERY_URI = 'capture_paiement.cgi';
     const REFUND_URI = 'recredit_paiement.cgi';
 
     private $_eptCode = null;
@@ -110,7 +110,7 @@ class Monetico
     }
 
     /**
-     * Return capture url required to redirect on bank interface
+     * Return recovery url required to redirect on bank interface
      *
      * @param bool $debug
      *
@@ -122,7 +122,7 @@ class Monetico
             $mainServiceUrl .= '/test';
         }
 
-        return $mainServiceUrl . '/' . self::CAPTURE_URI;
+        return $mainServiceUrl . '/' . self::RECOVERY_URI;
     }
 
     /**
@@ -157,7 +157,7 @@ class Monetico
         return $fields;
     }
 
-    public function getCaptureFields(Capture $input)
+    public function getCaptureFields(Recovery $input)
     {
         $seal = $input->generateSeal(
             $this->_eptCode,

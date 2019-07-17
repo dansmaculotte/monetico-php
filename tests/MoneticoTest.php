@@ -1,7 +1,7 @@
 <?php
 
 use Carbon\Carbon;
-use DansMaCulotte\Monetico\Capture\Capture;
+use DansMaCulotte\Monetico\Capture\Recovery;
 use DansMaCulotte\Monetico\Monetico;
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
@@ -124,7 +124,6 @@ class MoneticoTest extends TestCase
         ));
 
         $fields = $monetico->getPaymentFields($payment);
-        print_r($fields);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -203,21 +202,19 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $payment = new Capture(array(
+        $payment = new Recovery(array(
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
             'amountToCapture' => 0,
             'amountCaptured' => 0,
-            'amountLeft' => 0,
+            'amountLeft' => 42.42,
             'currency' => 'EUR',
             'orderDatetime' => Carbon::create(2019, 07, 17),
             'datetime' => Carbon::create(2019, 07, 17),
         ));
 
         $fields = $monetico->getCaptureFields($payment);
-
-        print_r($fields);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);

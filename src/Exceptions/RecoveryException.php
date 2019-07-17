@@ -2,12 +2,12 @@
 
 namespace DansMaCulotte\Monetico\Exceptions;
 
-class CaptureException extends \Exception
+class RecoveryException extends \Exception
 {
     /**
      * @param $invoiceType
      *
-     * @return CaptureException
+     * @return RecoveryException
      */
     public static function invalidInvoiceType($invoiceType)
     {
@@ -16,7 +16,7 @@ class CaptureException extends \Exception
 
 
     /**
-     * @return CaptureException
+     * @return RecoveryException
      */
     public static function invalidDatetime()
     {
@@ -24,7 +24,7 @@ class CaptureException extends \Exception
     }
 
     /**
-     * @return CaptureException
+     * @return RecoveryException
      */
     public static function invalidOrderDatetime()
     {
@@ -34,7 +34,7 @@ class CaptureException extends \Exception
     /**
      * @param string $reference
      *
-     * @return CaptureException
+     * @return RecoveryException
      */
     public static function invalidReference($reference)
     {
@@ -44,7 +44,7 @@ class CaptureException extends \Exception
     /**
      * @param string $language
      *
-     * @return CaptureException
+     * @return RecoveryException
      */
     public static function invalidLanguage($language)
     {
@@ -53,14 +53,14 @@ class CaptureException extends \Exception
 
     /**
      * @param $total
-     * @param $toCapture
-     * @param $captured
+     * @param $toRecover
+     * @param $recovered
      * @param $left
      *
-     * @return CaptureException
+     * @return RecoveryException
      */
-    public static function invalidAmounts($total, $toCapture, $captured, $left)
+    public static function invalidAmounts($total, $toRecover, $recovered, $left)
     {
-        return new self("amounts values are invalid, the sum of the amount to capture: ${toCapture}, the amount captured: ${captured} and the amount left: ${left} should be equal to the total amount: ${total}");
+        return new self("amounts values are invalid, the sum of the amount to recover: ${toRecover}, the amount recovered: ${recovered} and the amount left: ${left} should be equal to the total amount: ${total}");
     }
 }

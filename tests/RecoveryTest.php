@@ -1,15 +1,15 @@
 <?php
 
 use Carbon\Carbon;
-use DansMaCulotte\Monetico\Capture\Capture;
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Capture\Recovery;
+use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
 
-class CaptureTest extends TestCase
+class RecoveryTest extends TestCase
 {
     public function testCaptureConstruct()
     {
-        $capture = new Capture([
+        $recovery = new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -21,14 +21,14 @@ class CaptureTest extends TestCase
             'amountLeft' => 50
         ]);
 
-        $this->assertTrue($capture instanceof Capture);
+        $this->assertTrue($recovery instanceof Recovery);
     }
 
     public function testCaptureConstructExceptionInvalidAmounts()
     {
-        $this->expectExceptionObject(CaptureException::invalidAmounts(100, 30, 0, 50));
+        $this->expectExceptionObject(RecoveryException::invalidAmounts(100, 30, 0, 50));
 
-        new Capture([
+        new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -43,9 +43,9 @@ class CaptureTest extends TestCase
 
     public function testCaptureConstructExceptionInvalidDatetime()
     {
-        $this->expectExceptionObject(CaptureException::invalidDatetime());
+        $this->expectExceptionObject(RecoveryException::invalidDatetime());
 
-        new Capture([
+        new Recovery([
             'datetime' => 'invalid',
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -60,9 +60,9 @@ class CaptureTest extends TestCase
 
     public function testCaptureConstructExceptionInvalidOrderDatetime()
     {
-        $this->expectExceptionObject(CaptureException::invalidOrderDatetime());
+        $this->expectExceptionObject(RecoveryException::invalidOrderDatetime());
 
-        new Capture([
+        new Recovery([
             'datetime' => Carbon::create(2019, 1, 1),
             'orderDatetime' => 'invalid',
             'reference' => 'ABC123',
@@ -77,9 +77,9 @@ class CaptureTest extends TestCase
 
     public function testCaptureConstructExceptionInvalidReference()
     {
-        $this->expectExceptionObject(CaptureException::invalidReference('thisisatoolongreference'));
+        $this->expectExceptionObject(RecoveryException::invalidReference('thisisatoolongreference'));
 
-        new Capture([
+        new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'thisisatoolongreference',
@@ -94,9 +94,9 @@ class CaptureTest extends TestCase
 
     public function testCaptureConstructExceptionInvalidLanguage()
     {
-        $this->expectExceptionObject(CaptureException::invalidLanguage('English'));
+        $this->expectExceptionObject(RecoveryException::invalidLanguage('English'));
 
-        new Capture([
+        new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -111,7 +111,7 @@ class CaptureTest extends TestCase
 
     public function testCaptureOptions()
     {
-        $capture = new Capture([
+        $recovery = new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -123,27 +123,27 @@ class CaptureTest extends TestCase
             'amountLeft' => 50
         ]);
 
-        $capture->setStopRecurrence();
-        $this->assertEquals('oui', $capture->stopRecurrence);
+        $recovery->setStopRecurrence();
+        $this->assertEquals('oui', $recovery->stopRecurrence);
 
-        $capture->setFileNumber('12');
-        $this->assertEquals(12, $capture->fileNumber);
+        $recovery->setFileNumber('12');
+        $this->assertEquals(12, $recovery->fileNumber);
 
-        $capture->setInvoiceType('preauto');
-        $this->assertEquals('preauto', $capture->invoiceType);
+        $recovery->setInvoiceType('preauto');
+        $this->assertEquals('preauto', $recovery->invoiceType);
 
-        $capture->setInvoiceType('noshow');
-        $this->assertEquals('noshow', $capture->invoiceType);
+        $recovery->setInvoiceType('noshow');
+        $this->assertEquals('noshow', $recovery->invoiceType);
 
-        $capture->setPhone();
-        $this->assertEquals('oui', $capture->phone);
+        $recovery->setPhone();
+        $this->assertEquals('oui', $recovery->phone);
     }
 
     public function testSetInvoiceTypeExceptionInvalidInvoiceType()
     {
-        $this->expectExceptionObject(CaptureException::invalidInvoiceType('invalid'));
+        $this->expectExceptionObject(RecoveryException::invalidInvoiceType('invalid'));
 
-        $capture = new Capture([
+        $recovery = new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -155,8 +155,8 @@ class CaptureTest extends TestCase
             'amountLeft' => 50
         ]);
 
-        $capture->setInvoiceType('invalid');
-        $this->assertEquals('preauto', $capture->invoiceType);
+        $recovery->setInvoiceType('invalid');
+        $this->assertEquals('preauto', $recovery->invoiceType);
 
     }
 

@@ -3,6 +3,7 @@
 namespace DansMaCulotte\Monetico\Recovery;
 
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 
 class RecoveryResponse
@@ -58,7 +59,7 @@ class RecoveryResponse
      *
      * @param array $data
      *
-     * @throws RecoveryException
+     * @throws Exception
      */
     public function __construct($data = array())
     {
@@ -70,7 +71,7 @@ class RecoveryResponse
 
         $this->reference = $data['reference'];
         if (strlen($this->reference) > 12) {
-            throw RecoveryException::invalidReference($this->reference);
+            throw Exception::invalidReference($this->reference);
         }
 
         if (isset($data['aut'])) {
@@ -84,7 +85,7 @@ class RecoveryResponse
         if (isset($data['date_autorisation'])) {
             $this->authorisationDatetime = date_create($data['date_autorisation']);
             if (!is_a($this->authorisationDatetime, 'DateTime')) {
-                throw RecoveryException::invalidDatetime();
+                throw Exception::invalidDatetime();
             }
         }
 
@@ -95,21 +96,21 @@ class RecoveryResponse
         if (isset($data['date_debit'])) {
             $this->debitDatetime = date_create($data['date_debit']);
             if (!is_a($this->debitDatetime, 'DateTime')) {
-                throw RecoveryException::invalidDatetime();
+                throw Exception::invalidDatetime();
             }
         }
 
         if (isset($data['numero_dossier'])) {
             $this->fileNumber = $data['numero_dossier'];
             if (strlen($this->reference) > 12) {
-                throw RecoveryException::invalidReference($this->reference);
+                throw Exception::invalidReference($this->reference);
             }
         }
 
         if (isset($data['type_facture'])) {
             $this->invoiceType = $data['type_facture'];
             if (!in_array($this->invoiceType, self::INVOICE_TYPES)) {
-                throw RecoveryException::invalidInvoiceType($this->invoiceType);
+                throw Exception::invalidInvoiceType($this->invoiceType);
             }
         }
 

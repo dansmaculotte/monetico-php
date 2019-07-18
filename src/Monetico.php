@@ -2,10 +2,12 @@
 
 namespace DansMaCulotte\Monetico;
 
+use DansMaCulotte\Monetico\Recovery\Cancel;
 use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;
+use DansMaCulotte\Monetico\Refund\Refund;
 
 class Monetico
 {
@@ -126,6 +128,22 @@ class Monetico
     }
 
     /**
+     * Return recovery url required to redirect on bank interface
+     *
+     * @param bool $debug
+     *
+     * @return string
+     */
+    public function getRefundUrl($debug = false) {
+        $mainServiceUrl = self::MAIN_SERVICE_URL;
+        if ($this->_debug || $debug) {
+            $mainServiceUrl .= '/test';
+        }
+
+        return $mainServiceUrl . '/' . self::REFUND_URI;
+    }
+
+    /**
      * Return array fields required on bank interface
      *
      * @param Payment $input
@@ -157,7 +175,52 @@ class Monetico
         return $fields;
     }
 
+    /**
+     * Return array fields required on bank interface
+     *
+     * @param Recovery $input
+     *
+     * @return array
+     */
     public function getRecoveryFields(Recovery $input)
+    {
+        $seal = $input->generateSeal(
+            $this->_eptCode,
+            $this->_securityKey,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        $fields = $input->generateFields(
+            $this->_eptCode,
+            $seal,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        return $fields;
+    }
+
+    public function getCancelFields(Cancel $input)
+    {
+        $seal = $input->generateSeal(
+            $this->_eptCode,
+            $this->_securityKey,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        $fields = $input->generateFields(
+            $this->_eptCode,
+            $seal,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        return $fields;
+    }
+
+    public function getRefundFields(Refund $input)
     {
         $seal = $input->generateSeal(
             $this->_eptCode,

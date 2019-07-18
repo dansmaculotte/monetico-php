@@ -1,11 +1,13 @@
 <?php
 
 use Carbon\Carbon;
+use DansMaCulotte\Monetico\Recovery\Cancel;
 use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Monetico;
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;
+use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.php';
@@ -22,16 +24,6 @@ class MoneticoTest extends TestCase
             RETURN_SUCCESS_URL,
             RETURN_ERROR_URL
         );
-
-        $payment = new Payment(array(
-            'reference' => 'ABCDEF123',
-            'description' => 'PHPUnit',
-            'language' => 'FR',
-            'email' => 'john@english.fr',
-            'amount' => 42.42,
-            'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
-        ));
 
         $this->assertTrue($monetico instanceof Monetico);
     }
@@ -202,7 +194,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $payment = new Recovery(array(
+        $recovery = new Recovery(array(
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
@@ -214,16 +206,100 @@ class MoneticoTest extends TestCase
             'datetime' => Carbon::create(2019, 07, 17),
         ));
 
-        $fields = $monetico->getRecoveryFields($payment);
+        $fields = $monetico->getRecoveryFields($recovery);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
         $this->assertArrayHasKey('TPE', $fields);
         $this->assertArrayHasKey('date', $fields);
-        $this->assertArrayHasKey('montant', $fields);
+        $this->assertArrayHasKey('date_commande', $fields);
         $this->assertArrayHasKey('reference', $fields);
         $this->assertArrayHasKey('MAC', $fields);
         $this->assertArrayHasKey('lgue', $fields);
         $this->assertArrayHasKey('societe', $fields);
+        $this->assertArrayHasKey('montant', $fields);
+        $this->assertArrayHasKey('montant_a_capturer', $fields);
+        $this->assertArrayHasKey('montant_deja_capture', $fields);
+        $this->assertArrayHasKey('montant_restant', $fields);
+    }
+
+    public function testMoneticoCancelFields()
+    {
+        $monetico = new Monetico(
+            EPT_CODE,
+            SECURITY_KEY,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+        $cancel = new Cancel(array(
+            'reference' => 'AXCDEF123',
+            'language' => 'FR',
+            'amount' => 42.42,
+            'amountRecovered' => 0,
+            'currency' => 'EUR',
+            'orderDatetime' => Carbon::create(2019, 07, 17),
+            'datetime' => Carbon::create(2019, 07, 17),
+        ));
+
+        $fields = $monetico->getRecoveryFields($cancel);
+
+        $this->assertIsArray($fields);
+        $this->assertArrayHasKey('version', $fields);
+        $this->assertArrayHasKey('TPE', $fields);
+        $this->assertArrayHasKey('date', $fields);
+        $this->assertArrayHasKey('date_commande', $fields);
+        $this->assertArrayHasKey('reference', $fields);
+        $this->assertArrayHasKey('MAC', $fields);
+        $this->assertArrayHasKey('lgue', $fields);
+        $this->assertArrayHasKey('societe', $fields);
+        $this->assertArrayHasKey('montant', $fields);
+        $this->assertArrayHasKey('montant_a_capturer', $fields);
+        $this->assertArrayHasKey('montant_deja_capture', $fields);
+        $this->assertArrayHasKey('montant_restant', $fields);
+    }
+
+    public function testMoneticoRefundFields()
+    {
+        $monetico = new Monetico(
+            EPT_CODE,
+            SECURITY_KEY,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+        $refund = new Refund([
+            'datetime' => Carbon::create(2019, 2, 1),
+            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'authorizationNumber' => '1222',
+            'reference' => 'ABC123',
+            'language' => 'FR',
+            'currency' => 'EUR',
+            'amount' => 100,
+            'refundAmount' => 50,
+            'maxRefundAmount' => 80,
+        ]);
+
+        $fields = $monetico->getRefundFields($refund);
+
+        $this->assertIsArray($fields);
+        $this->assertArrayHasKey('version', $fields);
+        $this->assertArrayHasKey('TPE', $fields);
+        $this->assertArrayHasKey('date', $fields);
+        $this->assertArrayHasKey('date_commande', $fields);
+        $this->assertArrayHasKey('date_remise', $fields);
+        $this->assertArrayHasKey('num_autorisation', $fields);
+        $this->assertArrayHasKey('reference', $fields);
+        $this->assertArrayHasKey('MAC', $fields);
+        $this->assertArrayHasKey('lgue', $fields);
+        $this->assertArrayHasKey('societe', $fields);
+        $this->assertArrayHasKey('montant', $fields);
+        $this->assertArrayHasKey('montant_recredit', $fields);
+        $this->assertArrayHasKey('montant_possible', $fields);
     }
 }

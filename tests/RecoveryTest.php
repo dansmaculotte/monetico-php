@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\Carbon;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
@@ -43,7 +44,7 @@ class RecoveryTest extends TestCase
 
     public function testRecoveryConstructExceptionInvalidDatetime()
     {
-        $this->expectExceptionObject(RecoveryException::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidDatetime());
 
         new Recovery([
             'datetime' => 'invalid',
@@ -60,7 +61,7 @@ class RecoveryTest extends TestCase
 
     public function testRecoveryConstructExceptionInvalidOrderDatetime()
     {
-        $this->expectExceptionObject(RecoveryException::invalidOrderDatetime());
+        $this->expectExceptionObject(Exception::invalidOrderDatetime());
 
         new Recovery([
             'datetime' => Carbon::create(2019, 1, 1),
@@ -77,7 +78,7 @@ class RecoveryTest extends TestCase
 
     public function testRecoveryConstructExceptionInvalidReference()
     {
-        $this->expectExceptionObject(RecoveryException::invalidReference('thisisatoolongreference'));
+        $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
 
         new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
@@ -94,7 +95,7 @@ class RecoveryTest extends TestCase
 
     public function testRecoveryConstructExceptionInvalidLanguage()
     {
-        $this->expectExceptionObject(RecoveryException::invalidLanguage('English'));
+        $this->expectExceptionObject(Exception::invalidLanguage('English'));
 
         new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),
@@ -141,7 +142,7 @@ class RecoveryTest extends TestCase
 
     public function testSetInvoiceTypeExceptionInvalidInvoiceType()
     {
-        $this->expectExceptionObject(RecoveryException::invalidInvoiceType('invalid'));
+        $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
 
         $recovery = new Recovery([
             'datetime' => Carbon::create(2019, 2, 1),

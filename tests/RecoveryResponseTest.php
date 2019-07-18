@@ -1,5 +1,6 @@
 <?php
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Recovery\RecoveryResponse;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
@@ -40,7 +41,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseInvalidReferenceException()
     {
-        $this->expectExceptionObject(RecoveryException::invalidReference('thisisawrongreference'));
+        $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));
 
         $response = new RecoveryResponse([
             'version' => '1.0',
@@ -55,7 +56,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidReference()
     {
-        $this->expectExceptionObject(RecoveryException::invalidReference('thisisawrongreference'));
+        $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));
 
         new RecoveryResponse([
             'version' => '1.0',
@@ -69,7 +70,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidAuthDatetime()
     {
-        $this->expectExceptionObject(RecoveryException::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidDatetime());
 
         new RecoveryResponse([
             'version' => '1.0',
@@ -84,7 +85,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidDebitDatetime()
     {
-        $this->expectExceptionObject(RecoveryException::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidDatetime());
 
         new RecoveryResponse([
             'version' => '1.0',
@@ -99,7 +100,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidInvoiceType()
     {
-        $this->expectExceptionObject(RecoveryException::invalidInvoiceType('invalid'));
+        $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
 
         new RecoveryResponse([
             'version' => '1.0',

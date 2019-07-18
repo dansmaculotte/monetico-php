@@ -1,42 +1,41 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Recovery;
+namespace DansMaCulotte\Monetico\Refund;
+
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 
-class Recovery implements iRecoveryValidation
+class Refund
 {
-
     /** @var \DateTime */
     public $datetime;
 
     /** @var \DateTime */
     public $orderDatetime;
 
-    /** @var float */
-    public $amount;
+    /** @var \DateTime */
+    public $recoveryDatetime;
+
+    /** @var string */
+    public $authorizationNumber;
 
     /** @var string */
     public $currency;
 
     /** @var float */
-    public $amountToRecover;
+    public $amount;
 
     /** @var float */
-    public $amountRecovered;
+    public $refundAmount;
 
     /** @var float */
-    public $amountLeft;
+    public $maxRefundAmount;
 
     /** @var string */
     public $reference;
 
     /** @var string */
     public $language;
-
-    /** @var string */
-    public $stopRecurrence;
 
     /** @var string */
     public $fileNumber;
@@ -49,18 +48,13 @@ class Recovery implements iRecoveryValidation
         'noshow',
     ];
 
-    /** @var string */
-    public $phone;
-
-
     /**
-     * Recovery constructor.
+     * Refund constructor.
      * @param array $data
-     * @throws RecoveryException
+     * @throws Exception
      */
     public function __construct($data = array())
     {
-
         $this->datetime = $data['datetime'];
         if (!is_a($this->datetime, 'DateTime')) {
             throw Exception::invalidDatetime();
@@ -71,6 +65,19 @@ class Recovery implements iRecoveryValidation
             throw Exception::invalidOrderDatetime();
         }
 
+        $this->recoveryDatetime = $data['recoveryDatetime'];
+        if (!is_a($this->recoveryDatetime, 'DateTime')) {
+            throw Exception::invalidRecoveryDatetime();
+        }
+
+        $this->authorizationNumber = $data['authorizationNumber'];
+
+        $this->currency = $data['currency'];
+
+        $this->amount = $data['amount'];
+        $this->refundAmount = $data['refundAmount'];
+        $this->maxRefundAmount = $data['maxRefundAmount'];
+
         $this->reference = $data['reference'];
         if (strlen($this->reference) > 12) {
             throw Exception::invalidReference($this->reference);
@@ -80,33 +87,6 @@ class Recovery implements iRecoveryValidation
         if (strlen($this->language) != 2) {
             throw Exception::invalidLanguage($this->language);
         }
-
-        $this->currency = $data['currency'];
-
-        $this->amount = $data['amount'];
-        $this->amountToRecover = $data['amountToRecover'];
-        $this->amountRecovered = $data['amountRecovered'];
-        $this->amountLeft = $data['amountLeft'];
-
-        $this->validateAmounts();
-    }
-
-    /**
-     * @throws RecoveryException
-     */
-    public function validateAmounts()
-    {
-        if ($this->amountLeft + $this->amountRecovered + $this->amountToRecover !== $this->amount) {
-            throw RecoveryException::invalidAmounts($this->amount, $this->amountToRecover, $this->amountRecovered, $this->amountLeft);
-        }
-    }
-
-    /**
-     * @param bool $value
-     */
-    public function setStopRecurrence($value = true)
-    {
-        $this->stopRecurrence = ($value) ? 'oui' : '0';
     }
 
     /**
@@ -117,10 +97,10 @@ class Recovery implements iRecoveryValidation
         $this->fileNumber = $value;
     }
 
+
     /**
      * @param string $invoiceType
-     *
-     * @throws RecoveryException
+     * @throws Exception
      */
     public function setInvoiceType(string $invoiceType)
     {
@@ -130,34 +110,22 @@ class Recovery implements iRecoveryValidation
         $this->invoiceType = $invoiceType;
     }
 
-    /**
-     * @param bool $value
-     */
-    public function setPhone(bool $value = true)
-    {
-        $this->phone = ($value) ? 'oui' : '0';
-    }
-
-
     public function fieldsToArray($eptCode, $version, $companyCode)
     {
         $fields = array_merge([
             'TPE' => $eptCode,
             'date' => $this->datetime->format('d/m/Y:H:i:s'),
             'date_commande' => $this->orderDatetime->format('d/m/Y'),
-            'lgue' => $this->language,
+            'date_remise' => $this->recoveryDatetime->format('d/m/Y'),
+            'num_autorisation' => $this->authorizationNumber,
             'montant' => $this->amount . $this->currency,
-            'montant_a_capturer' => $this->amountToRecover . $this->currency,
-            'montant_deja_capture' => $this->amountRecovered . $this->currency,
-            'montant_restant' => $this->amountLeft . $this->currency,
+            'montant_recredit' => $this->refundAmount . $this->currency,
+            'montant_possible' => $this->maxRefundAmount . $this->currency,
             'reference' => $this->reference,
+            'lgue' => $this->language,
             'societe' => $companyCode,
             'version' => $version
         ]);
-
-        if (isset($this->stopRecurrence)) {
-            array_merge($fields, ['stoprecurrence' => $this->stopRecurrence]);
-        }
 
         if (isset($this->fileNumber)) {
             array_merge($fields, ['numero_dossier' => $this->fileNumber]);
@@ -165,10 +133,6 @@ class Recovery implements iRecoveryValidation
 
         if (isset($this->invoiceType)) {
             array_merge($fields, ['facture' => $this->invoiceType]);
-        }
-
-        if (isset($this->phone)) {
-            array_merge($fields, ['phonie' => $this->phone]);
         }
 
         return $fields;
@@ -201,4 +165,5 @@ class Recovery implements iRecoveryValidation
             ['MAC' => $seal]
         );
     }
+
 }

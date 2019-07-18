@@ -28,6 +28,7 @@ class RecoveryResponseTest extends TestCase
             'cdr' => '1',
             'lib' => 'paiement accepte',
             'aut' => '123456',
+            'phonie' => 'oui',
             'montant_estime' => '10EUR ',
             'date_autorisation' => '2019-05-20 ',
             'montant_debite' => '5EUR ',
@@ -64,6 +65,21 @@ class RecoveryResponseTest extends TestCase
             'cdr' => '1',
             'lib' => 'paiement accepte',
             'aut' => '123456',
+        ]);
+
+    }
+
+    public function testRecoveryResponseExceptionInvalidFileNumber()
+    {
+        $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));
+
+        new RecoveryResponse([
+            'version' => '1.0',
+            'reference' => 'ABCD123',
+            'cdr' => '1',
+            'lib' => 'paiement accepte',
+            'aut' => '123456',
+            'numero_dossier' => 'thisisawrongreference'
         ]);
 
     }

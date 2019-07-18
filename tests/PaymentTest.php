@@ -159,22 +159,18 @@ class PaymentTest extends TestCase
 
         $seal = $payment->generateSeal(
             'FOO',
-            'BAR',
-            '3.0',
-            'FOOBAR',
-            'https://127.0.0.1',
-            'https://127.0.0.1/success',
-            'https://127.0.0.1/error'
+            []
         );
 
         $fields = $payment->generateFields(
             'FOO',
-            'BAR',
-            '3.0',
-            'FOOBAR',
-            'https://127.0.0.1',
-            'https://127.0.0.1/success',
-            'https://127.0.0.1/error'
+            $payment->fieldsToArray(
+                'FOOBAR',
+                3.0,
+                'FOO',
+                'https://127.0.0.1',
+                'https://127.0.0.1/success',
+                'https://127.0.0.1/error')
         );
 
         $this->assertIsArray($fields);
@@ -222,6 +218,8 @@ class PaymentTest extends TestCase
         $payment->setAddressBilling('7 rue melingue', 'Caen', '14000', 'France');
         $payment->setAddressShipping('7 rue melingue', 'Caen', '14000', 'France');
 
+        $payment->setClient('MR', 'FooBoo', 'Foo', 'Boo');
+
         $this->assertEquals('7 rue melingue', $payment->shippingAddress['addressLine1']);
         $this->assertEquals('Caen', $payment->shippingAddress['city']);
         $this->assertEquals('14000', $payment->shippingAddress['postalCode']);
@@ -231,6 +229,11 @@ class PaymentTest extends TestCase
         $this->assertEquals('Caen', $payment->billingAddress['city']);
         $this->assertEquals('14000', $payment->billingAddress['postalCode']);
         $this->assertEquals('France', $payment->billingAddress['country']);
+
+        $this->assertEquals('MR', $payment->client['civility']);
+        $this->assertEquals('FooBoo', $payment->client['name']);
+        $this->assertEquals('Foo', $payment->client['firstName']);
+        $this->assertEquals('Boo', $payment->client['lastName']);
     }
 
     public function testSet3DSecure() {
@@ -246,24 +249,23 @@ class PaymentTest extends TestCase
 
         $payment->setThreeDSecureChallenge('challenge_mandated');
 
-        $seal = $payment->generateSeal(
+        $fields = $payment->fieldsToArray(
             EPT_CODE,
-            Monetico::getUsableKey(SECURITY_KEY),
-            '3.0',
+            3.0,
             COMPANY_CODE,
             'https://dev.dansmaculotte.com',
             'https://dev.dansmaculotte.com/success',
-            'https://dev.dansmaculotte.com/error'
+            'https://dev.dansmaculotte.com/error');
+
+        $seal = $payment->generateSeal(
+            Monetico::getUsableKey(SECURITY_KEY),
+            $fields
         );
 
         $fields = $payment->generateFields(
-            EPT_CODE,
             $seal,
-            3.0,
-            COMPANY_CODE,
-            'https://dev.dansmaculotte.com"',
-            'https://dev.dansmaculotte.com/success',
-            'https://dev.dansmaculotte.com/error');
+            $fields
+        );
 
         $this->assertEquals($fields['ThreeDSecureChallenge'], 'challenge_mandated');
     }

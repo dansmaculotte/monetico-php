@@ -144,6 +144,17 @@ class Monetico
     }
 
     /**
+     * Return recovery url required to redirect on bank interface
+     *
+     * @param bool $debug
+     *
+     * @return string
+     */
+    public function getCancelUrl($debug = false) {
+        return $this->getRecoveryUrl($debug);
+    }
+
+    /**
      * Return array fields required on bank interface
      *
      * @param Payment $input
@@ -152,9 +163,8 @@ class Monetico
      */
     public function getPaymentFields(Payment $input)
     {
-        $seal = $input->generateSeal(
+        $fields = $input->fieldsToArray(
             $this->_eptCode,
-            $this->_securityKey,
             self::SERVICE_VERSION,
             $this->_companyCode,
             $this->_returnUrl,
@@ -162,14 +172,14 @@ class Monetico
             $this->_errorUrl
         );
 
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
         $fields = $input->generateFields(
-            $this->_eptCode,
             $seal,
-            self::SERVICE_VERSION,
-            $this->_companyCode,
-            $this->_returnUrl,
-            $this->_successUrl,
-            $this->_errorUrl
+            $fields
         );
 
         return $fields;
@@ -184,18 +194,20 @@ class Monetico
      */
     public function getRecoveryFields(Recovery $input)
     {
-        $seal = $input->generateSeal(
+        $fields = $input->fieldsToArray(
             $this->_eptCode,
-            $this->_securityKey,
             self::SERVICE_VERSION,
             $this->_companyCode
         );
 
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
         $fields = $input->generateFields(
-            $this->_eptCode,
             $seal,
-            self::SERVICE_VERSION,
-            $this->_companyCode
+            $fields
         );
 
         return $fields;
@@ -203,18 +215,20 @@ class Monetico
 
     public function getCancelFields(Cancel $input)
     {
-        $seal = $input->generateSeal(
+        $fields = $input->fieldsToArray(
             $this->_eptCode,
-            $this->_securityKey,
             self::SERVICE_VERSION,
             $this->_companyCode
         );
 
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
         $fields = $input->generateFields(
-            $this->_eptCode,
             $seal,
-            self::SERVICE_VERSION,
-            $this->_companyCode
+            $fields
         );
 
         return $fields;
@@ -222,18 +236,20 @@ class Monetico
 
     public function getRefundFields(Refund $input)
     {
-        $seal = $input->generateSeal(
+        $fields = $input->fieldsToArray(
             $this->_eptCode,
-            $this->_securityKey,
             self::SERVICE_VERSION,
             $this->_companyCode
         );
 
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
         $fields = $input->generateFields(
-            $this->_eptCode,
             $seal,
-            self::SERVICE_VERSION,
-            $this->_companyCode
+            $fields
         );
 
         return $fields;

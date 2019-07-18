@@ -3,10 +3,14 @@
 namespace DansMaCulotte\Monetico\Refund;
 
 
+use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
+use DansMaCulotte\Monetico\iMethod;
 
-class Refund
+class Refund implements iMethod
 {
+    use BaseMethod;
+
     /** @var \DateTime */
     public $datetime;
 
@@ -56,37 +60,17 @@ class Refund
     public function __construct($data = array())
     {
         $this->datetime = $data['datetime'];
-        if (!is_a($this->datetime, 'DateTime')) {
-            throw Exception::invalidDatetime();
-        }
-
         $this->orderDatetime = $data['orderDatetime'];
-        if (!is_a($this->orderDatetime, 'DateTime')) {
-            throw Exception::invalidOrderDatetime();
-        }
-
         $this->recoveryDatetime = $data['recoveryDatetime'];
-        if (!is_a($this->recoveryDatetime, 'DateTime')) {
-            throw Exception::invalidRecoveryDatetime();
-        }
-
         $this->authorizationNumber = $data['authorizationNumber'];
-
         $this->currency = $data['currency'];
-
         $this->amount = $data['amount'];
         $this->refundAmount = $data['refundAmount'];
         $this->maxRefundAmount = $data['maxRefundAmount'];
-
         $this->reference = $data['reference'];
-        if (strlen($this->reference) > 12) {
-            throw Exception::invalidReference($this->reference);
-        }
-
         $this->language = $data['language'];
-        if (strlen($this->language) != 2) {
-            throw Exception::invalidLanguage($this->language);
-        }
+
+        $this->validate();
     }
 
     /**
@@ -128,42 +112,40 @@ class Refund
         ]);
 
         if (isset($this->fileNumber)) {
-            array_merge($fields, ['numero_dossier' => $this->fileNumber]);
+            $fields['numero_dossier'] = $this->fileNumber;
         }
 
         if (isset($this->invoiceType)) {
-            array_merge($fields, ['facture' => $this->invoiceType]);
+            $fields['facture'] = $this->invoiceType;
         }
 
         return $fields;
     }
 
     /**
-     * @param $eptCode
-     * @param $securityKey
-     * @param $version
-     * @param $companyCode
-     * @return string
+     * @throws Exception
      */
-    public function generateSeal($eptCode, $securityKey, $version, $companyCode)
+    public function validate()
     {
-        $fields = $this->fieldsToArray($eptCode, $version, $companyCode);
+        if (!is_a($this->datetime, 'DateTime')) {
+            throw Exception::invalidDatetime();
+        }
 
-        ksort($fields);
-        $query = urldecode(http_build_query($fields, null, '*'));
+        if (!is_a($this->orderDatetime, 'DateTime')) {
+            throw Exception::invalidOrderDatetime();
+        }
 
-        return strtoupper(hash_hmac(
-            'sha1',
-            $query,
-            $securityKey
-        ));
-    }
+        if (!is_a($this->recoveryDatetime, 'DateTime')) {
+            throw Exception::invalidRecoveryDatetime();
+        }
 
-    public function generateFields($eptCode, $seal, $version, $companyCode) {
-        return array_merge(
-            $this->fieldsToArray($eptCode, $version, $companyCode),
-            ['MAC' => $seal]
-        );
+        if (strlen($this->reference) > 12) {
+            throw Exception::invalidReference($this->reference);
+        }
+
+        if (strlen($this->language) != 2) {
+            throw Exception::invalidLanguage($this->language);
+        }
     }
 
 }

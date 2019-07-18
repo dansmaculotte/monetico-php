@@ -76,6 +76,66 @@ class MoneticoTest extends TestCase
         $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }
 
+    public function testMoneticoRecoveryUrl()
+    {
+        $monetico = new Monetico(
+            EPT_CODE,
+            SECURITY_KEY,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+        $url = $monetico->getRecoveryUrl();
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
+
+        $url = $monetico->getRecoveryUrl(true);
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
+    }
+
+    public function testMoneticoRefundUrl()
+    {
+        $monetico = new Monetico(
+            EPT_CODE,
+            SECURITY_KEY,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+        $url = $monetico->getRefundUrl();
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/recredit_paiement.cgi');
+
+        $url = $monetico->getRefundUrl(true);
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/test/recredit_paiement.cgi');
+    }
+
+    public function testMoneticoCancelUrl()
+    {
+        $monetico = new Monetico(
+            EPT_CODE,
+            SECURITY_KEY,
+            COMPANY_CODE,
+            RETURN_URL,
+            RETURN_SUCCESS_URL,
+            RETURN_ERROR_URL
+        );
+
+        $url = $monetico->getCancelUrl();
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
+
+        $url = $monetico->getCancelUrl(true);
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
+    }
+
     public function testMoneticoDebugMode()
     {
         $monetico = new Monetico(
@@ -206,6 +266,11 @@ class MoneticoTest extends TestCase
             'datetime' => Carbon::create(2019, 07, 17),
         ));
 
+        $recovery->setFileNumber('ABC');
+        $recovery->setInvoiceType('preauto');
+        $recovery->setPhone();
+        $recovery->setStopRecurrence();
+
         $fields = $monetico->getRecoveryFields($recovery);
 
         $this->assertIsArray($fields);
@@ -221,6 +286,10 @@ class MoneticoTest extends TestCase
         $this->assertArrayHasKey('montant_a_capturer', $fields);
         $this->assertArrayHasKey('montant_deja_capture', $fields);
         $this->assertArrayHasKey('montant_restant', $fields);
+        $this->assertArrayHasKey('stoprecurrence', $fields);
+        $this->assertArrayHasKey('numero_dossier', $fields);
+        $this->assertArrayHasKey('facture', $fields);
+        $this->assertArrayHasKey('phonie', $fields);
     }
 
     public function testMoneticoCancelFields()
@@ -244,7 +313,7 @@ class MoneticoTest extends TestCase
             'datetime' => Carbon::create(2019, 07, 17),
         ));
 
-        $fields = $monetico->getRecoveryFields($cancel);
+        $fields = $monetico->getCancelFields($cancel);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -285,6 +354,9 @@ class MoneticoTest extends TestCase
             'maxRefundAmount' => 80,
         ]);
 
+        $refund->setInvoiceType('preauto');
+        $refund->setFileNumber('ABC');
+
         $fields = $monetico->getRefundFields($refund);
 
         $this->assertIsArray($fields);
@@ -301,5 +373,7 @@ class MoneticoTest extends TestCase
         $this->assertArrayHasKey('montant', $fields);
         $this->assertArrayHasKey('montant_recredit', $fields);
         $this->assertArrayHasKey('montant_possible', $fields);
+        $this->assertArrayHasKey('facture', $fields);
+        $this->assertArrayHasKey('numero_dossier', $fields);
     }
 }

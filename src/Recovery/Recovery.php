@@ -2,11 +2,15 @@
 
 namespace DansMaCulotte\Monetico\Recovery;
 
+use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
+use DansMaCulotte\Monetico\iMethod;
 
-class Recovery implements iRecoveryValidation
+class Recovery implements iMethod
 {
+    use BaseMethod;
+
 
     /** @var \DateTime */
     public $datetime;
@@ -57,29 +61,18 @@ class Recovery implements iRecoveryValidation
      * Recovery constructor.
      * @param array $data
      * @throws RecoveryException
+     * @throws Exception
      */
     public function __construct($data = array())
     {
 
         $this->datetime = $data['datetime'];
-        if (!is_a($this->datetime, 'DateTime')) {
-            throw Exception::invalidDatetime();
-        }
 
         $this->orderDatetime = $data['orderDatetime'];
-        if (!is_a($this->orderDatetime, 'DateTime')) {
-            throw Exception::invalidOrderDatetime();
-        }
 
         $this->reference = $data['reference'];
-        if (strlen($this->reference) > 12) {
-            throw Exception::invalidReference($this->reference);
-        }
 
         $this->language = $data['language'];
-        if (strlen($this->language) != 2) {
-            throw Exception::invalidLanguage($this->language);
-        }
 
         $this->currency = $data['currency'];
 
@@ -88,14 +81,31 @@ class Recovery implements iRecoveryValidation
         $this->amountRecovered = $data['amountRecovered'];
         $this->amountLeft = $data['amountLeft'];
 
-        $this->validateAmounts();
+        $this->validate();
     }
 
     /**
+     * @throws Exception
      * @throws RecoveryException
      */
-    public function validateAmounts()
+    public function validate()
     {
+        if (!is_a($this->datetime, 'DateTime')) {
+            throw Exception::invalidDatetime();
+        }
+
+        if (!is_a($this->orderDatetime, 'DateTime')) {
+            throw Exception::invalidOrderDatetime();
+        }
+
+        if (strlen($this->reference) > 12) {
+            throw Exception::invalidReference($this->reference);
+        }
+
+        if (strlen($this->language) != 2) {
+            throw Exception::invalidLanguage($this->language);
+        }
+
         if ($this->amountLeft + $this->amountRecovered + $this->amountToRecover !== $this->amount) {
             throw RecoveryException::invalidAmounts($this->amount, $this->amountToRecover, $this->amountRecovered, $this->amountLeft);
         }
@@ -120,7 +130,7 @@ class Recovery implements iRecoveryValidation
     /**
      * @param string $invoiceType
      *
-     * @throws RecoveryException
+     * @throws Exception
      */
     public function setInvoiceType(string $invoiceType)
     {
@@ -156,49 +166,21 @@ class Recovery implements iRecoveryValidation
         ]);
 
         if (isset($this->stopRecurrence)) {
-            array_merge($fields, ['stoprecurrence' => $this->stopRecurrence]);
+            $fields['stoprecurrence'] = $this->stopRecurrence;
         }
 
         if (isset($this->fileNumber)) {
-            array_merge($fields, ['numero_dossier' => $this->fileNumber]);
+            $fields['numero_dossier'] = $this->fileNumber;
         }
 
         if (isset($this->invoiceType)) {
-            array_merge($fields, ['facture' => $this->invoiceType]);
+            $fields['facture'] = $this->invoiceType;
         }
 
         if (isset($this->phone)) {
-            array_merge($fields, ['phonie' => $this->phone]);
+            $fields['phonie'] = $this->phone;
         }
 
         return $fields;
-    }
-
-    /**
-     * @param $eptCode
-     * @param $securityKey
-     * @param $version
-     * @param $companyCode
-     * @return string
-     */
-    public function generateSeal($eptCode, $securityKey, $version, $companyCode)
-    {
-        $fields = $this->fieldsToArray($eptCode, $version, $companyCode);
-
-        ksort($fields);
-        $query = urldecode(http_build_query($fields, null, '*'));
-
-        return strtoupper(hash_hmac(
-            'sha1',
-            $query,
-            $securityKey
-        ));
-    }
-
-    public function generateFields($eptCode, $seal, $version, $companyCode) {
-        return array_merge(
-            $this->fieldsToArray($eptCode, $version, $companyCode),
-            ['MAC' => $seal]
-        );
     }
 }

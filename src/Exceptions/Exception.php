@@ -25,14 +25,6 @@ class Exception extends \Exception
     /**
      * @return Exception
      */
-    public static function invalidContextCommandJson()
-    {
-        return new self("JSON Invalid.");
-    }
-
-    /**
-     * @return Exception
-     */
     public static function invalidOrderDatetime()
     {
         return new self("orderDatetime value is not a DateTime object");

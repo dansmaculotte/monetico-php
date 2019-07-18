@@ -102,8 +102,8 @@ class RecoveryResponse
 
         if (isset($data['numero_dossier'])) {
             $this->fileNumber = $data['numero_dossier'];
-            if (strlen($this->reference) > 12) {
-                throw Exception::invalidReference($this->reference);
+            if (strlen($this->fileNumber) > 12) {
+                throw Exception::invalidReference($this->fileNumber);
             }
         }
 

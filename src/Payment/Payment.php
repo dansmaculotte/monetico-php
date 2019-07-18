@@ -2,10 +2,14 @@
 
 namespace DansMaCulotte\Monetico\Payment;
 
+use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\iMethod;
 
-class Payment
+class Payment implements iMethod
 {
+    use BaseMethod;
+
     /** @var string */
     public $reference;
 
@@ -70,33 +74,39 @@ class Payment
      * @param array $data
      * @param array $commitments
      * @param array $options
-     *
      * @throws PaymentException
      */
     public function __construct($data = array(), $commitments = array(), $options = array())
     {
         $this->reference = $data['reference'];
-        if (strlen($this->reference) > 12) {
-            throw PaymentException::invalidReference($this->reference);
-        }
-
         $this->language = $data['language'];
-        if (strlen($this->language) != 2) {
-            throw PaymentException::invalidLanguage($this->language);
-        }
-
         $this->datetime = $data['datetime'];
-        if (!is_a($this->datetime, 'DateTime')) {
-            throw PaymentException::invalidDatetime();
-        }
-
         $this->description = $data['description'];
         $this->email = $data['email'];
         $this->amount = $data['amount'];
         $this->currency = $data['currency'];
-
         $this->options = $options;
         $this->commitments = $commitments;
+
+        $this->validate();
+    }
+
+    /**
+     * @throws PaymentException
+     */
+    public function validate()
+    {
+        if (strlen($this->reference) > 12) {
+            throw PaymentException::invalidReference($this->reference);
+        }
+
+        if (strlen($this->language) != 2) {
+            throw PaymentException::invalidLanguage($this->language);
+        }
+
+        if (!is_a($this->datetime, 'DateTime')) {
+            throw PaymentException::invalidDatetime();
+        }
     }
 
     /**
@@ -473,52 +483,12 @@ class Payment
 
     }
 
-    /**
-     * @param $eptCode
-     * @param $securityKey
-     * @param $version
-     * @param $companyCode
-     * @param $returnUrl
-     * @param $successUrl
-     * @param $errorUrl
-     * @return string
-     */
-    public function generateSeal($eptCode, $securityKey, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
+    public function fieldsToArray($eptCode, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
     {
-        $fields = array_merge(
+        return array_merge(
             $this->baseFields($eptCode, $companyCode, $version),
             $this->optionsFields(),
             $this->commitmentsFields(),
             $this->urlFields($returnUrl, $successUrl, $errorUrl));
-
-        ksort($fields);
-        $query = urldecode(http_build_query($fields, null, '*'));
-
-        return strtoupper(hash_hmac(
-                'sha1',
-                $query,
-                $securityKey
-            ));
-    }
-
-    /**
-     * @param string $eptCode
-     * @param string $seal
-     * @param string $version
-     * @param string $companyCode
-     * @param string $returnUrl
-     * @param string $successUrl
-     * @param string $errorUrl
-     *
-     * @return array
-     */
-    public function generateFields($eptCode, $seal, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
-    {
-        return array_merge(
-            $this->baseFields($eptCode, $companyCode, $version),
-            $this->commitmentsFields(),
-            $this->urlFields($returnUrl, $successUrl, $errorUrl),
-            $this->optionsFields(),
-            ['MAC' => $seal]);
     }
 }

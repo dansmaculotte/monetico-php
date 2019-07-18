@@ -2,6 +2,7 @@
 
 namespace DansMaCulotte\Monetico\Recovery;
 use DansMaCulotte\Monetico\Exceptions\CancelException;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 
 class Cancel extends Recovery
 {
@@ -13,12 +14,24 @@ class Cancel extends Recovery
     }
 
     /**
-     * @throws CancelException
+     * @throws Exception
      */
-    public function validateAmounts()
+    public function validate()
     {
-        if ($this->amountLeft !== 0 || $this->amountToRecover !== 0) {
-            throw CancelException::invalidAmounts($this->amountToRecover, $this->amountLeft);
+        if (!is_a($this->datetime, 'DateTime')) {
+            throw Exception::invalidDatetime();
+        }
+
+        if (!is_a($this->orderDatetime, 'DateTime')) {
+            throw Exception::invalidOrderDatetime();
+        }
+
+        if (strlen($this->reference) > 12) {
+            throw Exception::invalidReference($this->reference);
+        }
+
+        if (strlen($this->language) != 2) {
+            throw Exception::invalidLanguage($this->language);
         }
     }
 }

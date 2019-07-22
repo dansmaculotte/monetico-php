@@ -29,7 +29,7 @@ class Payment implements iMethod
     public $currency;
 
     /** @var \DateTime */
-    public $datetime;
+    public $dateTime;
 
     /** @var array */
     public $options;
@@ -58,6 +58,7 @@ class Payment implements iMethod
         'paypal'
     );
 
+    /** @var array */
     const THREE_D_SECURE_CHALLENGES = array(
         'no_preference',
         'challenge_preferred',
@@ -67,6 +68,9 @@ class Payment implements iMethod
         'no_challenge_requested_trusted_third_party',
         'no_challenge_requested_risk_analysis'
     );
+
+    /** @var string */
+    const DATETIME_FORMAT = 'd/m/Y:H:i:s';
 
     /**
      * InputPayload constructor.
@@ -80,7 +84,7 @@ class Payment implements iMethod
     {
         $this->reference = $data['reference'];
         $this->language = $data['language'];
-        $this->datetime = $data['datetime'];
+        $this->dateTime = $data['datetime'];
         $this->description = $data['description'];
         $this->email = $data['email'];
         $this->amount = $data['amount'];
@@ -104,7 +108,7 @@ class Payment implements iMethod
             throw PaymentException::invalidLanguage($this->language);
         }
 
-        if (!is_a($this->datetime, 'DateTime')) {
+        if (!$this->dateTime instanceof DateTime) {
             throw PaymentException::invalidDatetime();
         }
     }
@@ -420,7 +424,7 @@ class Payment implements iMethod
     private function baseFields($eptCode, $companyCode, $version) {
         return [
             'TPE' => $eptCode,
-            'date' => $this->datetime->format('d/m/Y:H:i:s'),
+            'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'contexte_commande' => $this->orderContextBase64(),
             'lgue' => $this->language,
             'mail' => $this->email,

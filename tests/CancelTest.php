@@ -10,8 +10,8 @@ class CancelTest extends TestCase
     public function testCancelConstruct()
     {
         $cancel = new Cancel([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -27,8 +27,8 @@ class CancelTest extends TestCase
         $this->expectExceptionObject(Exception::invalidDatetime());
 
         new Cancel([
-            'datetime' => 'invalid',
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => 'invalid',
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -42,8 +42,8 @@ class CancelTest extends TestCase
         $this->expectExceptionObject(Exception::invalidOrderDatetime());
 
         new Cancel([
-            'datetime' => Carbon::create(2019, 1, 1),
-            'orderDatetime' => 'invalid',
+            'dateTime' => Carbon::create(2019, 1, 1),
+            'orderDate' => 'invalid',
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -57,8 +57,8 @@ class CancelTest extends TestCase
         $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
 
         new Cancel([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'thisisatoolongreference',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -72,8 +72,8 @@ class CancelTest extends TestCase
         $this->expectExceptionObject(Exception::invalidLanguage('English'));
 
         new Cancel([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'English',
             'currency' => 'EUR',

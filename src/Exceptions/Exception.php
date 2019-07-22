@@ -27,7 +27,7 @@ class Exception extends \Exception
      */
     public static function invalidOrderDatetime()
     {
-        return new self("orderDatetime value is not a DateTime object");
+        return new self("date_commande value is not a DateTime object");
     }
 
     /**
@@ -35,7 +35,7 @@ class Exception extends \Exception
      */
     public static function invalidDatetime()
     {
-        return new self("datetime value is not a DateTime object");
+        return new self("date value is not a DateTime object");
     }
 
     /**
@@ -53,7 +53,7 @@ class Exception extends \Exception
      */
     public static function invalidInvoiceType($invoiceType)
     {
-        return new self("invoice type invalid: ${invoiceType}");
+        return new self("facture value is invalid: ${invoiceType}");
     }
 
     /**
@@ -76,5 +76,14 @@ class Exception extends \Exception
         return new self("reference value is invalid, should be 12 characters long maximum: ${reference}");
     }
 
+    /**
+     * @param string $key
+     *
+     * @return Exception
+     */
+    public static function missingResponseKey($key)
+    {
+        return new self("${key} is missing");
+    }
 
 }

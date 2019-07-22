@@ -4,7 +4,7 @@ namespace DansMaCulotte\Monetico\Recovery;
 
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\RecoveryException;
+use DateTime;
 
 class RecoveryResponse
 {
@@ -65,14 +65,21 @@ class RecoveryResponse
     {
         $this->version = self::SERVICE_VERSION;
 
-        $this->returnCode = $data['cdr'];
+        $requiredKeys = array(
+            'cdr',
+            'lib',
+            'reference',
+        );
 
-        $this->description = $data['lib'];
-
-        $this->reference = $data['reference'];
-        if (strlen($this->reference) > 12) {
-            throw Exception::invalidReference($this->reference);
+        foreach ($requiredKeys as $key) {
+            if (!in_array($key, array_keys($data))) {
+                throw Exception::missingResponseKey($key);
+            }
         }
+
+        $this->returnCode = $data['cdr'];
+        $this->description = $data['lib'];
+        $this->reference = $data['reference'];
 
         if (isset($data['aut'])) {
             $this->authorisationNumber = $data['aut'];
@@ -84,7 +91,7 @@ class RecoveryResponse
 
         if (isset($data['date_autorisation'])) {
             $this->authorisationDatetime = date_create($data['date_autorisation']);
-            if (!is_a($this->authorisationDatetime, 'DateTime')) {
+            if (!$this->authorisationDatetime instanceof DateTime) {
                 throw Exception::invalidDatetime();
             }
         }
@@ -95,7 +102,7 @@ class RecoveryResponse
 
         if (isset($data['date_debit'])) {
             $this->debitDatetime = date_create($data['date_debit']);
-            if (!is_a($this->debitDatetime, 'DateTime')) {
+            if (!$this->authorisationDatetime instanceof DateTime) {
                 throw Exception::invalidDatetime();
             }
         }

@@ -13,10 +13,10 @@ class Recovery implements iMethod
 
 
     /** @var \DateTime */
-    public $datetime;
+    public $dateTime;
 
     /** @var \DateTime */
-    public $orderDatetime;
+    public $orderDate;
 
     /** @var float */
     public $amount;
@@ -48,6 +48,7 @@ class Recovery implements iMethod
     /** @var string */
     public $invoiceType;
 
+    /** @var array  */
     const INVOICE_TYPES = [
         'preauto',
         'noshow',
@@ -55,6 +56,12 @@ class Recovery implements iMethod
 
     /** @var string */
     public $phone;
+
+    /** @var string */
+    const DATETIME_FORMAT = 'd/m/Y:H:i:s';
+
+    /** @var string */
+    const DATE_FORMAT = 'd/m/Y';
 
 
     /**
@@ -66,9 +73,9 @@ class Recovery implements iMethod
     public function __construct($data = array())
     {
 
-        $this->datetime = $data['datetime'];
+        $this->dateTime = $data['dateTime'];
 
-        $this->orderDatetime = $data['orderDatetime'];
+        $this->orderDate = $data['orderDate'];
 
         $this->reference = $data['reference'];
 
@@ -90,11 +97,11 @@ class Recovery implements iMethod
      */
     public function validate()
     {
-        if (!is_a($this->datetime, 'DateTime')) {
+        if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
         }
 
-        if (!is_a($this->orderDatetime, 'DateTime')) {
+        if (!$this->orderDate instanceof DateTime) {
             throw Exception::invalidOrderDatetime();
         }
 
@@ -153,8 +160,8 @@ class Recovery implements iMethod
     {
         $fields = array_merge([
             'TPE' => $eptCode,
-            'date' => $this->datetime->format('d/m/Y:H:i:s'),
-            'date_commande' => $this->orderDatetime->format('d/m/Y'),
+            'date' => $this->dateTime->format(self::DATETIME_FORMAT),
+            'date_commande' => $this->orderDate->format(self::DATE_FORMAT),
             'lgue' => $this->language,
             'montant' => $this->amount . $this->currency,
             'montant_a_capturer' => $this->amountToRecover . $this->currency,

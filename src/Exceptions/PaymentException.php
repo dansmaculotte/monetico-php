@@ -32,15 +32,6 @@ class PaymentException extends \Exception
         return new self("datetime value is not a DateTime object");
     }
 
-    /**
-     * @param string $key
-     *
-     * @return PaymentException
-     */
-    public static function missingResponseKey($key)
-    {
-        return new self("${key} is missing");
-    }
 
     /**
      * @param string $returnCode

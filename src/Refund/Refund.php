@@ -15,10 +15,10 @@ class Refund implements iMethod
     public $datetime;
 
     /** @var \DateTime */
-    public $orderDatetime;
+    public $orderDate;
 
     /** @var \DateTime */
-    public $recoveryDatetime;
+    public $recoveryDate;
 
     /** @var string */
     public $authorizationNumber;
@@ -47,10 +47,17 @@ class Refund implements iMethod
     /** @var string */
     public $invoiceType;
 
+    /** @var array */
     const INVOICE_TYPES = [
         'preauto',
         'noshow',
     ];
+
+    /** @var string */
+    const DATETIME_FORMAT = 'd/m/Y:H:i:s';
+
+    /** @var string */
+    const DATE_FORMAT = 'd/m/Y';
 
     /**
      * Refund constructor.
@@ -60,8 +67,8 @@ class Refund implements iMethod
     public function __construct($data = array())
     {
         $this->datetime = $data['datetime'];
-        $this->orderDatetime = $data['orderDatetime'];
-        $this->recoveryDatetime = $data['recoveryDatetime'];
+        $this->orderDate = $data['orderDatetime'];
+        $this->recoveryDate = $data['recoveryDatetime'];
         $this->authorizationNumber = $data['authorizationNumber'];
         $this->currency = $data['currency'];
         $this->amount = $data['amount'];
@@ -98,9 +105,9 @@ class Refund implements iMethod
     {
         $fields = array_merge([
             'TPE' => $eptCode,
-            'date' => $this->datetime->format('d/m/Y:H:i:s'),
-            'date_commande' => $this->orderDatetime->format('d/m/Y'),
-            'date_remise' => $this->recoveryDatetime->format('d/m/Y'),
+            'date' => $this->datetime->format(self::DATETIME_FORMAT),
+            'date_commande' => $this->orderDate->format(self::DATE_FORMAT),
+            'date_remise' => $this->recoveryDate->format(self::DATE_FORMAT),
             'num_autorisation' => $this->authorizationNumber,
             'montant' => $this->amount . $this->currency,
             'montant_recredit' => $this->refundAmount . $this->currency,
@@ -127,15 +134,15 @@ class Refund implements iMethod
      */
     public function validate()
     {
-        if (!is_a($this->datetime, 'DateTime')) {
+        if (!$this->datetime instanceof DateTime) {
             throw Exception::invalidDatetime();
         }
 
-        if (!is_a($this->orderDatetime, 'DateTime')) {
+        if (!$this->orderDate instanceof DateTime) {
             throw Exception::invalidOrderDatetime();
         }
 
-        if (!is_a($this->recoveryDatetime, 'DateTime')) {
+        if (!$this->recoveryDate instanceof DateTime) {
             throw Exception::invalidRecoveryDatetime();
         }
 

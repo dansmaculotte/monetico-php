@@ -40,35 +40,6 @@ class RecoveryResponseTest extends TestCase
         $this->assertTrue($response instanceof RecoveryResponse);
     }
 
-    public function testRecoveryResponseInvalidReferenceException()
-    {
-        $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));
-
-        $response = new RecoveryResponse([
-            'version' => '1.0',
-            'reference' => 'thisisawrongreference',
-            'cdr' => '1',
-            'lib' => 'paiement accepte',
-            'aut' => '123456',
-        ]);
-
-        $this->assertTrue($response instanceof RecoveryResponse);
-    }
-
-    public function testRecoveryResponseExceptionInvalidReference()
-    {
-        $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));
-
-        new RecoveryResponse([
-            'version' => '1.0',
-            'reference' => 'thisisawrongreference',
-            'cdr' => '1',
-            'lib' => 'paiement accepte',
-            'aut' => '123456',
-        ]);
-
-    }
-
     public function testRecoveryResponseExceptionInvalidFileNumber()
     {
         $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));

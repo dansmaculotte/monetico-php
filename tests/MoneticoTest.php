@@ -262,8 +262,8 @@ class MoneticoTest extends TestCase
             'amountRecovered' => 0,
             'amountLeft' => 42.42,
             'currency' => 'EUR',
-            'orderDatetime' => Carbon::create(2019, 07, 17),
-            'datetime' => Carbon::create(2019, 07, 17),
+            'orderDate' => Carbon::create(2019, 07, 17),
+            'dateTime' => Carbon::create(2019, 07, 17),
         ));
 
         $recovery->setFileNumber('ABC');
@@ -309,8 +309,8 @@ class MoneticoTest extends TestCase
             'amount' => 42.42,
             'amountRecovered' => 0,
             'currency' => 'EUR',
-            'orderDatetime' => Carbon::create(2019, 07, 17),
-            'datetime' => Carbon::create(2019, 07, 17),
+            'orderDate' => Carbon::create(2019, 07, 17),
+            'dateTime' => Carbon::create(2019, 07, 17),
         ));
 
         $fields = $monetico->getCancelFields($cancel);

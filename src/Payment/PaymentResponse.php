@@ -2,6 +2,7 @@
 
 namespace DansMaCulotte\Monetico\Payment;
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DateTime;
 
@@ -184,7 +185,7 @@ class PaymentResponse
 
         foreach ($requiredKeys as $key) {
             if (!in_array($key, array_keys($data))) {
-                throw PaymentException::missingResponseKey($key);
+                throw Exception::missingResponseKey($key);
             }
         }
 

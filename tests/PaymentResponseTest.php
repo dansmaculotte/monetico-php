@@ -4,6 +4,7 @@ use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;
 use PHPUnit\Framework\TestCase;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 
 require_once 'Credentials.php';
 
@@ -38,7 +39,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseMissingResponseKey()
     {
-        $this->expectExceptionObject(PaymentException::missingResponseKey('TPE'));
+        $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
         new PaymentResponse(array());
     }

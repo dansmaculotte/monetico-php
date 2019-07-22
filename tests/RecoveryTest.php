@@ -11,8 +11,8 @@ class RecoveryTest extends TestCase
     public function testRecoveryConstruct()
     {
         $recovery = new Recovery([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -30,8 +30,8 @@ class RecoveryTest extends TestCase
         $this->expectExceptionObject(RecoveryException::invalidAmounts(100, 30, 0, 50));
 
         new Recovery([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -47,8 +47,8 @@ class RecoveryTest extends TestCase
         $this->expectExceptionObject(Exception::invalidDatetime());
 
         new Recovery([
-            'datetime' => 'invalid',
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => 'invalid',
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -64,8 +64,8 @@ class RecoveryTest extends TestCase
         $this->expectExceptionObject(Exception::invalidOrderDatetime());
 
         new Recovery([
-            'datetime' => Carbon::create(2019, 1, 1),
-            'orderDatetime' => 'invalid',
+            'dateTime' => Carbon::create(2019, 1, 1),
+            'orderDate' => 'invalid',
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -81,8 +81,8 @@ class RecoveryTest extends TestCase
         $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
 
         new Recovery([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'thisisatoolongreference',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -98,8 +98,8 @@ class RecoveryTest extends TestCase
         $this->expectExceptionObject(Exception::invalidLanguage('English'));
 
         new Recovery([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'English',
             'currency' => 'EUR',
@@ -113,8 +113,8 @@ class RecoveryTest extends TestCase
     public function testRecoveryOptions()
     {
         $recovery = new Recovery([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',
@@ -145,8 +145,8 @@ class RecoveryTest extends TestCase
         $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
 
         $recovery = new Recovery([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
             'language' => 'FR',
             'currency' => 'EUR',

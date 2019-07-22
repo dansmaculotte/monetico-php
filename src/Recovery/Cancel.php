@@ -3,6 +3,7 @@
 namespace DansMaCulotte\Monetico\Recovery;
 use DansMaCulotte\Monetico\Exceptions\CancelException;
 use DansMaCulotte\Monetico\Exceptions\Exception;
+use DateTime;
 
 class Cancel extends Recovery
 {
@@ -18,11 +19,11 @@ class Cancel extends Recovery
      */
     public function validate()
     {
-        if (!is_a($this->datetime, 'DateTime')) {
+        if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
         }
 
-        if (!is_a($this->orderDatetime, 'DateTime')) {
+        if (!$this->orderDate instanceof DateTime) {
             throw Exception::invalidOrderDatetime();
         }
 

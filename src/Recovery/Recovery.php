@@ -5,9 +5,10 @@ namespace DansMaCulotte\Monetico\Recovery;
 use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
-use DansMaCulotte\Monetico\iMethod;
+use DansMaCulotte\Monetico\method;
+use DateTime;
 
-class Recovery implements iMethod
+class Recovery implements method
 {
     use BaseMethod;
 

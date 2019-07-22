@@ -5,9 +5,10 @@ namespace DansMaCulotte\Monetico\Refund;
 
 use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\iMethod;
+use DansMaCulotte\Monetico\method;
+use DateTime;
 
-class Refund implements iMethod
+class Refund implements method
 {
     use BaseMethod;
 

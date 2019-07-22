@@ -8,7 +8,9 @@ trait BaseMethod
     public function generateSeal($securityKey, $fields)
     {
         ksort($fields);
-        $query = urldecode(http_build_query($fields, null, '*'));
+
+        $query = http_build_query($fields, null, '*');
+        $query = urldecode($query);
 
         return strtoupper(hash_hmac(
             'sha1',

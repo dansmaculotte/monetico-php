@@ -9,7 +9,7 @@ class PaymentTest extends TestCase
 {
     public function testPaymentConstruct()
     {
-        $payment = new Payment(array(
+        $payment = new Payment([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -17,7 +17,7 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'datetime' => Carbon::create(2019, 1, 1),
-        ));
+        ]);
 
         $this->assertTrue($payment instanceof Payment);
     }
@@ -26,7 +26,7 @@ class PaymentTest extends TestCase
     {
         $this->expectExceptionObject(PaymentException::invalidReference('thisisabigerroryouknow'));
 
-        new Payment(array(
+        new Payment([
             'reference' => 'thisisabigerroryouknow',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -34,14 +34,14 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'datetime' => Carbon::create(2019, 1, 1),
-        ));
+        ]);
     }
 
     public function testPaymentExceptionLanguage()
     {
         $this->expectExceptionObject(PaymentException::invalidLanguage('WTF'));
 
-        new Payment(array(
+        new Payment([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'WTF',
@@ -49,14 +49,14 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'datetime' => Carbon::create(2019, 1, 1),
-        ));
+        ]);
     }
 
     public function testPaymentExceptionDatetime()
     {
         $this->expectExceptionObject(PaymentException::invalidDatetime());
 
-        new Payment(array(
+        new Payment([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -64,12 +64,12 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'datetime' => '42',
-        ));
+        ]);
     }
 
     public function testPaymentOptions()
     {
-        $payment = new Payment(array(
+        $payment = new Payment([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -77,7 +77,7 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'datetime' => Carbon::create(2019, 1, 1),
-        ));
+        ]);
 
         $payment->setCardAlias('foobar');
         $this->assertArrayHasKey('aliascb', $payment->options);
@@ -101,23 +101,23 @@ class PaymentTest extends TestCase
         $this->assertArrayHasKey('libelleMonetique', $payment->options);
         $this->assertTrue($payment->options['libelleMonetique'] === 'FooBar');
 
-        $payment->setDisabledPaymentWays(array(
+        $payment->setDisabledPaymentWays([
             '1euro',
             '3xcb',
             '4xcb',
             'fivory',
             'paypal'
-        ));
+        ]);
         $this->assertArrayHasKey('desactivemoyenpaiement', $payment->options);
         $this->assertTrue($payment->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory,paypal');
 
-        $payment->setDisabledPaymentWays(array(
+        $payment->setDisabledPaymentWays([
             '1euro',
             '3xcb',
             '4xcb',
             'fivory',
             'foobar'
-        ));
+        ]);
         $this->assertArrayHasKey('desactivemoyenpaiement', $payment->options);
         $this->assertTrue($payment->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory');
     }
@@ -125,7 +125,7 @@ class PaymentTest extends TestCase
     public function testPaymentCommitments()
     {
         $payment = new Payment(
-            array(
+            [
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -133,25 +133,25 @@ class PaymentTest extends TestCase
             'amount' => 200,
             'currency' => 'EUR',
             'datetime' => Carbon::create(2019, 1, 1),
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'date' => '06/01/2019',
                     'amount' => '50EUR',
-                ),
-                array(
+                ],
+                [
                     'date' => '12/01/2019',
                     'amount' => '100EUR',
-                ),
-                array(
+                ],
+                [
                     'date' => '24/01/2019',
                     'amount' => '20EUR',
-                ),
-                array(
+                ],
+                [
                     'date' => '02/02/2019',
                     'amount' => '30EUR',
-                ),
-            )
+                ],
+            ]
         );
 
         $seal = $payment->generateSeal(

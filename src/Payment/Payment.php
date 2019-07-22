@@ -37,13 +37,13 @@ class Payment
     const FORMAT_OUTPUT = '%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s';
 
     /** @var array */
-    const PAYMENT_WAYS = array(
+    const PAYMENT_WAYS = [
         '1euro',
         '3xcb',
         '4xcb',
         'fivory',
         'paypal'
-    );
+    ];
 
     /**
      * InputPayload constructor.
@@ -54,7 +54,7 @@ class Payment
      *
      * @throws PaymentException
      */
-    public function __construct($data = array(), $commitments = array(), $options = array())
+    public function __construct($data = [], $commitments = [], $options = [])
     {
         $this->reference = $data['reference'];
         if (strlen($this->reference) > 12) {
@@ -125,9 +125,9 @@ class Payment
      *
      * @param array[string] $ways List of payment ways to disable
      */
-    public function setDisabledPaymentWays($ways = array())
+    public function setDisabledPaymentWays($ways = [])
     {
-        $_ways = array();
+        $_ways = [];
 
         foreach ($ways as $way) {
             if (in_array($way, self::PAYMENT_WAYS)) {
@@ -199,7 +199,7 @@ class Payment
     public function generateFields($eptCode, $seal, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
     {
         $commitmentsCount = count($this->commitments);
-        $_submitCommitments = array();
+        $_submitCommitments = [];
 
         if ($commitmentsCount > 0) {
             $_submitCommitments['nbrech'] = $commitmentsCount;
@@ -226,7 +226,7 @@ class Payment
         }
 
         return array_merge(
-            array(
+            [
                 'version' => $version,
                 'TPE' => $eptCode,
                 'date' => $this->datetime->format('d/m/Y:H:i:s'),
@@ -240,7 +240,7 @@ class Payment
                 'societe' => $companyCode,
                 'texte-libre' => $this->description,
                 'mail' => $this->email,
-            ),
+            ],
             $_submitCommitments
         );
     }

@@ -21,5 +21,4 @@ class Exception extends \Exception
     {
         return new self("Security key is invalid, should be 40 characters long.");
     }
-
 }

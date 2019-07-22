@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentResponseTest extends TestCase
 {
-    private $data = array(
+    private $data = [
         'TPE' => EPT_CODE,
         'date' => '01/01/2019_a_08:42:42',
         'amount' => '42.42EUR',
@@ -28,7 +28,7 @@ class PaymentResponseTest extends TestCase
         'originetr' => 'FRA',
         'veres' => null,
         'pares' => null,
-    );
+    ];
 
     public function testPaymentResponseConstruct()
     {
@@ -41,7 +41,7 @@ class PaymentResponseTest extends TestCase
     {
         $this->expectExceptionObject(PaymentException::missingResponseKey('date'));
 
-        new Response(array());
+        new Response([]);
     }
 
     public function testPaymentResponseExceptionDateTime()

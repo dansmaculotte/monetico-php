@@ -1,8 +1,8 @@
 <?php
 
+use \DansMaCulotte\Monetico\Exceptions\Exception;
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Monetico;
-use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\Response;
 use PHPUnit\Framework\TestCase;
@@ -102,7 +102,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $payment = new Payment(array(
+        $payment = new Payment([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -110,7 +110,7 @@ class MoneticoTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'datetime' => Carbon::create(2019, 1, 1),
-        ));
+        ]);
 
         $fields = $monetico->getPaymentFields($payment);
 
@@ -141,7 +141,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $data = array(
+        $data = [
             'TPE' => EPT_CODE,
             'date' => '01/01/2019_a_08:42:42',
             'amount' => '42.42EUR',
@@ -162,7 +162,7 @@ class MoneticoTest extends TestCase
             'originetr' => 'FRA',
             'veres' => null,
             'pares' => null,
-        );
+        ];
 
         $output = vsprintf(
             '%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*',

@@ -60,7 +60,8 @@ class Monetico
      *
      * @param boolean $value
      */
-    public function setDebug($value = true) {
+    public function setDebug($value = true)
+    {
         $this->_debug = $value;
     }
 
@@ -71,8 +72,8 @@ class Monetico
      *
      * @return string
      */
-    public static function getUsableKey($key) {
-
+    public static function getUsableKey($key)
+    {
         $hexStrKey = substr($key, 0, 38);
         $hexFinal = '' . substr($key, 38, 2) . '00';
 
@@ -154,5 +155,4 @@ class Monetico
 
         return $seal;
     }
-
 }

@@ -4,9 +4,12 @@ namespace DansMaCulotte\Monetico\Payment;
 
 use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
-use DansMaCulotte\Monetico\iMethod;
+use DansMaCulotte\Monetico\method;
+use DansMaCulotte\Monetico\Resources\AddressBilling;
+use DansMaCulotte\Monetico\Resources\AddressShipping;
+use DansMaCulotte\Monetico\Resources\Client;
 
-class Payment implements iMethod
+class Payment implements method
 {
     use BaseMethod;
 
@@ -34,16 +37,13 @@ class Payment implements iMethod
     /** @var array */
     public $options;
 
-    /** @var array */
-    public $billingAddress;
+    /** @var AddressBilling */
+    public $addressBilling;
 
-    /** @var array */
-    public $shippingAddress;
+    /** @var AddressShipping */
+    public $addressShipping;
 
-    /** @var array */
-    public $shoppingCart;
-
-    /** @var array */
+    /** @var Client */
     public $client;
 
     /** @var array */
@@ -169,216 +169,21 @@ class Payment implements iMethod
         $this->options['libelleMonetique'] = $label;
     }
 
-    /**
-     * Set order address billing
-     *
-     * @param string $addressLine1
-     * @param string $city
-     * @param string $postalCode
-     * @param string $country
-     * @param string $civility
-     * @param string $name
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $middleName
-     * @param string $address
-     * @param string $addressLine2
-     * @param string $addressLine3
-     * @param string $stateOrProvince
-     * @param string $countrySubdivision
-     * @param string $email
-     * @param string $phone
-     * @param string $mobilePhone
-     * @param string $homePhone
-     * @param string $workPhone
-     */
-    public function setAddressBilling(string $addressLine1,
-                                      string $city,
-                                      string $postalCode,
-                                      string $country,
-                                      string $civility = null,
-                                      string $name = null,
-                                      string $firstName = null,
-                                      string $lastName = null,
-                                      string $middleName = null,
-                                      string $address = null,
-                                      string $addressLine2 = null,
-                                      string $addressLine3 = null,
-                                      string $stateOrProvince = null,
-                                      string $countrySubdivision = null,
-                                      string $email = null,
-                                      string $phone = null,
-                                      string $mobilePhone = null,
-                                      string $homePhone = null,
-                                      string $workPhone = null)
+
+    public function setAddressBilling(AddressBilling $addressBilling)
     {
-        $this->billingAddress = [
-            'addressLine1' => $addressLine1,
-            'city' => $city,
-            'postalCode' => $postalCode,
-            'country' => $country,
-            'civility' => $civility,
-            'name' => $name,
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'middleName' => $middleName,
-            'address' => $address,
-            'addressLine2' => $addressLine2,
-            'addressLine3' => $addressLine3,
-            'stateOrProvince' => $stateOrProvince,
-            'countrySubdivision' => $countrySubdivision,
-            'email' => $email,
-            'phone' => $phone,
-            'mobilePhone' => $mobilePhone,
-            'homePhone' => $homePhone,
-            'workPhone' => $workPhone,
-        ];
+        $this->addressBilling = $addressBilling;
     }
 
-    /**
-     * Set order address shipping
-     *
-     * @param string $addressLine1
-     * @param string $city
-     * @param string $postalCode
-     * @param string $country
-     * @param string|null $civility
-     * @param string|null $name
-     * @param string|null $firstName
-     * @param string|null $lastName
-     * @param string|null $address
-     * @param string|null $addressLine2
-     * @param string|null $addressLine3
-     * @param string|null $stateOrProvince
-     * @param string|null $countrySubdivision
-     * @param string|null $email
-     * @param string|null $phone
-     * @param string|null $shipIndicator
-     * @param string|null $deliveryTimeframe
-     * @param string|null $firstUseDate
-     * @param bool|null $matchBillingAddress
-     */
-    public function setAddressShipping(string $addressLine1,
-                                       string $city,
-                                       string $postalCode,
-                                       string $country,
-                                       string $civility = null,
-                                       string $name = null,
-                                       string $firstName = null,
-                                       string $lastName = null,
-                                       string $address = null,
-                                       string $addressLine2 = null,
-                                       string $addressLine3 = null,
-                                       string $stateOrProvince = null,
-                                       string $countrySubdivision = null,
-                                       string $email = null,
-                                       string $phone = null,
-                                       string $shipIndicator = null,
-                                       string $deliveryTimeframe = null,
-                                       string $firstUseDate = null,
-                                       bool $matchBillingAddress = null)
+
+    public function setAddressShipping(AddressShipping $addressShipping)
     {
-        $this->shippingAddress = [
-            'addressLine1' => $addressLine1,
-            'city' => $city,
-            'postalCode' => $postalCode,
-            'country' => $country,
-            'civility' => $civility,
-            'name' => $name,
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'address' => $address,
-            'addressLine2' => $addressLine2,
-            'addressLine3' => $addressLine3,
-            'stateOrProvince' => $stateOrProvince,
-            'countrySubdivision' => $countrySubdivision,
-            'email' => $email,
-            'phone' => $phone,
-            'mobilePhone' => $shipIndicator,
-            'homePhone' => $deliveryTimeframe,
-            'workPhone' => $firstUseDate,
-            'matchBillingAddress' => $matchBillingAddress,
-        ];
+        $this->addressShipping = $addressShipping;
     }
 
-    public function setClient($civility = null,
-                              $name = null,
-                              $firstName = null,
-                              $lastName = null,
-                              $middleName = null,
-                              $address = null,
-                              $addressLine1 = null,
-                              $addressLine2 = null,
-                              $addressLine3 = null,
-                              $city = null,
-                              $postalCode = null,
-                              $country  = null,
-                              $stateOrProvince = null,
-                              $countrySubdivision = null,
-                              $email = null,
-                              $birthLastName = null,
-                              $birthCity = null,
-                              $birthPostalCode = null,
-                              $birthCountry = null,
-                              $birthStateOrProvince = null,
-                              $birthCountrySubdivision = null,
-                              $birthdate = null,
-                              $phone = null,
-                              $nationalIDNumber = null,
-                              $suspiciousAccountActivity = null,
-                              $authenticationMethod = null,
-                              $authenticationTimestamp = null,
-                              $priorAuthenticationMethod = null,
-                              $priorAuthenticationTimestamp = null,
-                              $paymentMeanAge = null,
-                              $lastYearTransactions = null,
-                              $last24HoursTransactions = null,
-                              $addCardNbLast24Hours = null,
-                              $last6MonthsPurchase = null,
-                              $lastPasswordChange = null,
-                              $accountAge = null,
-                              $lastAccountModification = null)
+    public function setClient(Client $client)
     {
-
-        $this->client = [
-            'civility' => $civility,
-            'name' => $name,
-            'firstName' => $firstName,
-            'lastName' => $lastName,
-            'middleName' => $middleName,
-            'address' => $address,
-            'addressLine1' => $addressLine1,
-            'addressLine2' => $addressLine2,
-            'addressLine3' => $addressLine3,
-            'city' => $city,
-            'postalCode' => $postalCode,
-            'country ' => $country ,
-            'stateOrProvince' => $stateOrProvince,
-            'countrySubdivision' => $countrySubdivision,
-            'email' => $email,
-            'birthLastName' => $birthLastName,
-            'birthCity' => $birthCity,
-            'birthPostalCode' => $birthPostalCode,
-            'birthCountry' => $birthCountry,
-            'birthStateOrProvince' => $birthStateOrProvince,
-            'birthCountrySubdivision' => $birthCountrySubdivision,
-            'birthdate' => $birthdate,
-            'phone' => $phone,
-            'nationalIDNumber' => $nationalIDNumber,
-            'suspiciousAccountActivity' => $suspiciousAccountActivity,
-            'authenticationMethod' => $authenticationMethod,
-            'authenticationTimestamp' => $authenticationTimestamp,
-            'priorAuthenticationMethod' => $priorAuthenticationMethod,
-            'priorAuthenticationTimestamp' => $priorAuthenticationTimestamp,
-            'paymentMeanAge' => $paymentMeanAge,
-            'lastYearTransactions' => $lastYearTransactions,
-            'last24HoursTransactions' => $last24HoursTransactions,
-            'addCardNbLast24Hours' => $addCardNbLast24Hours,
-            'last6MonthsPurchase' => $last6MonthsPurchase,
-            'lastPasswordChange' => $lastPasswordChange,
-            'accountAge' => $accountAge,
-            'lastAccountModification' => $lastAccountModification,
-        ];
+        $this->client = $client;
     }
 
     /**
@@ -407,9 +212,9 @@ class Payment implements iMethod
     public function orderContextBase64()
     {
         $contextCommand = [
-            'billing' => $this->billingAddress,
-            'shipping' => $this->shippingAddress,
-            'client' => $this->client,
+            'billing' => (isset($this->addressBilling)) ? $this->addressBilling->data : [],
+            'shipping' => (isset($this->addressShipping)) ? $this->addressShipping->data : [],
+            'client' => (isset($this->client)) ? $this->client->data : [],
         ];
 
         return base64_encode(json_encode($contextCommand));

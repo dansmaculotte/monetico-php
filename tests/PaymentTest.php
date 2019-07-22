@@ -22,7 +22,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
         ));
 
         $this->assertTrue($payment instanceof Payment);
@@ -39,7 +39,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
         ));
     }
 
@@ -54,7 +54,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
         ));
     }
 
@@ -69,7 +69,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => '42',
+            'dateTime' => '42',
         ));
     }
 
@@ -82,7 +82,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
         ));
 
         $payment->setCardAlias('foobar');
@@ -138,7 +138,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 200,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
             ),
             array(
                 array(
@@ -215,7 +215,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
         ));
 
         $addressBilling = new AddressBilling(['7 rue melingue', 'Caen', '14000', 'France']);
@@ -251,7 +251,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 10, 07),
+            'dateTime' => Carbon::create(2019, 10, 07),
         ));
 
         $payment->setThreeDSecureChallenge('challenge_mandated');
@@ -288,7 +288,7 @@ class PaymentTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
         ));
 
         $payment->setThreeDSecureChallenge('invalid_choice');

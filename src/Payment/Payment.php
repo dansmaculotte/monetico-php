@@ -8,6 +8,7 @@ use DansMaCulotte\Monetico\method;
 use DansMaCulotte\Monetico\Resources\AddressBilling;
 use DansMaCulotte\Monetico\Resources\AddressShipping;
 use DansMaCulotte\Monetico\Resources\Client;
+use DateTime;
 
 class Payment implements method
 {
@@ -84,7 +85,7 @@ class Payment implements method
     {
         $this->reference = $data['reference'];
         $this->language = $data['language'];
-        $this->dateTime = $data['datetime'];
+        $this->dateTime = $data['dateTime'];
         $this->description = $data['description'];
         $this->email = $data['email'];
         $this->amount = $data['amount'];

@@ -172,7 +172,7 @@ class MoneticoTest extends TestCase
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'datetime' => Carbon::create(2019, 7, 17),
+            'dateTime' => Carbon::create(2019, 7, 17),
         ));
 
         $fields = $monetico->getPaymentFields($payment);

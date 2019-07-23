@@ -139,6 +139,10 @@ class PaymentResponseTest extends TestCase
         $data['filtrage_etat'] = 'test';
         $data['cbenregistree'] = '1';
         $data['cbmasquee'] = '1234XXXXXXXXXXX1234';
+        $data['motifrefus'] = 'Interdit';
+        $data['filtragecause'] = '1';
+        $data['cbenregistree'] = '1';
+
 
         $response = new Response($data);
 
@@ -155,12 +159,12 @@ class PaymentResponseTest extends TestCase
 
         $response = new Response($data);
 
-        $this->assertEquals('3DSecure', $response->authentication['protocol']);
-        $this->assertEquals('authenticated', $response->authentication['status']);
-        $this->assertEquals('1.0.2', $response->authentication['version']);
-        $this->assertEquals('Y', $response->authentication['details']['PARes']);
-        $this->assertEquals('Y', $response->authentication['details']['VERes']);
-        $this->assertEquals('1', $response->authentication['details']['status3DS']);
+        $this->assertEquals('3DSecure', $response->authentication->protocol);
+        $this->assertEquals('authenticated', $response->authentication->status);
+        $this->assertEquals('1.0.2', $response->authentication->version);
+        $this->assertEquals('Y', $response->authentication->details['PARes']);
+        $this->assertEquals('Y', $response->authentication->details['VERes']);
+        $this->assertEquals('1', $response->authentication->details['status3DS']);
     }
 
     public function testSealIsValid()
@@ -183,6 +187,13 @@ class PaymentResponseTest extends TestCase
             'reference' => '12345678',
             'texte-libre' => 'PHPUnit',
             'TPE' => '6784452',
+            'montantech' => '50EUR',
+            'filtragevaleur' => 'foobar',
+            'filtrage_etat' => 'test',
+            'cbenregistree' => '1',
+            'cbmasquee' => '1234XXXXXXXXXXX1234',
+            'motifrefus' => 'Interdit',
+            'filtragecause' => '1',
         ];
 
         $data['MAC'] = $this->generateSeal($data);

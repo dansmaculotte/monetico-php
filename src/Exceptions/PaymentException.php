@@ -5,34 +5,6 @@ namespace DansMaCulotte\Monetico\Exceptions;
 class PaymentException extends \Exception
 {
     /**
-     * @param string $reference
-     *
-     * @return PaymentException
-     */
-    public static function invalidReference($reference)
-    {
-        return new self("reference value is invalid, should be 12 characters long maximum: ${reference}");
-    }
-
-    /**
-     * @param string $language
-     *
-     * @return PaymentException
-     */
-    public static function invalidLanguage($language)
-    {
-        return new self("language value is invalid, should be 12 characters long maximum: ${language}");
-    }
-
-    /**
-     * @return PaymentException
-     */
-    public static function invalidDatetime()
-    {
-        return new self("datetime value is not a DateTime object");
-    }
-
-    /**
      * @param $ThreeDSecureChallenge
      * @return PaymentException
      */
@@ -41,15 +13,6 @@ class PaymentException extends \Exception
         return new self("ThreeDSecureChallenge value is invalid: ${ThreeDSecureChallenge}");
     }
 
-    /**
-     * @param string $DDDSStatus
-     *
-     * @return PaymentException
-     */
-    public static function invalidDDDSStatus($DDDSStatus)
-    {
-        return new self("status3ds value is invalid: ${DDDSStatus}");
-    }
 
     /**
      * @param string $returnCode

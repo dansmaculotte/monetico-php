@@ -4,6 +4,7 @@ namespace DansMaCulotte\Monetico\Payment;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Resources\Authentication;
 use DateTime;
 
 class Response
@@ -20,7 +21,6 @@ class Response
     /** @var string */
     public $reference;
 
-    /** @var string */
     /** @var string */
     public $seal;
 
@@ -90,8 +90,8 @@ class Response
     /** @var string */
     public $filteredStatus = null;
 
-    /** @var array */
-    public $authentication = [];
+    /** @var Authentication */
+    public $authentication = null;
 
     /** @var string */
     public $authenticationHash = null;
@@ -127,10 +127,7 @@ class Response
         'na' => 'Non disponible',
     ];
 
-    /** @var array  */
-    const DDDS_STATUSES = [
-        -1, 1, 4,
-    ];
+
 
     /** @var array  */
     const REJECT_REASONS = [
@@ -210,7 +207,16 @@ class Response
         $this->description = $data['texte-libre'];
 
         $this->authenticationHash = $data['authentification'];
-        $this->authentication = json_decode(base64_decode($data['authentification']), true);
+
+        $authentication = base64_decode($data['authentification']);
+        $authentication = json_decode($authentication);
+
+        $this->authentication = new Authentication(
+            $authentication->protocol,
+            $authentication->status,
+            $authentication->version,
+            (array) $authentication->details
+        );
 
         $this->returnCode = $data['code-retour'];
         if (!in_array($this->returnCode, self::RETURN_CODES)) {

@@ -20,6 +20,19 @@ class RefundResponseTest extends TestCase
         $this->assertTrue($response instanceof Response);
     }
 
+    public function testRefundResponseConstructExceptionMissingResponseKey()
+    {
+        $this->expectExceptionObject(Exception::missingResponseKey('cdr'));
+
+        new Response([
+            'version' => '1.0',
+            'reference' => '000000000145',
+            'lib' => 'paiement accepte',
+            'numero_dossier' => '123',
+            'type_facture' => 'complementaire'
+        ]);
+    }
+
 
     public function testRefundResponseConstructExceptionInvalidFileNumber()
     {

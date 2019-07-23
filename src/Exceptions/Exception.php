@@ -22,13 +22,6 @@ class Exception extends \Exception
         return new self("Security key is invalid, should be 40 characters long.");
     }
 
-    /**
-     * @return Exception
-     */
-    public static function invalidResponseOrderDate()
-    {
-        return new self("date_commande value is not a DateTime object");
-    }
 
     /**
      * @return Exception

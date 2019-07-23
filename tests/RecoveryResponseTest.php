@@ -40,6 +40,17 @@ class RecoveryResponseTest extends TestCase
         $this->assertTrue($response instanceof Response);
     }
 
+    public function testRecoveryResponseConstructExceptionMissingResponseKey()
+    {
+        $this->expectExceptionObject(Exception::missingResponseKey('cdr'));
+        new Response([
+            'version' => '1.0',
+            'reference' => '000000000145',
+            'lib' => 'paiement accepte',
+            'aut' => '123456',
+        ]);
+    }
+
     public function testRecoveryResponseExceptionInvalidFileNumber()
     {
         $this->expectExceptionObject(Exception::invalidResponseFileNumber('thisisawrongreference'));

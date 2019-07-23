@@ -21,9 +21,17 @@ class RecoveryException extends \Exception
     /**
      * @return RecoveryException
      */
-    public static function invalidResponseDebitDatetime()
+    public static function invalidResponseDebitDate()
     {
         return new self("date_debit value is invalid");
+    }
+
+    /**
+     * @return RecoveryException
+     */
+    public static function invalidResponseAuthorizationDate()
+    {
+        return new self("date_autorisation value is invalid");
     }
 
 }

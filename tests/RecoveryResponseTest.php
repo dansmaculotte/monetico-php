@@ -30,10 +30,10 @@ class RecoveryResponseTest extends TestCase
             'aut' => '123456',
             'phonie' => 'oui',
             'montant_estime' => '10EUR ',
-            'date_autorisation' => '2019-05-20 ',
-            'montant_debite' => '5EUR ',
-            'date_debit' => '2019-05-30 ',
-            'numero_dossier' => 'doss123456 ',
+            'date_autorisation' => '2019-05-20',
+            'montant_debite' => '5EUR',
+            'date_debit' => '2019-05-30',
+            'numero_dossier' => 'doss123456',
             'type_facture' => 'preauto',
         ]);
 
@@ -72,7 +72,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidDebitDatetime()
     {
-        $this->expectExceptionObject(RecoveryException::invalidResponseDebitDatetime());
+        $this->expectExceptionObject(RecoveryException::invalidResponseDebitDate());
 
         new RecoveryResponse([
             'version' => '1.0',

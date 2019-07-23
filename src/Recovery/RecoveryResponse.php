@@ -9,6 +9,7 @@ use DateTime;
 
 class RecoveryResponse
 {
+    /** @var float */
     const SERVICE_VERSION = 1.0;
 
     /** @var int */
@@ -33,7 +34,7 @@ class RecoveryResponse
     public $estimatedAmount;
 
     /** @var \DateTime */
-    public $authorisationDatetime;
+    public $authorisationDate;
 
     /** @var string */
     public $currency;
@@ -50,10 +51,14 @@ class RecoveryResponse
     /** @var string */
     public $invoiceType;
 
+    /** @var array  */
     const INVOICE_TYPES = [
         'preauto',
         'noshow',
     ];
+
+    /** @var string */
+    const DATE_FORMAT = 'Y-m-d';
 
     /**
      * RecoveryResponse constructor.
@@ -92,9 +97,9 @@ class RecoveryResponse
         }
 
         if (isset($data['date_autorisation'])) {
-            $this->authorisationDatetime = date_create($data['date_autorisation']);
-            if (!$this->authorisationDatetime instanceof DateTime) {
-                throw Exception::invalidResponseDateTime();
+            $this->authorisationDate = DateTime::createFromFormat(self::DATE_FORMAT, $data['date_autorisation']);
+            if (!$this->authorisationDate instanceof DateTime) {
+                throw RecoveryException::invalidResponseAuthorizationDate();
             }
         }
 
@@ -103,16 +108,16 @@ class RecoveryResponse
         }
 
         if (isset($data['date_debit'])) {
-            $this->debitDatetime = date_create($data['date_debit']);
-            if (!$this->authorisationDatetime instanceof DateTime) {
-                throw RecoveryException::invalidResponseDebitDatetime();
+            $this->debitDatetime = DateTime::createFromFormat(self::DATE_FORMAT, $data['date_debit']);
+            if (!$this->authorisationDate instanceof DateTime) {
+                throw RecoveryException::invalidResponseDebitDate();
             }
         }
 
         if (isset($data['numero_dossier'])) {
             $this->fileNumber = $data['numero_dossier'];
             if (strlen($this->fileNumber) > 12) {
-                throw Exception::invalidReference($this->fileNumber);
+                throw Exception::invalidResponseFileNumber($this->fileNumber);
             }
         }
 

@@ -90,8 +90,10 @@ class PaymentResponse
     /** @var string */
     public $filteredStatus = null;
 
+    /** @var array */
     public $authentication = [];
 
+    /** @var string */
     public $authenticationHash = null;
 
     /** @var string */

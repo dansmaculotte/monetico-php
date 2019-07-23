@@ -3,7 +3,6 @@
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\Response;
-use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 
@@ -11,6 +10,21 @@ require_once 'Credentials.php';
 
 class PaymentResponseTest extends TestCase
 {
+    private function generateSeal($data)
+    {
+        ksort($data);
+        $query = http_build_query($data, null, '*');
+        $query = urldecode($query);
+
+        $hash =  strtoupper(hash_hmac(
+            'sha1',
+            $query,
+            Monetico::getUsableKey(SECURITY_KEY)
+        ));
+
+        return $hash;
+    }
+
     private $data = array(
         'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJQQVJlcyIgOiAiWSIsCiAgICAgICJWRVJlcyIgOiAiWSIsCiAgICAgICJzdGF0dXMzRFMiIDogMQogICB9LAogICAicHJvdG9jb2wiIDogIjNEU2VjdXJlIiwKICAgInN0YXR1cyIgOiAiYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIxLjAuMiIKfQo=',
         'bincb' => '000003',
@@ -20,7 +34,7 @@ class PaymentResponseTest extends TestCase
         'date' => '11/07/2019_a_10:51:19',
         'hpancb' => '07CDB0331260C06818027855F795C9F726585286',
         'ipclient' => '80.15.24.220',
-        'MAC' => 'C3E8B0D0F71AABE041F50C240E1821E09CF9AACB',
+        'MAC' => '', // needs to be generated
         'modepaiement' => 'CB',
         'montant' => '42.42EUR',
         'numauto' => '000000',
@@ -135,21 +149,6 @@ class PaymentResponseTest extends TestCase
         $this->assertTrue($response->cardMask === '1234XXXXXXXXXXX1234');
     }
 
-    public function testSealIsValid()
-    {
-        $data = $this->data;
-
-        $response = new Response($data);
-
-        $sealIsValid = $response->validateSeal(
-            EPT_CODE,
-            Monetico::getUsableKey(SECURITY_KEY),
-            3.0);
-
-        $this->assertTrue($sealIsValid);
-
-    }
-
     public function testAuthenticationDecode()
     {
         $data = $this->data;
@@ -162,5 +161,34 @@ class PaymentResponseTest extends TestCase
         $this->assertEquals('Y', $response->authentication['details']['PARes']);
         $this->assertEquals('Y', $response->authentication['details']['VERes']);
         $this->assertEquals('1', $response->authentication['details']['status3DS']);
+    }
+
+    public function testSealIsValid()
+    {
+        $data = [
+            'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJBUmVzIiA6ICJZIiwKICAgICAgImF1dGhlbnRpY2F0aW9uVmFsdWUiIDogIlFVRkNRa05EUkVSRlJVWkdRVUZDUWtORFJFUT0iLAogICAgICAibGlhYmlsaXR5U2hpZnQiIDogIlkiLAogICAgICAibWVyY2hhbnRQcmVmZXJlbmNlIiA6ICJub19wcmVmZXJlbmNlIiwKICAgICAgInRyYW5zYWN0aW9uSUQiIDogIjdjOTgyNTVhLWE5YzctNDYxYy1hZDEyLWM3NjM5MzczZDljYiIKICAgfSwKICAgInByb3RvY29sIiA6ICIzRFNlY3VyZSIsCiAgICJzdGF0dXMiIDogImF1dGhlbnRpY2F0ZWQiLAogICAidmVyc2lvbiIgOiAiMi4xLjAiCn0K',
+            'bincb' => '000003',
+            'brand' => 'MC',
+            'code-retour' => 'payetest',
+            'cvx' => 'oui',
+            'hpancb' => '6FF1313F3B6FE9B053B21CBDEE516603CB8CF01E',
+            'ipclient' => '80.15.24.220',
+            'modepaiement' => 'CB',
+            'numauto' => '000000',
+            'originecb' => 'FRA',
+            'originetr' => 'FRA',
+            'vld' => '1221',
+            'date' => '23/07/2019_a_11:55:47',
+            'montant' => '42.42EUR',
+            'reference' => '12345678',
+            'texte-libre' => 'PHPUnit',
+            'TPE' => '6784452',
+        ];
+
+        $data['MAC'] = $this->generateSeal($data);
+
+        $response = new Response($data);
+        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY), '3.0');
+        $this->assertTrue($sealValid);
     }
 }

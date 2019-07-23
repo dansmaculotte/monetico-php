@@ -286,16 +286,7 @@ class Response
         }
     }
 
-    /**
-     * Validate seal to verify payment
-     *
-     * @param string $eptCode
-     * @param string $securityKey
-     * @param string $version
-     *
-     * @return bool
-     */
-    public function validateSeal($eptCode, $securityKey, $version)
+    private function fieldsToArray($eptCode)
     {
         $fields = [
             'TPE' => $eptCode,
@@ -317,8 +308,55 @@ class Response
             'vld' => $this->cardExpirationDate,
         ];
 
+        if (isset($this->rejectReason)) {
+            $fields['motifrefus'] = $this->rejectReason;
+        }
+
+
+        if (isset($this->commitmentAmount)) {
+            $fields['montantech'] = $this->commitmentAmount;
+        }
+
+        if (isset($this->filteredReason)) {
+            $fields['filtragecause'] = $this->filteredReason;
+        }
+
+        if (isset($this->filteredValue)) {
+            $fields['filtragevaleur'] = $this->filteredValue;
+        }
+
+        if (isset($this->filteredStatus)) {
+            $fields['filtrage_etat'] = $this->filteredStatus;
+        }
+
+        if (isset($this->cardBookmarked)) {
+            $fields['cbenregistree'] = $this->cardBookmarked;
+        }
+
+        if (isset($this->cardMask)) {
+            $fields['cbmasquee'] = $this->cardMask;
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Validate seal to verify payment
+     *
+     * @param string $eptCode
+     * @param string $securityKey
+     * @param string $version
+     *
+     * @return bool
+     */
+    public function validateSeal($eptCode, $securityKey, $version)
+    {
+        $fields = $this->fieldsToArray($eptCode);
+
         ksort($fields);
-        $query = urldecode(http_build_query($fields, null, '*'));
+
+        $query = http_build_query($fields, null, '*');
+        $query = urldecode($query);
 
         $hash =  strtoupper(hash_hmac(
             'sha1',

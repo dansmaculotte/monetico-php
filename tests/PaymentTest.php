@@ -246,20 +246,22 @@ class PaymentTest extends TestCase
 
     public function testSet3DSecure() {
         $payment = new Payment(array(
-            'reference' => 'DDDDDDD',
+            'reference' => '12345679',
             'description' => 'PHPUnit',
             'language' => 'FR',
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
-            'dateTime' => Carbon::create(2019, 10, 07),
+            'dateTime' => Carbon::create(2019, 07, 23),
         ));
 
         $payment->setThreeDSecureChallenge('challenge_mandated');
+        $payment->setCardAlias('martin');
+        $payment->setSignLabel('toto');
 
         $fields = $payment->fieldsToArray(
             EPT_CODE,
-            3.0,
+            '3.0',
             COMPANY_CODE,
             'https://dev.dansmaculotte.com',
             'https://dev.dansmaculotte.com/success',

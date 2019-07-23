@@ -49,13 +49,13 @@ $payment = new Payment(array(
     'datetime' => Carbon::create(2019, 1, 1),
 ));
 
-$addressBilling = new AddressBilling(['7 rue melingue', 'Caen', '14000', 'France']);
+$addressBilling = new AddressBilling('7 rue melingue', 'Caen', '14000', 'France');
 $payment->setAddressBilling($addressBilling);
 
-$addressShipping = new AddressShipping(['7 rue melingue', 'Caen', '14000', 'France']);
+$addressShipping = new AddressShipping('7 rue melingue', 'Caen', '14000', 'France');
 $payment->setAddressShipping($addressShipping);
 
-$client = new Client(['MR', 'John', 'Stark', 'Snow']);
+$client = new Client('MR', 'John', 'Stark', 'Snow');
 $payment->setClient($client);
 
 $url = $monetico->getPaymentUrl();

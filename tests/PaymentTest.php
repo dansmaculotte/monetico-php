@@ -219,13 +219,13 @@ class PaymentTest extends TestCase
             'dateTime' => Carbon::create(2019, 1, 1),
         ]);
 
-        $addressBilling = new AddressBilling(['7 rue melingue', 'Caen', '14000', 'France']);
+        $addressBilling = new AddressBilling('7 rue melingue', 'Caen', '14000', 'France');
         $payment->setAddressBilling($addressBilling);
 
-        $addressShipping = new AddressShipping(['7 rue melingue', 'Caen', '14000', 'France']);
+        $addressShipping = new AddressShipping('7 rue melingue', 'Caen', '14000', 'France');
         $payment->setAddressShipping($addressShipping);
 
-        $client = new Client(['MR', 'FooBoo', 'Foo', 'Boo']);
+        $client = new Client('MR', 'FooBoo', 'Foo', 'Boo');
         $payment->setClient($client);
 
         $this->assertEquals('7 rue melingue', $payment->addressShipping->data['addressLine1']);

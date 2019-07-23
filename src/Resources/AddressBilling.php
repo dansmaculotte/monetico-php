@@ -10,14 +10,6 @@ class AddressBilling
     /**
      * Client constructor.
      *
-     * @param array $data
-     */
-    public function __construct($data = [])
-    {
-        $this->setData(...$data);
-    }
-
-    /**
      * @param string $addressLine1
      * @param string $city
      * @param string $postalCode
@@ -38,7 +30,7 @@ class AddressBilling
      * @param string|null $homePhone
      * @param string|null $workPhone
      */
-    public function setData(
+    public function __construct(
         string $addressLine1,
         string $city,
         string $postalCode,
@@ -58,7 +50,8 @@ class AddressBilling
         string $mobilePhone = null,
         string $homePhone = null,
         string $workPhone = null
-    ) {
+    )
+    {
         $this->data = [
             'addressLine1' => $addressLine1,
             'city' => $city,

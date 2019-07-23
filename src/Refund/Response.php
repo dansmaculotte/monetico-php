@@ -4,7 +4,7 @@ namespace DansMaCulotte\Monetico\Refund;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
 
-class RefundResponse
+class Response
 {
     /** @var float */
     const SERVICE_VERSION = 1.0;

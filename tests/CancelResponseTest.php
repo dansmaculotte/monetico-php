@@ -1,13 +1,13 @@
 <?php
 
-use DansMaCulotte\Monetico\Recovery\CancelResponse;
+use DansMaCulotte\Monetico\Recovery\Response;
 use PHPUnit\Framework\TestCase;
 
 class CancelResponseTest extends TestCase
 {
     public function testCancelResponseConstruct()
     {
-        $response = new CancelResponse([
+        $response = new Response([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -19,6 +19,6 @@ class CancelResponseTest extends TestCase
             'type_facture' => 'preauto',
         ]);
 
-        $this->assertTrue($response instanceof CancelResponse);
+        $this->assertTrue($response instanceof Response);
     }
 }

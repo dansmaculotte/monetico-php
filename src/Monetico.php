@@ -2,11 +2,11 @@
 
 namespace DansMaCulotte\Monetico;
 
-use DansMaCulotte\Monetico\Recovery\Cancel;
+use DansMaCulotte\Monetico\Cancel\Cancel;
 use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Payment\PaymentResponse;
+use DansMaCulotte\Monetico\Payment\Response;
 use DansMaCulotte\Monetico\Refund\Refund;
 
 class Monetico
@@ -270,11 +270,11 @@ class Monetico
     /**
      * Validate seal from response
      *
-     * @param PaymentResponse $response
+     * @param Response $response
      *
      * @return bool
      */
-    public function validateSeal(PaymentResponse $response)
+    public function validateSeal(Response $response)
     {
         $seal = $response->validateSeal(
             $this->_eptCode,

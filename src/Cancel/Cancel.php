@@ -1,8 +1,8 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Recovery;
-use DansMaCulotte\Monetico\Exceptions\CancelException;
+namespace DansMaCulotte\Monetico\Cancel;
 use DansMaCulotte\Monetico\Exceptions\Exception;
+use DansMaCulotte\Monetico\Recovery\Recovery;
 use DateTime;
 
 class Cancel extends Recovery

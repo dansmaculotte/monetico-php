@@ -1,6 +1,6 @@
 <?php
 
-use DansMaCulotte\Monetico\Refund\RefundResponse;
+use DansMaCulotte\Monetico\Refund\Response;
 use PHPUnit\Framework\TestCase;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 
@@ -8,7 +8,7 @@ class RefundResponseTest extends TestCase
 {
     public function testRefundResponseConstruct()
     {
-        $response = new RefundResponse([
+        $response = new Response([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -17,7 +17,7 @@ class RefundResponseTest extends TestCase
             'type_facture' => 'complementaire'
         ]);
 
-        $this->assertTrue($response instanceof RefundResponse);
+        $this->assertTrue($response instanceof Response);
     }
 
 
@@ -25,7 +25,7 @@ class RefundResponseTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidResponseFileNumber('thisisatoolongreference'));
 
-        new RefundResponse([
+        new Response([
             'version' => '1.0',
             'reference' => 'ABC',
             'cdr' => '1',
@@ -39,7 +39,7 @@ class RefundResponseTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidResponseInvoiceType('invalid'));
 
-        new RefundResponse([
+        new Response([
             'version' => '1.0',
             'reference' => 'ABC',
             'cdr' => '1',

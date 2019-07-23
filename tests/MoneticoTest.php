@@ -1,12 +1,12 @@
 <?php
 
 use Carbon\Carbon;
-use DansMaCulotte\Monetico\Recovery\Cancel;
+use DansMaCulotte\Monetico\Cancel\Cancel;
 use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Monetico;
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Payment\PaymentResponse;
+use DansMaCulotte\Monetico\Payment\Response;
 use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
@@ -237,7 +237,7 @@ class MoneticoTest extends TestCase
 
         $data['MAC'] = $seal;
 
-        $response = new PaymentResponse($data);
+        $response = new Response($data);
 
         $isValid = $monetico->validateSeal($response);
         $this->assertTrue($isValid);

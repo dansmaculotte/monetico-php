@@ -7,7 +7,7 @@ use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use DateTime;
 
-class RecoveryResponse
+class Response
 {
     /** @var float */
     const SERVICE_VERSION = 1.0;

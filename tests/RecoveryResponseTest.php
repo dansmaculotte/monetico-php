@@ -1,7 +1,7 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Recovery\RecoveryResponse;
+use DansMaCulotte\Monetico\Recovery\Response;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use PHPUnit\Framework\TestCase;
 
@@ -9,7 +9,7 @@ class RecoveryResponseTest extends TestCase
 {
     public function testRecoveryResponseConstruct()
     {
-        $response = new RecoveryResponse([
+        $response = new Response([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -17,12 +17,12 @@ class RecoveryResponseTest extends TestCase
             'aut' => '123456',
         ]);
 
-        $this->assertTrue($response instanceof RecoveryResponse);
+        $this->assertTrue($response instanceof Response);
     }
 
     public function testRecoveryResponseWithAuthorization()
     {
-        $response = new RecoveryResponse([
+        $response = new Response([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -37,14 +37,14 @@ class RecoveryResponseTest extends TestCase
             'type_facture' => 'preauto',
         ]);
 
-        $this->assertTrue($response instanceof RecoveryResponse);
+        $this->assertTrue($response instanceof Response);
     }
 
     public function testRecoveryResponseExceptionInvalidFileNumber()
     {
         $this->expectExceptionObject(Exception::invalidResponseFileNumber('thisisawrongreference'));
 
-        new RecoveryResponse([
+        new Response([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',
@@ -59,7 +59,7 @@ class RecoveryResponseTest extends TestCase
     {
         $this->expectExceptionObject(RecoveryException::invalidResponseAuthorizationDate());
 
-        new RecoveryResponse([
+        new Response([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',
@@ -73,7 +73,7 @@ class RecoveryResponseTest extends TestCase
     {
         $this->expectExceptionObject(RecoveryException::invalidResponseDebitDate());
 
-        new RecoveryResponse([
+        new Response([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',
@@ -88,7 +88,7 @@ class RecoveryResponseTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidResponseInvoiceType('invalid'));
 
-        new RecoveryResponse([
+        new Response([
             'version' => '1.0',
             'reference' => 'ABCD123',
             'cdr' => '1',

@@ -63,7 +63,7 @@ $result = $monetico->validateSeal($response);
 $receipt = new Receipt($result);
 ```
 
-#### Recovery
+### Recovery
 
 ```php
 Use DansMaCulotte\Monetico\Recovery\Recovery;
@@ -92,7 +92,7 @@ use DansMaCulotte\Monetico\Recovery\Response;
 $response = new Response($data);
 ```
 
-#### Cancel
+### Cancel
 
 ```php
 use DansMaCulotte\Monetico\Cancel\Cancel;
@@ -116,7 +116,7 @@ use DansMaCulotte\Monetico\Cancel\Response;
 $response = new Response($data);
 ```
 
-#### Refund
+### Refund
 
 ```php
 use DansMaCulotte\Monetico\Refund\Refund;

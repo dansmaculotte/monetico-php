@@ -42,7 +42,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidFileNumber()
     {
-        $this->expectExceptionObject(Exception::invalidReference('thisisawrongreference'));
+        $this->expectExceptionObject(Exception::invalidResponseFileNumber('thisisawrongreference'));
 
         new RecoveryResponse([
             'version' => '1.0',
@@ -57,7 +57,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidAuthDatetime()
     {
-        $this->expectExceptionObject(Exception::invalidResponseDateTime());
+        $this->expectExceptionObject(RecoveryException::invalidResponseAuthorizationDate());
 
         new RecoveryResponse([
             'version' => '1.0',

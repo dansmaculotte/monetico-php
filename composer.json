@@ -11,6 +11,10 @@
         {
             "name": "Gaël Reyrol",
             "email": "gael@dansmaculotte.fr"
+        },
+        {
+            "name": "Martin Potel",
+            "email": "martin@dansmaculotte.fr"
         }
     ],
     "autoload": {

@@ -79,6 +79,7 @@ $receipt = new Receipt($result);
 
 ```php
 Use DansMaCulotte\Monetico\Recovery\Recovery;
+use DansMaCulotte\Monetico\Recovery\Response;
 
 $recovery = new Recovery([
     'reference' => 'AXCDEF123',
@@ -94,12 +95,11 @@ $recovery = new Recovery([
 
 $url = $monetico->getRecoveryUrl();
 $fields = $monetico->getRecoveryFields($recovery);
-```
 
-```php
-use DansMaCulotte\Monetico\Recovery\Response;
+$client = new GuzzleHttp\Client();
+$data = $client->request('POST', $url, $fields);
 
-// $data = json_decode($body, true);
+// $data = json_decode($data, true);
 
 $response = new Response($data);
 ```
@@ -108,6 +108,7 @@ $response = new Response($data);
 
 ```php
 use DansMaCulotte\Monetico\Cancel\Cancel;
+use DansMaCulotte\Monetico\Cancel\Response;
 
 $cancel = new Cancel([
     'dateTime' => Carbon::create(2019, 2, 1),
@@ -121,12 +122,11 @@ $cancel = new Cancel([
 
 $url = $monetico->getCancelUrl();
 $fields = $monetico->getCancelFields($recovery);
-```
 
-```php
-use DansMaCulotte\Monetico\Cancel\Response;
+$client = new GuzzleHttp\Client();
+$data = $client->request('POST', $url, $fields);
 
-// $data = json_decode($body, true);
+// $data = json_decode($data, true);
 
 $response = new Response($data);
 ```
@@ -135,6 +135,7 @@ $response = new Response($data);
 
 ```php
 use DansMaCulotte\Monetico\Refund\Refund;
+use DansMaCulotte\Monetico\Refund\Response;
 
 $refund = new Refund([
     'datetime' => Carbon::create(2019, 2, 1),
@@ -151,12 +152,11 @@ $refund = new Refund([
 
 $url = $monetico->getRefundUrl();
 $fields = $monetico->getRefundFields($recovery);
-```
 
-```php
-use DansMaCulotte\Monetico\Refund\Response;
+$client = new GuzzleHttp\Client();
+$data = $client->request('POST', $url, $fields);
 
-// $data = json_decode($body, true);
+// $data = json_decode($data, true);
 
 $response = new Response($data);
 ```

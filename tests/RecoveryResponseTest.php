@@ -57,7 +57,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidAuthDatetime()
     {
-        $this->expectExceptionObject(Exception::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidResponseDateTime());
 
         new RecoveryResponse([
             'version' => '1.0',
@@ -72,7 +72,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidDebitDatetime()
     {
-        $this->expectExceptionObject(Exception::invalidDatetime());
+        $this->expectExceptionObject(RecoveryException::invalidResponseDebitDatetime());
 
         new RecoveryResponse([
             'version' => '1.0',
@@ -87,7 +87,7 @@ class RecoveryResponseTest extends TestCase
 
     public function testRecoveryResponseExceptionInvalidInvoiceType()
     {
-        $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
+        $this->expectExceptionObject(Exception::invalidResponseInvoiceType('invalid'));
 
         new RecoveryResponse([
             'version' => '1.0',

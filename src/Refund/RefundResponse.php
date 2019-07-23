@@ -6,11 +6,11 @@ use DansMaCulotte\Monetico\Exceptions\Exception;
 
 class RefundResponse
 {
+    /** @var float */
     const SERVICE_VERSION = 1.0;
 
     /** @var string */
     public $returnCode;
-
 
     /** @var string */
     public $description;
@@ -27,6 +27,7 @@ class RefundResponse
     /** @var string */
     public $invoiceType;
 
+    /** @var array */
     const INVOICE_TYPES = [
         'preauto',
         'noshow',
@@ -43,26 +44,33 @@ class RefundResponse
     {
         $this->version = self::SERVICE_VERSION;
 
-        $this->returnCode = $data['cdr'];
+        $requiredKeys = array(
+            'cdr',
+            'lib',
+            'reference',
+        );
 
-        $this->description = $data['lib'];
-
-        $this->reference = $data['reference'];
-        if (strlen($this->reference) > 12) {
-            throw Exception::invalidReference($this->reference);
+        foreach ($requiredKeys as $key) {
+            if (!in_array($key, array_keys($data))) {
+                throw Exception::missingResponseKey($key);
+            }
         }
+
+        $this->returnCode = $data['cdr'];
+        $this->description = $data['lib'];
+        $this->reference = $data['reference'];
 
         if (isset($data['numero_dossier'])) {
             $this->fileNumber = $data['numero_dossier'];
             if (strlen($this->fileNumber) > 12) {
-                throw Exception::invalidReference($this->fileNumber);
+                throw Exception::invalidResponseFileNumber($this->fileNumber);
             }
         }
 
         if (isset($data['type_facture'])) {
             $this->invoiceType = $data['type_facture'];
             if (!in_array($this->invoiceType, self::INVOICE_TYPES)) {
-                throw Exception::invalidInvoiceType($this->invoiceType);
+                throw Exception::invalidResponseInvoiceType($this->invoiceType);
             }
         }
     }

@@ -3,6 +3,7 @@
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\PaymentResponse;
+use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 
@@ -46,7 +47,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionDateTime()
     {
-        $this->expectExceptionObject(PaymentException::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidResponseDateTime());
 
         $data = $this->data;
         $data['date'] = 'oups';
@@ -54,9 +55,10 @@ class PaymentResponseTest extends TestCase
         new PaymentResponse($data);
     }
 
+
     public function testPaymentResponseExceptionReturnCode()
     {
-        $this->expectExceptionObject(PaymentException::invalidReturnCode('foo'));
+        $this->expectExceptionObject(PaymentException::invalidResponseReturnCode('foo'));
 
         $data = $this->data;
         $data['code-retour'] = 'foo';
@@ -66,7 +68,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionCardVerificationStatus()
     {
-        $this->expectExceptionObject(PaymentException::invalidCardVerificationStatus('nope'));
+        $this->expectExceptionObject(PaymentException::invalidResponseCardVerificationStatus('nope'));
 
         $data = $this->data;
         $data['cvx'] = 'nope';
@@ -76,7 +78,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionCardBrand()
     {
-        $this->expectExceptionObject(PaymentException::invalidCardBrand('foo'));
+        $this->expectExceptionObject(PaymentException::invalidResponseCardBrand('foo'));
 
         $data = $this->data;
         $data['brand'] = 'foo';
@@ -86,7 +88,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionRejectReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidRejectReason('foobar'));
+        $this->expectExceptionObject(PaymentException::invalidResponseRejectReason('foobar'));
 
         $data = $this->data;
         $data['motifrefus'] = 'foobar';
@@ -96,7 +98,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionPaymentMethod()
     {
-        $this->expectExceptionObject(PaymentException::invalidPaymentMethod('bar'));
+        $this->expectExceptionObject(PaymentException::invalidResponsePaymentMethod('bar'));
 
         $data = $this->data;
         $data['modepaiement'] = 'bar';
@@ -106,7 +108,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionFilteredReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidFilteredReason('10'));
+        $this->expectExceptionObject(PaymentException::invalidResponseFilteredReason('10'));
 
         $data = $this->data;
         $data['filtragecause'] = '10';

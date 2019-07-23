@@ -66,9 +66,10 @@ class RefundTest extends TestCase
         ]);
     }
 
+
     public function testRefundConstructExceptionInvalidOrderDatetime()
     {
-        $this->expectExceptionObject(Exception::invalidOrderDatetime());
+        $this->expectExceptionObject(Exception::invalidOrderDate());
         new Refund([
             'datetime' => Carbon::create(2019, 1, 1),
             'orderDatetime' => 'invalid',
@@ -85,7 +86,7 @@ class RefundTest extends TestCase
 
     public function testRefundConstructExceptionInvalidRecoveryDatetime()
     {
-        $this->expectExceptionObject(Exception::invalidRecoveryDatetime());
+        $this->expectExceptionObject(Exception::invalidRecoveryDate());
         new Refund([
             'datetime' => Carbon::create(2019, 1, 1),
             'orderDatetime' => Carbon::create(2019, 1, 1),

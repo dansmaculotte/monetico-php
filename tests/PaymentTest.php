@@ -8,6 +8,7 @@ use DansMaCulotte\Monetico\Resources\AddressBilling;
 use DansMaCulotte\Monetico\Resources\AddressShipping;
 use DansMaCulotte\Monetico\Resources\Client;
 use PHPUnit\Framework\TestCase;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 
 require_once 'Credentials.php';
 
@@ -30,7 +31,7 @@ class PaymentTest extends TestCase
 
     public function testPaymentExceptionReference()
     {
-        $this->expectExceptionObject(PaymentException::invalidReference('thisisabigerroryouknow'));
+        $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknow'));
 
         new Payment(array(
             'reference' => 'thisisabigerroryouknow',
@@ -45,7 +46,7 @@ class PaymentTest extends TestCase
 
     public function testPaymentExceptionLanguage()
     {
-        $this->expectExceptionObject(PaymentException::invalidLanguage('WTF'));
+        $this->expectExceptionObject(Exception::invalidLanguage('WTF'));
 
         new Payment(array(
             'reference' => 'ABCDEF123',
@@ -60,7 +61,7 @@ class PaymentTest extends TestCase
 
     public function testPaymentExceptionDatetime()
     {
-        $this->expectExceptionObject(PaymentException::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidDatetime());
 
         new Payment(array(
             'reference' => 'ABCDEF123',

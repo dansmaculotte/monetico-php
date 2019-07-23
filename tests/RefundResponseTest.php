@@ -20,23 +20,10 @@ class RefundResponseTest extends TestCase
         $this->assertTrue($response instanceof RefundResponse);
     }
 
-    public function testRefundResponseConstructExceptionInvalidReference()
-    {
-        $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
-
-        new RefundResponse([
-            'version' => '1.0',
-            'reference' => 'thisisatoolongreference',
-            'cdr' => '1',
-            'lib' => 'paiement accepte',
-            'numero_dossier' => '123',
-            'type_facture' => 'complementaire'
-        ]);
-    }
 
     public function testRefundResponseConstructExceptionInvalidFileNumber()
     {
-        $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
+        $this->expectExceptionObject(Exception::invalidResponseFileNumber('thisisatoolongreference'));
 
         new RefundResponse([
             'version' => '1.0',
@@ -50,7 +37,7 @@ class RefundResponseTest extends TestCase
 
     public function testRefundResponseConstructExceptionInvalidInvoiceType()
     {
-        $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
+        $this->expectExceptionObject(Exception::invalidResponseInvoiceType('invalid'));
 
         new RefundResponse([
             'version' => '1.0',

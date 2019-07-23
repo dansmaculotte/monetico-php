@@ -4,6 +4,7 @@ namespace DansMaCulotte\Monetico\Recovery;
 
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
+use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use DateTime;
 
 class RecoveryResponse
@@ -60,6 +61,7 @@ class RecoveryResponse
      * @param array $data
      *
      * @throws Exception
+     * @throws RecoveryException
      */
     public function __construct($data = array())
     {
@@ -92,7 +94,7 @@ class RecoveryResponse
         if (isset($data['date_autorisation'])) {
             $this->authorisationDatetime = date_create($data['date_autorisation']);
             if (!$this->authorisationDatetime instanceof DateTime) {
-                throw Exception::invalidDatetime();
+                throw Exception::invalidResponseDateTime();
             }
         }
 
@@ -103,7 +105,7 @@ class RecoveryResponse
         if (isset($data['date_debit'])) {
             $this->debitDatetime = date_create($data['date_debit']);
             if (!$this->authorisationDatetime instanceof DateTime) {
-                throw Exception::invalidDatetime();
+                throw RecoveryException::invalidResponseDebitDatetime();
             }
         }
 
@@ -117,7 +119,7 @@ class RecoveryResponse
         if (isset($data['type_facture'])) {
             $this->invoiceType = $data['type_facture'];
             if (!in_array($this->invoiceType, self::INVOICE_TYPES)) {
-                throw Exception::invalidInvoiceType($this->invoiceType);
+                throw Exception::invalidResponseInvoiceType($this->invoiceType);
             }
         }
 

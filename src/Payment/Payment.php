@@ -3,6 +3,7 @@
 namespace DansMaCulotte\Monetico\Payment;
 
 use DansMaCulotte\Monetico\BaseMethod;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\method;
 use DansMaCulotte\Monetico\Resources\AddressBilling;
@@ -79,7 +80,7 @@ class Payment implements method
      * @param array $data
      * @param array $commitments
      * @param array $options
-     * @throws PaymentException
+     * @throws Exception
      */
     public function __construct($data = array(), $commitments = array(), $options = array())
     {
@@ -97,20 +98,20 @@ class Payment implements method
     }
 
     /**
-     * @throws PaymentException
+     * @throws Exception
      */
     public function validate()
     {
         if (strlen($this->reference) > 12) {
-            throw PaymentException::invalidReference($this->reference);
+            throw Exception::invalidReference($this->reference);
         }
 
         if (strlen($this->language) != 2) {
-            throw PaymentException::invalidLanguage($this->language);
+            throw Exception::invalidLanguage($this->language);
         }
 
         if (!$this->dateTime instanceof DateTime) {
-            throw PaymentException::invalidDatetime();
+            throw Exception::invalidDatetime();
         }
     }
 

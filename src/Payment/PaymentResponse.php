@@ -12,7 +12,7 @@ class PaymentResponse
     private $eptCode;
 
     /** @var \DateTime */
-    public $datetime;
+    public $dateTime;
 
     /** @var string */
     public $amount;
@@ -20,6 +20,7 @@ class PaymentResponse
     /** @var string */
     public $reference;
 
+    /** @var string */
     /** @var string */
     public $seal;
 
@@ -189,9 +190,9 @@ class PaymentResponse
             }
         }
 
-        $this->datetime = DateTime::createFromFormat(self::DATETIME_FORMAT, $data['date']);
-        if (!is_a($this->datetime, 'DateTime')) {
-            throw PaymentException::invalidDatetime();
+        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $data['date']);
+        if (!$this->dateTime instanceof DateTime) {
+            throw Exception::invalidResponseDateTime();
         }
 
         $this->eptCode = $data['TPE'];
@@ -211,26 +212,26 @@ class PaymentResponse
 
         $this->returnCode = $data['code-retour'];
         if (!in_array($this->returnCode, self::RETURN_CODES)) {
-            throw PaymentException::invalidReturnCode($this->returnCode);
+            throw PaymentException::invalidResponseReturnCode($this->returnCode);
         }
 
         $this->cardVerificationStatus = $data['cvx'];
         if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
-            throw PaymentException::invalidCardVerificationStatus($this->cardVerificationStatus);
+            throw PaymentException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
         }
 
         $this->cardExpirationDate = $data['vld'];
 
         $this->cardBrand = $data['brand'];
         if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
-            throw PaymentException::invalidCardBrand($this->cardBrand);
+            throw PaymentException::invalidResponseCardBrand($this->cardBrand);
         }
 
 
         if (isset($data['motifrefus'])) {
             $this->rejectReason = $data['motifrefus'];
             if (!in_array($this->rejectReason, self::REJECT_REASONS)) {
-                throw PaymentException::invalidRejectReason($this->rejectReason);
+                throw PaymentException::invalidResponseRejectReason($this->rejectReason);
             }
         }
 
@@ -250,7 +251,7 @@ class PaymentResponse
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
             if (!in_array($this->paymentMethod, self::PAYMENT_METHODS)) {
-                throw PaymentException::invalidPaymentMethod($this->paymentMethod);
+                throw PaymentException::invalidResponsePaymentMethod($this->paymentMethod);
             }
         }
 
@@ -262,7 +263,7 @@ class PaymentResponse
         if (isset($data['filtragecause'])) {
             $this->filteredReason = (int) $data['filtragecause'];
             if (!in_array($this->filteredReason, self::FILTERED_REASONS)) {
-                throw PaymentException::invalidFilteredReason($this->filteredReason);
+                throw PaymentException::invalidResponseFilteredReason($this->filteredReason);
             }
         }
 
@@ -301,7 +302,7 @@ class PaymentResponse
             'brand' => $this->cardBrand,
             'code-retour' => $this->returnCode,
             'cvx' => $this->cardVerificationStatus,
-            'date' => $this->datetime->format(self::DATETIME_FORMAT),
+            'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'hpancb' => $this->cardHash,
             'ipclient' => $this->clientIp,
             'modepaiement' => $this->paymentMethod,

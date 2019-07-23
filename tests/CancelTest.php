@@ -39,7 +39,7 @@ class CancelTest extends TestCase
 
     public function testRecoveryConstructExceptionInvalidOrderDatetime()
     {
-        $this->expectExceptionObject(Exception::invalidOrderDatetime());
+        $this->expectExceptionObject(Exception::invalidOrderDate());
 
         new Cancel([
             'dateTime' => Carbon::create(2019, 1, 1),

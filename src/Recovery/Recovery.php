@@ -103,7 +103,7 @@ class Recovery implements method
         }
 
         if (!$this->orderDate instanceof DateTime) {
-            throw Exception::invalidOrderDatetime();
+            throw Exception::invalidOrderDate();
         }
 
         if (strlen($this->reference) > 12) {

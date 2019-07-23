@@ -25,7 +25,7 @@ class Exception extends \Exception
     /**
      * @return Exception
      */
-    public static function invalidOrderDatetime()
+    public static function invalidResponseOrderDate()
     {
         return new self("date_commande value is not a DateTime object");
     }
@@ -35,15 +35,25 @@ class Exception extends \Exception
      */
     public static function invalidDatetime()
     {
-        return new self("date value is not a DateTime object");
+        return new self("dateTime value is not a DateTime object");
     }
 
     /**
      * @return Exception
      */
-    public static function invalidRecoveryDatetime()
+    public static function invalidRecoveryDate()
     {
-        return new self("datetime value is not a DateTime object");
+        return new self("recoveryDate value is not a DateTime object");
+    }
+
+    /**
+     * @param $invoiceType
+     *
+     * @return Exception
+     */
+    public static function invalidResponseInvoiceType($invoiceType)
+    {
+        return new self("type_facture value is invalid: ${invoiceType}");
     }
 
     /**
@@ -53,7 +63,7 @@ class Exception extends \Exception
      */
     public static function invalidInvoiceType($invoiceType)
     {
-        return new self("facture value is invalid: ${invoiceType}");
+        return new self("invoiceType value is invalid: ${invoiceType}");
     }
 
     /**
@@ -85,5 +95,33 @@ class Exception extends \Exception
     {
         return new self("${key} is missing");
     }
+
+    /**
+     *
+     * @return Exception
+     */
+    public static function invalidResponseDateTime()
+    {
+        return new self("date value is invalid");
+    }
+
+    /**
+     * @param $fileNumber
+     * @return Exception
+     */
+    public static function invalidResponseFileNumber($fileNumber)
+    {
+        return new self("numero_dossier value is invalid: ${fileNumber}");
+    }
+
+    /**
+     * @return Exception
+     */
+    public static function invalidOrderDate()
+    {
+        return new self("orderDate value is not a DateTime object");
+    }
+
+
 
 }

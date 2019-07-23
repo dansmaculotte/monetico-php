@@ -213,6 +213,12 @@ class Monetico
         return $fields;
     }
 
+    /**
+     * Return array fields required on cancel bank interface
+     *
+     * @param Cancel $input
+     * @return array
+     */
     public function getCancelFields(Cancel $input)
     {
         $fields = $input->fieldsToArray(
@@ -234,6 +240,12 @@ class Monetico
         return $fields;
     }
 
+    /**
+     * Return array fields required on refund bank interface
+     *
+     * @param Refund $input
+     * @return array
+     */
     public function getRefundFields(Refund $input)
     {
         $fields = $input->fieldsToArray(

@@ -67,7 +67,6 @@ class RecoveryResponseTest extends TestCase
             'aut' => '123456',
             'date_autorisation' => 'juin 2019'
         ]);
-
     }
 
     public function testRecoveryResponseExceptionInvalidDebitDatetime()

@@ -12,7 +12,7 @@ This library aims to facilitate the usage of Monetico Service Methods
 
 ### Requirements
 
-- PHP 7.0
+- PHP 7.2
 
 You can install the package via composer:
 

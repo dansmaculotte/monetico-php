@@ -118,6 +118,9 @@ $cancel = new Cancel([
     'amount' => 100,
     'amountRecovered' => 0,
 ]);
+
+$url = $monetico->getCancelUrl();
+$fields = $monetico->getCancelFields($recovery);
 ```
 
 ```php
@@ -145,6 +148,9 @@ $refund = new Refund([
     'refundAmount' => 50,
     'maxRefundAmount' => 80,
 ]);
+
+$url = $monetico->getRefundUrl();
+$fields = $monetico->getRefundFields($recovery);
 ```
 
 ```php

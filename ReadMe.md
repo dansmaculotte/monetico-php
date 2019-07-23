@@ -35,6 +35,9 @@ $monetico = new Monetico(
 
 ```php
 use DansMaCulotte\Monetico\Payment\Payment;
+use DansMaCulotte\Monetico\Resources\AddressBilling;
+use DansMaCulotte\Monetico\Resources\AddressShipping;
+use DansMaCulotte\Monetico\Resources\Client;
 
 $payment = new Payment(array(
     'reference' => 'ABCDEF123',
@@ -45,6 +48,15 @@ $payment = new Payment(array(
     'currency' => 'EUR',
     'datetime' => Carbon::create(2019, 1, 1),
 ));
+
+$addressBilling = new AddressBilling(['7 rue melingue', 'Caen', '14000', 'France']);
+$payment->setAddressBilling($addressBilling);
+
+$addressShipping = new AddressShipping(['7 rue melingue', 'Caen', '14000', 'France']);
+$payment->setAddressShipping($addressShipping);
+
+$client = new Client(['MR', 'John', 'Stark', 'Snow']);
+$payment->setClient($client);
 
 $url = $monetico->getPaymentUrl();
 $fields = $monetico->getPaymentFields($payment);

@@ -2,8 +2,8 @@
 
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Cancel\Cancel;
-use PHPUnit\Framework\TestCase;
 use DansMaCulotte\Monetico\Exceptions\Exception;
+use PHPUnit\Framework\TestCase;
 
 class CancelTest extends TestCase
 {

@@ -1,8 +1,8 @@
 <?php
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Refund\Response;
 use PHPUnit\Framework\TestCase;
-use DansMaCulotte\Monetico\Exceptions\Exception;
 
 class RefundResponseTest extends TestCase
 {

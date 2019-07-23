@@ -52,16 +52,16 @@ class Payment implements method
     public $commitments;
 
     /** @var array */
-    const PAYMENT_WAYS = array(
+    const PAYMENT_WAYS = [
         '1euro',
         '3xcb',
         '4xcb',
         'fivory',
         'paypal'
-    );
+    ];
 
     /** @var array */
-    const THREE_D_SECURE_CHALLENGES = array(
+    const THREE_D_SECURE_CHALLENGES = [
         'no_preference',
         'challenge_preferred',
         'challenge_mandated',
@@ -69,7 +69,7 @@ class Payment implements method
         'no_challenge_requested_strong_authentication',
         'no_challenge_requested_trusted_third_party',
         'no_challenge_requested_risk_analysis'
-    );
+    ];
 
     /** @var string */
     const DATETIME_FORMAT = 'd/m/Y:H:i:s';
@@ -82,7 +82,7 @@ class Payment implements method
      * @param array $options
      * @throws Exception
      */
-    public function __construct($data = array(), $commitments = array(), $options = array())
+    public function __construct($data = [], $commitments = [], $options = [])
     {
         $this->reference = $data['reference'];
         $this->language = $data['language'];
@@ -193,9 +193,9 @@ class Payment implements method
      *
      * @param array[string] $ways List of payment ways to disable
      */
-    public function setDisabledPaymentWays($ways = array())
+    public function setDisabledPaymentWays($ways = [])
     {
-        $_ways = array();
+        $_ways = [];
 
         foreach ($ways as $way) {
             if (in_array($way, self::PAYMENT_WAYS)) {
@@ -228,7 +228,8 @@ class Payment implements method
      * @param $version
      * @return array
      */
-    private function baseFields($eptCode, $companyCode, $version) {
+    private function baseFields($eptCode, $companyCode, $version)
+    {
         return [
             'TPE' => $eptCode,
             'date' => $this->dateTime->format(self::DATETIME_FORMAT),
@@ -250,7 +251,8 @@ class Payment implements method
      * @param $errorUrl
      * @return array
      */
-    private function urlFields($returnUrl, $successUrl, $errorUrl) {
+    private function urlFields($returnUrl, $successUrl, $errorUrl)
+    {
         return [
             'url_retour' => $returnUrl,
             'url_retour_ok' => $successUrl . '?reference=' . $this->reference,
@@ -282,7 +284,8 @@ class Payment implements method
     /**
      * @return array
      */
-    private function optionsFields() {
+    private function optionsFields()
+    {
         return [
             'ThreeDSecureChallenge' => (isset($this->options['threeDsecureChallenge'])) ? $this->options['threeDsecureChallenge'] : '',
             '3dsdebrayable' => (isset($this->options['3dsdebrayable'])) ? $this->options['3dsdebrayable'] : '',
@@ -291,7 +294,6 @@ class Payment implements method
             'forcesaisiecb' => (isset($this->options['forcesaisiecb'])) ? $this->options['forcesaisiecb'] : '',
             'libelleMonetique' => (isset($this->options['libelleMonetique'])) ? $this->options['libelleMonetique'] : '',
         ];
-
     }
 
     public function fieldsToArray($eptCode, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
@@ -300,6 +302,7 @@ class Payment implements method
             $this->baseFields($eptCode, $companyCode, $version),
             $this->optionsFields(),
             $this->commitmentsFields(),
-            $this->urlFields($returnUrl, $successUrl, $errorUrl));
+            $this->urlFields($returnUrl, $successUrl, $errorUrl)
+        );
     }
 }

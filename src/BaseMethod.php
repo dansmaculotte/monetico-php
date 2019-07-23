@@ -2,7 +2,6 @@
 
 namespace DansMaCulotte\Monetico;
 
-
 trait BaseMethod
 {
     public function generateSeal($securityKey, $fields)
@@ -19,7 +18,8 @@ trait BaseMethod
         ));
     }
 
-    public function generateFields($seal, $fields) {
+    public function generateFields($seal, $fields)
+    {
         return array_merge(
             $fields,
             ['MAC' => $seal]

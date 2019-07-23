@@ -1,8 +1,8 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Recovery\Response;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
+use DansMaCulotte\Monetico\Recovery\Response;
 use PHPUnit\Framework\TestCase;
 
 class RecoveryResponseTest extends TestCase
@@ -52,7 +52,6 @@ class RecoveryResponseTest extends TestCase
             'aut' => '123456',
             'numero_dossier' => 'thisisawrongreference'
         ]);
-
     }
 
     public function testRecoveryResponseExceptionInvalidAuthDatetime()
@@ -81,7 +80,6 @@ class RecoveryResponseTest extends TestCase
             'aut' => '123456',
             'date_debit' => 'juin 2019'
         ]);
-
     }
 
     public function testRecoveryResponseExceptionInvalidInvoiceType()
@@ -96,8 +94,5 @@ class RecoveryResponseTest extends TestCase
             'lib' => 'paiement accepte',
             'aut' => '123456',
         ]);
-
     }
-
-
 }

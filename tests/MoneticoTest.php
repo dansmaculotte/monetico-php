@@ -1,12 +1,12 @@
 <?php
 
+use \DansMaCulotte\Monetico\Exceptions\Exception;
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Cancel\Cancel;
-use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Monetico;
-use \DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
@@ -165,7 +165,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $payment = new Payment(array(
+        $payment = new Payment([
             'reference' => 'AYCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -173,7 +173,7 @@ class MoneticoTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 7, 17),
-        ));
+        ]);
 
         $fields = $monetico->getPaymentFields($payment);
 
@@ -204,7 +204,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $data = array(
+        $data = [
             'TPE' => EPT_CODE,
             'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJQQVJlcyIgOiAiWSIsCiAgICAgICJWRVJlcyIgOiAiWSIsCiAgICAgICJzdGF0dXMzRFMiIDogMQogICB9LAogICAicHJvdG9jb2wiIDogIjNEU2VjdXJlIiwKICAgInN0YXR1cyIgOiAiYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIxLjAuMiIKfQo=',
             'bincb' => '000003',
@@ -222,7 +222,7 @@ class MoneticoTest extends TestCase
             'reference' => 'D2345677',
             'texte-libre' => 'PHPUnit',
             'vld' => '1219',
-        );
+        ];
 
         ksort($data);
         $output = urldecode(http_build_query($data, null, '*'));
@@ -254,7 +254,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $recovery = new Recovery(array(
+        $recovery = new Recovery([
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
@@ -264,7 +264,7 @@ class MoneticoTest extends TestCase
             'currency' => 'EUR',
             'orderDate' => Carbon::create(2019, 07, 17),
             'dateTime' => Carbon::create(2019, 07, 17),
-        ));
+        ]);
 
         $recovery->setFileNumber('ABC');
         $recovery->setInvoiceType('preauto');
@@ -303,7 +303,7 @@ class MoneticoTest extends TestCase
             RETURN_ERROR_URL
         );
 
-        $cancel = new Cancel(array(
+        $cancel = new Cancel([
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
@@ -311,7 +311,7 @@ class MoneticoTest extends TestCase
             'currency' => 'EUR',
             'orderDate' => Carbon::create(2019, 07, 17),
             'dateTime' => Carbon::create(2019, 07, 17),
-        ));
+        ]);
 
         $fields = $monetico->getCancelFields($cancel);
 

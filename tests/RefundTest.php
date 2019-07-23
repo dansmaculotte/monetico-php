@@ -1,9 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
-use DansMaCulotte\Monetico\Exceptions\Exception;
 
 class RefundTest extends TestCase
 {
@@ -156,7 +156,4 @@ class RefundTest extends TestCase
 
         $refund->setInvoiceType('invalid');
     }
-
-
-
 }

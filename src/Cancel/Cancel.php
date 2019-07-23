@@ -1,13 +1,14 @@
 <?php
 
 namespace DansMaCulotte\Monetico\Cancel;
+
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Recovery\Recovery;
 use DateTime;
 
 class Cancel extends Recovery
 {
-    public function __construct(array $data = array())
+    public function __construct(array $data = [])
     {
         $data['amountLeft'] = 0;
         $data['amountToRecover'] = 0;

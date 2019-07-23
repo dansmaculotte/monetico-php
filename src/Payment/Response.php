@@ -100,7 +100,7 @@ class Response
     const DATETIME_FORMAT = 'd/m/Y_\a_H:i:s';
 
     /** @var array */
-    const RETURN_CODES = array(
+    const RETURN_CODES = [
         'payetest',
         'paiement',
         'Annulation',
@@ -110,52 +110,52 @@ class Response
         'Annulation_pf2',
         'Annulation_pf3',
         'Annulation_pf4',
-    );
+    ];
 
     /** @var array */
-    const CARD_VERIFICATION_STATUSES = array(
+    const CARD_VERIFICATION_STATUSES = [
         'oui',
         'non',
-    );
+    ];
 
     /** @var array */
-    const CARD_BRANDS = array(
+    const CARD_BRANDS = [
         'AM' => 'American Express',
         'CB' => 'GIE CB',
         'MC' => 'Mastercard',
         'VI' => 'Visa',
         'na' => 'Non disponible',
-    );
+    ];
 
     /** @var array  */
-    const DDDS_STATUSES = array(
+    const DDDS_STATUSES = [
         -1, 1, 4,
-    );
+    ];
 
     /** @var array  */
-    const REJECT_REASONS = array(
+    const REJECT_REASONS = [
         'Appel Phonie',
         'Refus',
         'Interdit',
         'filtrage',
         'scoring',
         '3DSecure',
-    );
+    ];
 
     /** @var array  */
-    const PAYMENT_METHODS = array(
+    const PAYMENT_METHODS = [
         'CB',
         'paypal',
         '1euro',
         '3xcb',
         '4cb',
         'audiotel',
-    );
+    ];
 
     /** @var array */
-    const FILTERED_REASONS = array(
+    const FILTERED_REASONS = [
         1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16,
-    );
+    ];
 
     /**
      * OutputPayload constructor.
@@ -164,9 +164,9 @@ class Response
      *
      * @throws \Exception
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
-        $requiredKeys = array(
+        $requiredKeys = [
             'TPE',
             'date',
             'montant',
@@ -184,7 +184,7 @@ class Response
             'hpancb',
             'ipclient',
             'originetr',
-        );
+        ];
 
         foreach ($requiredKeys as $key) {
             if (!in_array($key, array_keys($data))) {

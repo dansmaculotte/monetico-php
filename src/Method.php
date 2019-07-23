@@ -2,7 +2,6 @@
 
 namespace DansMaCulotte\Monetico;
 
-
 interface method
 {
     public function generateSeal($securityKey, $fields);

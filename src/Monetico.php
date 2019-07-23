@@ -3,10 +3,10 @@
 namespace DansMaCulotte\Monetico;
 
 use DansMaCulotte\Monetico\Cancel\Cancel;
-use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Refund\Refund;
 
 class Monetico
@@ -63,7 +63,8 @@ class Monetico
      *
      * @param boolean $value
      */
-    public function setDebug($value = true) {
+    public function setDebug($value = true)
+    {
         $this->_debug = $value;
     }
 
@@ -74,8 +75,8 @@ class Monetico
      *
      * @return string
      */
-    public static function getUsableKey($key) {
-
+    public static function getUsableKey($key)
+    {
         $hexStrKey = substr($key, 0, 38);
         $hexFinal = '' . substr($key, 38, 2) . '00';
 
@@ -118,7 +119,8 @@ class Monetico
      *
      * @return string
      */
-    public function getRecoveryUrl($debug = false) {
+    public function getRecoveryUrl($debug = false)
+    {
         $mainServiceUrl = self::MAIN_SERVICE_URL;
         if ($this->_debug || $debug) {
             $mainServiceUrl .= '/test';
@@ -134,7 +136,8 @@ class Monetico
      *
      * @return string
      */
-    public function getRefundUrl($debug = false) {
+    public function getRefundUrl($debug = false)
+    {
         $mainServiceUrl = self::MAIN_SERVICE_URL;
         if ($this->_debug || $debug) {
             $mainServiceUrl .= '/test';
@@ -150,7 +153,8 @@ class Monetico
      *
      * @return string
      */
-    public function getCancelUrl($debug = false) {
+    public function getCancelUrl($debug = false)
+    {
         return $this->getRecoveryUrl($debug);
     }
 
@@ -284,5 +288,4 @@ class Monetico
 
         return $seal;
     }
-
 }

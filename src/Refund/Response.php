@@ -40,15 +40,15 @@ class Response
      * @param array $data
      * @throws Exception
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         $this->version = self::SERVICE_VERSION;
 
-        $requiredKeys = array(
+        $requiredKeys = [
             'cdr',
             'lib',
             'reference',
-        );
+        ];
 
         foreach ($requiredKeys as $key) {
             if (!in_array($key, array_keys($data))) {
@@ -74,5 +74,4 @@ class Response
             }
         }
     }
-
 }

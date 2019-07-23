@@ -2,7 +2,6 @@
 
 namespace DansMaCulotte\Monetico\Refund;
 
-
 use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\method;
@@ -65,7 +64,7 @@ class Refund implements method
      * @param array $data
      * @throws Exception
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
         $this->datetime = $data['datetime'];
         $this->orderDate = $data['orderDatetime'];
@@ -155,5 +154,4 @@ class Refund implements method
             throw Exception::invalidLanguage($this->language);
         }
     }
-
 }

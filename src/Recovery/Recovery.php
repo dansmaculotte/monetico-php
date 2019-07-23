@@ -71,9 +71,8 @@ class Recovery implements method
      * @throws RecoveryException
      * @throws Exception
      */
-    public function __construct($data = array())
+    public function __construct($data = [])
     {
-
         $this->dateTime = $data['dateTime'];
 
         $this->orderDate = $data['orderDate'];

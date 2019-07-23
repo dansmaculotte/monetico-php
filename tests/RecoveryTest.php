@@ -2,8 +2,8 @@
 
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
+use DansMaCulotte\Monetico\Recovery\Recovery;
 use PHPUnit\Framework\TestCase;
 
 class RecoveryTest extends TestCase
@@ -158,7 +158,5 @@ class RecoveryTest extends TestCase
 
         $recovery->setInvoiceType('invalid');
         $this->assertEquals('preauto', $recovery->invoiceType);
-
     }
-
 }

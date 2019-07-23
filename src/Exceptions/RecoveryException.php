@@ -33,5 +33,4 @@ class RecoveryException extends \Exception
     {
         return new self("date_autorisation value is invalid");
     }
-
 }

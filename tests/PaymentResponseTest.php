@@ -1,10 +1,10 @@
 <?php
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\Response;
 use PHPUnit\Framework\TestCase;
-use DansMaCulotte\Monetico\Exceptions\Exception;
 
 require_once 'Credentials.php';
 
@@ -25,7 +25,7 @@ class PaymentResponseTest extends TestCase
         return $hash;
     }
 
-    private $data = array(
+    private $data = [
         'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJQQVJlcyIgOiAiWSIsCiAgICAgICJWRVJlcyIgOiAiWSIsCiAgICAgICJzdGF0dXMzRFMiIDogMQogICB9LAogICAicHJvdG9jb2wiIDogIjNEU2VjdXJlIiwKICAgInN0YXR1cyIgOiAiYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIxLjAuMiIKfQo=',
         'bincb' => '000003',
         'brand' => 'MC',
@@ -44,7 +44,7 @@ class PaymentResponseTest extends TestCase
         'texte-libre' => 'PHPUnit',
         'TPE' => '6784452',
         'vld' => '1219',
-    );
+    ];
 
     public function testPaymentResponseConstruct()
     {
@@ -56,7 +56,7 @@ class PaymentResponseTest extends TestCase
     {
         $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
-        new Response(array());
+        new Response([]);
     }
 
     public function testPaymentResponseExceptionDateTime()

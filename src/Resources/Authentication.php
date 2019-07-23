@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinpotel
- * Date: 2019-07-23
- * Time: 14:22
- */
 
 namespace DansMaCulotte\Monetico\Resources;
 

@@ -7,4 +7,5 @@ composer.phar
 # composer.lock
 tests/Credentials.php
 coverage
+build
 .php_cs.cache

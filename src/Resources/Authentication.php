@@ -103,6 +103,7 @@ class Authentication
         }
 
         $this->setDetails($details);
+        $this->setDetailsMessages($details);
     }
 
     /**
@@ -116,34 +117,6 @@ class Authentication
                 throw AuthenticationException::invalidLiabilityShift($details['liabilityShift']);
             }
             $this->details['liabilityShift'] = $details['liabilityShift'];
-        }
-
-        if (isset($details['VERes'])) {
-            if (!in_array($details['VERes'], self::VERES_OPTIONS)) {
-                throw AuthenticationException::invalidVERes($details['VERes']);
-            }
-            $this->details['VERes'] = $details['VERes'];
-        }
-
-        if (isset($details['PARes'])) {
-            if (!in_array($details['PARes'], self::PARES_OPTIONS)) {
-                throw AuthenticationException::invalidPARes($details['PARes']);
-            }
-            $this->details['PARes'] = $details['PARes'];
-        }
-
-        if (isset($details['ARes'])) {
-            if (!in_array($details['ARes'], self::ARES_OPTIONS)) {
-                throw AuthenticationException::invalidARes($details['ARes']);
-            }
-            $this->details['ARes'] = $details['ARes'];
-        }
-
-        if (isset($details['CRes'])) {
-            if (!in_array($details['CRes'], self::CRES_OPTIONS)) {
-                throw AuthenticationException::invalidCRes($details['CRes']);
-            }
-            $this->details['CRes'] = $details['CRes'];
         }
 
         if (isset($details['merchantPreference'])) {
@@ -172,6 +145,41 @@ class Authentication
                 throw AuthenticationException::invalidDisablingReason($details['disablingReason']);
             }
             $this->details['disablingReason'] = $details['disablingReason'];
+        }
+    }
+
+    /**
+     * @param $details
+     * @throws AuthenticationException
+     */
+    private function setDetailsMessages($details)
+    {
+        if (isset($details['VERes'])) {
+            if (!in_array($details['VERes'], self::VERES_OPTIONS)) {
+                throw AuthenticationException::invalidVERes($details['VERes']);
+            }
+            $this->details['VERes'] = $details['VERes'];
+        }
+
+        if (isset($details['PARes'])) {
+            if (!in_array($details['PARes'], self::PARES_OPTIONS)) {
+                throw AuthenticationException::invalidPARes($details['PARes']);
+            }
+            $this->details['PARes'] = $details['PARes'];
+        }
+
+        if (isset($details['ARes'])) {
+            if (!in_array($details['ARes'], self::ARES_OPTIONS)) {
+                throw AuthenticationException::invalidARes($details['ARes']);
+            }
+            $this->details['ARes'] = $details['ARes'];
+        }
+
+        if (isset($details['CRes'])) {
+            if (!in_array($details['CRes'], self::CRES_OPTIONS)) {
+                throw AuthenticationException::invalidCRes($details['CRes']);
+            }
+            $this->details['CRes'] = $details['CRes'];
         }
     }
 }

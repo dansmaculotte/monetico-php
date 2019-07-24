@@ -42,7 +42,7 @@ class Response
     public $amountDebited;
 
     /** @var \DateTime */
-    public $debitDatetime;
+    public $debitDate;
 
     /** @var string */
     public $fileNumber;
@@ -69,8 +69,26 @@ class Response
      */
     public function __construct($data = [])
     {
+        $this->validateRequiredKeys($data);
+
         $this->version = self::SERVICE_VERSION;
 
+        $this->returnCode = $data['cdr'];
+        $this->description = $data['lib'];
+        $this->reference = $data['reference'];
+
+        $this->setOptions($data);
+        $this->setDates($data);
+        $this->setAmounts($data);
+    }
+
+
+    /**
+     * @param $data
+     * @throws Exception
+     */
+    private function validateRequiredKeys($data)
+    {
         $requiredKeys = [
             'cdr',
             'lib',
@@ -82,35 +100,37 @@ class Response
                 throw Exception::missingResponseKey($key);
             }
         }
+    }
 
-        $this->returnCode = $data['cdr'];
-        $this->description = $data['lib'];
-        $this->reference = $data['reference'];
-
-        if (isset($data['aut'])) {
-            $this->authorisationNumber = $data['aut'];
-        }
-
-        if (isset($data['montant_estime'])) {
-            $this->estimatedAmount = $data['montant_estime'];
-        }
-
+    /**
+     * @param $data
+     * @throws RecoveryException
+     */
+    private function setDates($data)
+    {
         if (isset($data['date_autorisation'])) {
             $this->authorisationDate = DateTime::createFromFormat(self::DATE_FORMAT, $data['date_autorisation']);
-            if (!$this->authorisationDate instanceof DateTime) {
+            if (!$this->authorisationDate) {
                 throw RecoveryException::invalidResponseAuthorizationDate();
             }
         }
 
-        if (isset($data['montant_debite'])) {
-            $this->amountDebited = $data['montant_debite'];
-        }
-
         if (isset($data['date_debit'])) {
-            $this->debitDatetime = DateTime::createFromFormat(self::DATE_FORMAT, $data['date_debit']);
-            if (!$this->authorisationDate instanceof DateTime) {
+            $this->debitDate = DateTime::createFromFormat(self::DATE_FORMAT, $data['date_debit']);
+            if (!$this->authorisationDate) {
                 throw RecoveryException::invalidResponseDebitDate();
             }
+        }
+    }
+
+    /**
+     * @param $data
+     * @throws Exception
+     */
+    public function setOptions($data)
+    {
+        if (isset($data['aut'])) {
+            $this->authorisationNumber = $data['aut'];
         }
 
         if (isset($data['numero_dossier'])) {
@@ -129,6 +149,19 @@ class Response
 
         if (isset($data['phonie'])) {
             $this->phone = $data['phonie'];
+        }
+    }
+
+    /**
+     * @param $data
+     */
+    private function setAmounts($data)
+    {
+        if (isset($data['montant_estime'])) {
+            $this->estimatedAmount = $data['montant_estime'];
+        }
+        if (isset($data['montant_debite'])) {
+            $this->amountDebited = $data['montant_debite'];
         }
     }
 }

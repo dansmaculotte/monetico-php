@@ -163,6 +163,61 @@ class Response
      */
     public function __construct($data = [])
     {
+        $this->validateRequiredKeys($data);
+
+        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $data['date']);
+        if (!$this->dateTime instanceof DateTime) {
+            throw Exception::invalidResponseDateTime();
+        }
+
+        $this->eptCode = $data['TPE'];
+
+        // ToDo: Split amount and currency with ISO4217
+        $this->amount = $data['montant'];
+        $this->reference = $data['reference'];
+        $this->seal = $data['MAC'];
+        $this->description = $data['texte-libre'];
+        $this->authenticationHash = $data['authentification'];
+
+        $this->returnCode = $data['code-retour'];
+        if (!in_array($this->returnCode, self::RETURN_CODES)) {
+            throw PaymentException::invalidResponseReturnCode($this->returnCode);
+        }
+
+        $this->cardVerificationStatus = $data['cvx'];
+        if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
+            throw PaymentException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
+        }
+
+        $this->cardExpirationDate = $data['vld'];
+
+        $this->cardBrand = $data['brand'];
+        if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
+            throw PaymentException::invalidResponseCardBrand($this->cardBrand);
+        }
+
+        // ToDo: Check Country
+        $this->cardCountry = $data['originecb'];
+        $this->authNumber = $data['numauto'];
+        $this->cardBIN = $data['bincb'];
+        $this->cardHash = $data['hpancb'];
+        $this->clientIp = $data['ipclient'];
+
+        // ToDo: Check Country
+        $this->transactionCountry = $data['originetr'];
+
+        $this->setAuthentication($data['authentification']);
+        $this->setOptions($data);
+        $this->setErrorsOptions($data);
+    }
+
+
+    /**
+     * @param $data
+     * @throws Exception
+     */
+    private function validateRequiredKeys($data)
+    {
         $requiredKeys = [
             'TPE',
             'date',
@@ -188,27 +243,15 @@ class Response
                 throw Exception::missingResponseKey($key);
             }
         }
+    }
 
-        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $data['date']);
-        if (!$this->dateTime instanceof DateTime) {
-            throw Exception::invalidResponseDateTime();
-        }
-
-        $this->eptCode = $data['TPE'];
-
-
-        // ToDo: Split amount and currency with ISO4217
-        $this->amount = $data['montant'];
-
-        $this->reference = $data['reference'];
-
-        $this->seal = $data['MAC'];
-
-        $this->description = $data['texte-libre'];
-
-        $this->authenticationHash = $data['authentification'];
-
-        $authentication = base64_decode($data['authentification']);
+    /**
+     * @param $authentication
+     * @throws \DansMaCulotte\Monetico\Exceptions\AuthenticationException
+     */
+    private function setAuthentication($authentication)
+    {
+        $authentication = base64_decode($authentication);
         $authentication = json_decode($authentication);
 
         $this->authentication = new Authentication(
@@ -217,45 +260,14 @@ class Response
             $authentication->version,
             (array) $authentication->details
         );
+    }
 
-        $this->returnCode = $data['code-retour'];
-        if (!in_array($this->returnCode, self::RETURN_CODES)) {
-            throw PaymentException::invalidResponseReturnCode($this->returnCode);
-        }
-
-        $this->cardVerificationStatus = $data['cvx'];
-        if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
-            throw PaymentException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
-        }
-
-        $this->cardExpirationDate = $data['vld'];
-
-        $this->cardBrand = $data['brand'];
-        if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
-            throw PaymentException::invalidResponseCardBrand($this->cardBrand);
-        }
-
-
-        if (isset($data['motifrefus'])) {
-            $this->rejectReason = $data['motifrefus'];
-            if (!in_array($this->rejectReason, self::REJECT_REASONS)) {
-                throw PaymentException::invalidResponseRejectReason($this->rejectReason);
-            }
-        }
-
-        $this->authNumber = $data['numauto'];
-
-        // ToDo: Check Country
-        $this->cardCountry = $data['originecb'];
-
-        $this->cardBIN = $data['bincb'];
-        $this->cardHash = $data['hpancb'];
-
-        $this->clientIp = $data['ipclient'];
-
-        // ToDo: Check Country
-        $this->transactionCountry = $data['originetr'];
-
+    /**
+     * @param $data
+     * @throws PaymentException
+     */
+    private function setOptions($data)
+    {
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
             if (!in_array($this->paymentMethod, self::PAYMENT_METHODS)) {
@@ -268,10 +280,32 @@ class Response
             $this->commitmentAmount = $data['montantech'];
         }
 
+        if (isset($data['cbenregistree'])) {
+            $this->cardBookmarked = (bool) $data['cbenregistree'];
+        }
+
+        if (isset($data['cbmasquee'])) {
+            $this->cardMask = $data['cbmasquee'];
+        }
+    }
+
+    /**
+     * @param $data
+     * @throws PaymentException
+     */
+    private function setErrorsOptions($data)
+    {
         if (isset($data['filtragecause'])) {
             $this->filteredReason = (int) $data['filtragecause'];
             if (!in_array($this->filteredReason, self::FILTERED_REASONS)) {
                 throw PaymentException::invalidResponseFilteredReason($this->filteredReason);
+            }
+        }
+
+        if (isset($data['motifrefus'])) {
+            $this->rejectReason = $data['motifrefus'];
+            if (!in_array($this->rejectReason, self::REJECT_REASONS)) {
+                throw PaymentException::invalidResponseRejectReason($this->rejectReason);
             }
         }
 
@@ -281,14 +315,6 @@ class Response
 
         if (isset($data['filtrage_etat'])) {
             $this->filteredStatus = $data['filtrage_etat'];
-        }
-
-        if (isset($data['cbenregistree'])) {
-            $this->cardBookmarked = (bool) $data['cbenregistree'];
-        }
-
-        if (isset($data['cbmasquee'])) {
-            $this->cardMask = $data['cbmasquee'];
         }
     }
 

@@ -10,7 +10,7 @@ use DansMaCulotte\Monetico\Resources\AddressShipping;
 use DansMaCulotte\Monetico\Resources\Client;
 use PHPUnit\Framework\TestCase;
 
-require_once 'Credentials.php';
+require_once 'Credentials.fake.php';
 
 class PaymentTest extends TestCase
 {

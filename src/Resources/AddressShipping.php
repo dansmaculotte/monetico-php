@@ -30,25 +30,26 @@ class AddressShipping
      * @param string|null $firstUseDate
      * @param bool $matchBillingAddress
      */
-    public function __construct( string $addressLine1,
-                                 string $city,
-                                 string $postalCode,
-                                 string $country,
-                                 string $civility = null,
-                                 string $name = null,
-                                 string $firstName = null,
-                                 string $lastName = null,
-                                 string $address = null,
-                                 string $addressLine2 = null,
-                                 string $addressLine3 = null,
-                                 string $stateOrProvince = null,
-                                 string $countrySubdivision = null,
-                                 string $email = null,
-                                 string $phone = null,
-                                 string $shipIndicator = null,
-                                 string $deliveryTimeframe = null,
-                                 string $firstUseDate = null,
-                                 bool $matchBillingAddress = false
+    public function __construct(
+        string $addressLine1,
+        string $city,
+        string $postalCode,
+        string $country,
+        string $civility = null,
+        string $name = null,
+        string $firstName = null,
+        string $lastName = null,
+        string $address = null,
+        string $addressLine2 = null,
+        string $addressLine3 = null,
+        string $stateOrProvince = null,
+        string $countrySubdivision = null,
+        string $email = null,
+        string $phone = null,
+        string $shipIndicator = null,
+        string $deliveryTimeframe = null,
+        string $firstUseDate = null,
+        bool $matchBillingAddress = false
     ) {
         $this->data = [
             'addressLine1' => $addressLine1,

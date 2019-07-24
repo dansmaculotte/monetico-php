@@ -10,7 +10,7 @@ use DansMaCulotte\Monetico\Recovery\Recovery;
 use DansMaCulotte\Monetico\Refund\Refund;
 use PHPUnit\Framework\TestCase;
 
-require_once 'Credentials.php';
+require_once 'Credentials.fake.php';
 
 class MoneticoTest extends TestCase
 {

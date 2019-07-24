@@ -6,7 +6,7 @@ use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\Response;
 use PHPUnit\Framework\TestCase;
 
-require_once 'Credentials.php';
+require_once 'Credentials.fake.php';
 
 class PaymentResponseTest extends TestCase
 {
@@ -42,7 +42,7 @@ class PaymentResponseTest extends TestCase
         'originetr' => 'FRA',
         'reference' => 'D2345677',
         'texte-libre' => 'PHPUnit',
-        'TPE' => '6784452',
+        'TPE' => '9344512',
         'vld' => '1219',
     ];
 
@@ -186,7 +186,7 @@ class PaymentResponseTest extends TestCase
             'montant' => '42.42EUR',
             'reference' => '12345678',
             'texte-libre' => 'PHPUnit',
-            'TPE' => '6784452',
+            'TPE' => '9344512',
             'montantech' => '50EUR',
             'filtragevaleur' => 'foobar',
             'filtrage_etat' => 'test',

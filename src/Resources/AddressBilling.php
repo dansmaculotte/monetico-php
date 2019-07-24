@@ -50,8 +50,7 @@ class AddressBilling
         string $mobilePhone = null,
         string $homePhone = null,
         string $workPhone = null
-    )
-    {
+    ) {
         $this->data = [
             'addressLine1' => $addressLine1,
             'city' => $city,

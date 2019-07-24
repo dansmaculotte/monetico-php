@@ -11,6 +11,10 @@
         {
             "name": "Gaël Reyrol",
             "email": "gael@dansmaculotte.fr"
+        },
+        {
+            "name": "Martin Potel",
+            "email": "martin@dansmaculotte.fr"
         }
     ],
     "autoload": {
@@ -19,7 +23,8 @@
         }
     },
     "require": {
-        "php": "^7.0"
+        "php": "^7.2",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.2",

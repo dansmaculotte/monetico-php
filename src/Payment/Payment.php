@@ -2,10 +2,19 @@
 
 namespace DansMaCulotte\Monetico\Payment;
 
+use DansMaCulotte\Monetico\BaseMethod;
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Method;
+use DansMaCulotte\Monetico\Resources\AddressBilling;
+use DansMaCulotte\Monetico\Resources\AddressShipping;
+use DansMaCulotte\Monetico\Resources\Client;
+use DateTime;
 
-class Payment
+class Payment implements Method
 {
+    use BaseMethod;
+
     /** @var string */
     public $reference;
 
@@ -25,16 +34,25 @@ class Payment
     public $currency;
 
     /** @var \DateTime */
-    public $datetime;
+    public $dateTime;
 
     /** @var array */
     public $options;
 
+    /** @var AddressBilling */
+    public $addressBilling;
+
+    /** @var AddressShipping */
+    public $addressShipping;
+
+    /** @var Client */
+    public $client;
+
     /** @var array */
     public $commitments;
 
-    /** @var string */
-    const FORMAT_OUTPUT = '%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s*%s';
+    /** @var int */
+    const MAC_COMMITMENTS = 4;
 
     /** @var array */
     const PAYMENT_WAYS = [
@@ -45,39 +63,59 @@ class Payment
         'paypal'
     ];
 
+    /** @var array */
+    const THREE_D_SECURE_CHALLENGES = [
+        'no_preference',
+        'challenge_preferred',
+        'challenge_mandated',
+        'no_challenge_requested',
+        'no_challenge_requested_strong_authentication',
+        'no_challenge_requested_trusted_third_party',
+        'no_challenge_requested_risk_analysis'
+    ];
+
+    /** @var string */
+    const DATETIME_FORMAT = 'd/m/Y:H:i:s';
+
     /**
      * InputPayload constructor.
      *
      * @param array $data
      * @param array $commitments
      * @param array $options
-     *
-     * @throws PaymentException
+     * @throws Exception
      */
     public function __construct($data = [], $commitments = [], $options = [])
     {
         $this->reference = $data['reference'];
-        if (strlen($this->reference) > 12) {
-            throw PaymentException::invalidReference($this->reference);
-        }
-
         $this->language = $data['language'];
-        if (strlen($this->language) != 2) {
-            throw PaymentException::invalidLanguage($this->language);
-        }
-
-        $this->datetime = $data['datetime'];
-        if (!is_a($this->datetime, 'DateTime')) {
-            throw PaymentException::invalidDatetime();
-        }
-
+        $this->dateTime = $data['dateTime'];
         $this->description = $data['description'];
         $this->email = $data['email'];
         $this->amount = $data['amount'];
         $this->currency = $data['currency'];
-
         $this->options = $options;
         $this->commitments = $commitments;
+
+        $this->validate();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function validate()
+    {
+        if (strlen($this->reference) > 12) {
+            throw Exception::invalidReference($this->reference);
+        }
+
+        if (strlen($this->language) != 2) {
+            throw Exception::invalidLanguage($this->language);
+        }
+
+        if (!$this->dateTime instanceof DateTime) {
+            throw Exception::invalidDatetime();
+        }
     }
 
     /**
@@ -111,6 +149,22 @@ class Payment
     }
 
     /**
+     * 3DSecure V2 Choice
+     *
+     * @param bool $choice
+     * @throws PaymentException
+     */
+    public function setThreeDSecureChallenge($choice)
+    {
+        if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES)) {
+            throw PaymentException::invalidThreeDSecureChallenge($choice);
+        }
+
+        $this->options['threeDsecureChallenge'] = $choice;
+    }
+
+
+    /**
      * Change company sign label on payment interface
      *
      * @param string $label New sign label content
@@ -118,6 +172,23 @@ class Payment
     public function setSignLabel($label)
     {
         $this->options['libelleMonetique'] = $label;
+    }
+
+
+    public function setAddressBilling(AddressBilling $addressBilling)
+    {
+        $this->addressBilling = $addressBilling;
+    }
+
+
+    public function setAddressShipping(AddressShipping $addressShipping)
+    {
+        $this->addressShipping = $addressShipping;
+    }
+
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
     }
 
     /**
@@ -139,109 +210,99 @@ class Payment
     }
 
     /**
-     * Generate seal to prepare payment
-     *
-     * @param string $eptCode
-     * @param string $securityKey
-     * @param string $version
-     * @param string $companyCode
+     * Get order context
      *
      * @return string
      */
-    public function generateSeal($eptCode, $securityKey, $version, $companyCode)
+    public function orderContextBase64()
     {
-        $commitments = $this->commitments;
-        $commitmentsCount = count($commitments);
+        $contextCommand = [
+            'billing' => (isset($this->addressBilling)) ? $this->addressBilling->data : [],
+            'shipping' => (isset($this->addressShipping)) ? $this->addressShipping->data : [],
+            'client' => (isset($this->client)) ? $this->client->data : [],
+        ];
 
-        $output = sprintf(
-            self::FORMAT_OUTPUT,
-            $eptCode,
-            $this->datetime->format('d/m/Y:H:i:s'),
-            $this->amount . $this->currency,
-            $this->reference,
-            $this->description,
-            $version,
-            $this->language,
-            $companyCode,
-            $this->email,
-            ($commitmentsCount > 0) ? $commitmentsCount : '',
-            ($commitmentsCount >= 1) ? $commitments[0]['date'] : '',
-            ($commitmentsCount >= 1) ? $commitments[0]['amount'] : '',
-            ($commitmentsCount >= 2) ? $commitments[1]['date'] : '',
-            ($commitmentsCount >= 2) ? $commitments[1]['amount'] : '',
-            ($commitmentsCount >= 3) ? $commitments[2]['date'] : '',
-            ($commitmentsCount >= 3) ? $commitments[2]['amount'] : '',
-            ($commitmentsCount >= 4) ? $commitments[3]['date'] : '',
-            ($commitmentsCount >= 4) ? $commitments[3]['amount'] : '',
-            http_build_query($this->options)
-        );
-
-        return strtolower(
-            hash_hmac(
-                'sha1',
-                $output,
-                $securityKey
-            )
-        );
+        return base64_encode(json_encode($contextCommand));
     }
 
     /**
-     * @param string $eptCode
-     * @param string $seal
-     * @param string $version
-     * @param string $companyCode
-     * @param string $returnUrl
-     * @param string $successUrl
-     * @param string $errorUrl
-     *
+     * @param $eptCode
+     * @param $companyCode
+     * @param $version
      * @return array
      */
-    public function generateFields($eptCode, $seal, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
+    private function baseFields($eptCode, $companyCode, $version)
+    {
+        return [
+            'TPE' => $eptCode,
+            'date' => $this->dateTime->format(self::DATETIME_FORMAT),
+            'contexte_commande' => $this->orderContextBase64(),
+            'lgue' => $this->language,
+            'mail' => $this->email,
+            'montant' => $this->amount . $this->currency,
+            'reference' => $this->reference,
+            'societe' => $companyCode,
+            'texte-libre' => $this->description,
+            'version' => $version
+        ];
+    }
+
+
+    /**
+     * @param $returnUrl
+     * @param $successUrl
+     * @param $errorUrl
+     * @return array
+     */
+    private function urlFields($returnUrl, $successUrl, $errorUrl)
+    {
+        return [
+            'url_retour' => $returnUrl,
+            'url_retour_ok' => $successUrl . '?reference=' . $this->reference,
+            'url_retour_err' => $errorUrl . '?reference=' . $this->reference,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function commitmentsFields()
     {
         $commitmentsCount = count($this->commitments);
-        $_submitCommitments = [];
+        $commitments = [
+            'nbrech' => ($commitmentsCount > 0) ? $commitmentsCount : ''
+        ];
 
-        if ($commitmentsCount > 0) {
-            $_submitCommitments['nbrech'] = $commitmentsCount;
-
-            if ($commitmentsCount >= 1) {
-                $_submitCommitments['dateech1'] = $this->commitments[0]['date'];
-                $_submitCommitments['montantech1'] = $this->commitments[0]['amount'];
-            }
-
-            if ($commitmentsCount >= 2) {
-                $_submitCommitments['dateech2'] = $this->commitments[1]['date'];
-                $_submitCommitments['montantech2'] = $this->commitments[1]['amount'];
-            }
-
-            if ($commitmentsCount >= 3) {
-                $_submitCommitments['dateech3'] = $this->commitments[2]['date'];
-                $_submitCommitments['montantech3'] = $this->commitments[2]['amount'];
-            }
-
-            if ($commitmentsCount >= 4) {
-                $_submitCommitments['dateech4'] = $this->commitments[3]['date'];
-                $_submitCommitments['montantech4'] = $this->commitments[3]['amount'];
-            }
+        for ($i = 1; $i <= self::MAC_COMMITMENTS; $i++) {
+            $commitments["dateech${i}"] = ($commitmentsCount >= $i) ? $this->commitments[$i - 1]['date'] : '';
+            $commitments["montantech${i}"] = ($commitmentsCount >= $i) ? $this->commitments[$i - 1]['amount'] . $this->currency : '';
         }
 
+        return $commitments;
+    }
+
+    /**
+     * @return array
+     */
+    private function optionsFields()
+    {
+        return [
+            'ThreeDSecureChallenge' => (isset($this->options['threeDsecureChallenge'])) ? $this->options['threeDsecureChallenge'] : '',
+            '3dsdebrayable' => (isset($this->options['3dsdebrayable'])) ? $this->options['3dsdebrayable'] : '',
+            'aliascb' => (isset($this->options['aliascb'])) ? $this->options['aliascb'] : '',
+            'desactivemoyenpaiement' => (isset($this->options['desactivemoyenpaiement'])) ? $this->options['desactivemoyenpaiement'] : '',
+            'forcesaisiecb' => (isset($this->options['forcesaisiecb'])) ? $this->options['forcesaisiecb'] : '',
+            'libelleMonetique' => (isset($this->options['libelleMonetique'])) ? $this->options['libelleMonetique'] : '',
+        ];
+    }
+
+    public function fieldsToArray($eptCode, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
+    {
         return array_merge(
-            [
-                'version' => $version,
-                'TPE' => $eptCode,
-                'date' => $this->datetime->format('d/m/Y:H:i:s'),
-                'montant' => $this->amount . $this->currency,
-                'reference' => $this->reference,
-                'MAC' => $seal,
-                'url_retour' => $returnUrl,
-                'url_retour_ok' => $successUrl . '?reference=' . $this->reference,
-                'url_retour_err' => $errorUrl . '?reference=' . $this->reference,
-                'lgue' => $this->language,
-                'societe' => $companyCode,
-                'texte-libre' => $this->description,
-                'mail' => $this->email,
-            ],
-            $_submitCommitments
+            $this->baseFields($eptCode, $companyCode, $version),
+            $this->optionsFields(),
+            $this->commitmentsFields(),
+            $this->urlFields($returnUrl, $successUrl, $errorUrl)
         );
     }
 }

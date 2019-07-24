@@ -2,9 +2,12 @@
 
 namespace DansMaCulotte\Monetico;
 
+use DansMaCulotte\Monetico\Cancel\Cancel;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Payment\Payment;
 use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Recovery\Recovery;
+use DansMaCulotte\Monetico\Refund\Refund;
 
 class Monetico
 {
@@ -14,7 +17,7 @@ class Monetico
     const MISC_SERVICE_URL = 'https://payment-api.e-i.com';
 
     const PAYMENT_URI = 'paiement.cgi';
-    const CAPTURE_URI = 'capture_paiement.cgi';
+    const RECOVERY_URI = 'capture_paiement.cgi';
     const REFUND_URI = 'recredit_paiement.cgi';
 
     private $_eptCode = null;
@@ -110,6 +113,52 @@ class Monetico
     }
 
     /**
+     * Return recovery url required to redirect on bank interface
+     *
+     * @param bool $debug
+     *
+     * @return string
+     */
+    public function getRecoveryUrl($debug = false)
+    {
+        $mainServiceUrl = self::MAIN_SERVICE_URL;
+        if ($this->_debug || $debug) {
+            $mainServiceUrl .= '/test';
+        }
+
+        return $mainServiceUrl . '/' . self::RECOVERY_URI;
+    }
+
+    /**
+     * Return recovery url required to redirect on bank interface
+     *
+     * @param bool $debug
+     *
+     * @return string
+     */
+    public function getRefundUrl($debug = false)
+    {
+        $mainServiceUrl = self::MAIN_SERVICE_URL;
+        if ($this->_debug || $debug) {
+            $mainServiceUrl .= '/test';
+        }
+
+        return $mainServiceUrl . '/' . self::REFUND_URI;
+    }
+
+    /**
+     * Return recovery url required to redirect on bank interface
+     *
+     * @param bool $debug
+     *
+     * @return string
+     */
+    public function getCancelUrl($debug = false)
+    {
+        return $this->getRecoveryUrl($debug);
+    }
+
+    /**
      * Return array fields required on bank interface
      *
      * @param Payment $input
@@ -118,21 +167,105 @@ class Monetico
      */
     public function getPaymentFields(Payment $input)
     {
-        $seal = $input->generateSeal(
+        $fields = $input->fieldsToArray(
             $this->_eptCode,
-            $this->_securityKey,
-            self::SERVICE_VERSION,
-            $this->_companyCode
-        );
-
-        $fields = $input->generateFields(
-            $this->_eptCode,
-            $seal,
             self::SERVICE_VERSION,
             $this->_companyCode,
             $this->_returnUrl,
             $this->_successUrl,
             $this->_errorUrl
+        );
+
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
+        $fields = $input->generateFields(
+            $seal,
+            $fields
+        );
+
+        return $fields;
+    }
+
+    /**
+     * Return array fields required on bank interface
+     *
+     * @param Recovery $input
+     *
+     * @return array
+     */
+    public function getRecoveryFields(Recovery $input)
+    {
+        $fields = $input->fieldsToArray(
+            $this->_eptCode,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
+        $fields = $input->generateFields(
+            $seal,
+            $fields
+        );
+
+        return $fields;
+    }
+
+    /**
+     * Return array fields required on cancel bank interface
+     *
+     * @param Cancel $input
+     * @return array
+     */
+    public function getCancelFields(Cancel $input)
+    {
+        $fields = $input->fieldsToArray(
+            $this->_eptCode,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
+        $fields = $input->generateFields(
+            $seal,
+            $fields
+        );
+
+        return $fields;
+    }
+
+    /**
+     * Return array fields required on refund bank interface
+     *
+     * @param Refund $input
+     * @return array
+     */
+    public function getRefundFields(Refund $input)
+    {
+        $fields = $input->fieldsToArray(
+            $this->_eptCode,
+            self::SERVICE_VERSION,
+            $this->_companyCode
+        );
+
+        $seal = $input->generateSeal(
+            $this->_securityKey,
+            $fields
+        );
+
+        $fields = $input->generateFields(
+            $seal,
+            $fields
         );
 
         return $fields;

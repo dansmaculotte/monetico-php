@@ -5,49 +5,21 @@ namespace DansMaCulotte\Monetico\Exceptions;
 class PaymentException extends \Exception
 {
     /**
-     * @param string $reference
-     *
+     * @param $ThreeDSecureChallenge
      * @return PaymentException
      */
-    public static function invalidReference($reference)
+    public static function invalidThreeDSecureChallenge($ThreeDSecureChallenge)
     {
-        return new self("reference value is invalid, should be 12 characters long maximum: ${reference}");
+        return new self("ThreeDSecureChallenge value is invalid: ${ThreeDSecureChallenge}");
     }
 
-    /**
-     * @param string $language
-     *
-     * @return PaymentException
-     */
-    public static function invalidLanguage($language)
-    {
-        return new self("language value is invalid, should be 12 characters long maximum: ${language}");
-    }
-
-    /**
-     * @return PaymentException
-     */
-    public static function invalidDatetime()
-    {
-        return new self("datetime value is not a DateTime object");
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return PaymentException
-     */
-    public static function missingResponseKey($key)
-    {
-        return new self("${key} is missing");
-    }
 
     /**
      * @param string $returnCode
      *
      * @return PaymentException
      */
-    public static function invalidReturnCode($returnCode)
+    public static function invalidResponseReturnCode($returnCode)
     {
         return new self("code-retour value is invalid: ${returnCode}");
     }
@@ -57,7 +29,7 @@ class PaymentException extends \Exception
      *
      * @return PaymentException
      */
-    public static function invalidCardVerificationStatus($status)
+    public static function invalidResponseCardVerificationStatus($status)
     {
         return new self("cvx value is invalid: ${status}");
     }
@@ -67,27 +39,18 @@ class PaymentException extends \Exception
      *
      * @return PaymentException
      */
-    public static function invalidCardBrand($brand)
+    public static function invalidResponseCardBrand($brand)
     {
         return new self("brand value is invalid: ${brand}");
     }
 
-    /**
-     * @param string $DDDSStatus
-     *
-     * @return PaymentException
-     */
-    public static function invalidDDDSStatus($DDDSStatus)
-    {
-        return new self("status3ds value is invalid: ${DDDSStatus}");
-    }
 
     /**
      * @param string $rejectReason
      *
      * @return PaymentException
      */
-    public static function invalidRejectReason($rejectReason)
+    public static function invalidResponseRejectReason($rejectReason)
     {
         return new self("motifrefus value is invalid: ${rejectReason}");
     }
@@ -97,7 +60,7 @@ class PaymentException extends \Exception
      *
      * @return PaymentException
      */
-    public static function invalidPaymentMethod($paymentMethod)
+    public static function invalidResponsePaymentMethod($paymentMethod)
     {
         return new self("modepaiement value is invalid: ${paymentMethod}");
     }
@@ -107,7 +70,7 @@ class PaymentException extends \Exception
      *
      * @return PaymentException
      */
-    public static function invalidFilteredReason($filteredReason)
+    public static function invalidResponseFilteredReason($filteredReason)
     {
         return new self("filtragecause value is invalid: ${filteredReason}");
     }

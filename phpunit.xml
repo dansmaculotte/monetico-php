@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit
         bootstrap="vendor/autoload.php"
+        backupGlobals="false"
+        backupStaticAttributes="false"
         colors="true"
+        verbose="true"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
         convertWarningsToExceptions="true"
+        processIsolation="false"
         stopOnFailure="true">
     <testsuites>
         <testsuite name="Unit Tests">
@@ -16,4 +20,9 @@
             <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
+    <logging>
+        <log type="coverage-html" target="build/coverage"/>
+        <log type="coverage-text" target="build/coverage.txt"/>
+        <log type="coverage-clover" target="build/clover.xml"/>
+    </logging>
 </phpunit>

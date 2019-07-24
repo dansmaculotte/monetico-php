@@ -1,52 +1,67 @@
 <?php
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Payment\Response;
 use PHPUnit\Framework\TestCase;
 
+require_once 'Credentials.fake.php';
+
 class PaymentResponseTest extends TestCase
 {
+    private function generateSeal($data)
+    {
+        ksort($data);
+        $query = http_build_query($data, null, '*');
+        $query = urldecode($query);
+
+        $hash =  strtoupper(hash_hmac(
+            'sha1',
+            $query,
+            Monetico::getUsableKey(SECURITY_KEY)
+        ));
+
+        return $hash;
+    }
+
     private $data = [
-        'TPE' => EPT_CODE,
-        'date' => '01/01/2019_a_08:42:42',
-        'amount' => '42.42EUR',
-        'reference' => 'ABCDEF123',
-        'MAC' => 'YOLO',
-        'texte-libre' => 'PHPUnit',
-        'version' => '3.0',
+        'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJQQVJlcyIgOiAiWSIsCiAgICAgICJWRVJlcyIgOiAiWSIsCiAgICAgICJzdGF0dXMzRFMiIDogMQogICB9LAogICAicHJvdG9jb2wiIDogIjNEU2VjdXJlIiwKICAgInN0YXR1cyIgOiAiYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIxLjAuMiIKfQo=',
+        'bincb' => '000003',
+        'brand' => 'MC',
         'code-retour' => 'payetest',
         'cvx' => 'oui',
-        'vld' => '1219',
-        'brand' => 'VI',
-        'status3ds' => '4',
+        'date' => '11/07/2019_a_10:51:19',
+        'hpancb' => '07CDB0331260C06818027855F795C9F726585286',
+        'ipclient' => '80.15.24.220',
+        'MAC' => '', // needs to be generated
+        'modepaiement' => 'CB',
+        'montant' => '42.42EUR',
         'numauto' => '000000',
-        'motifrefus' => null,
         'originecb' => 'FRA',
-        'bincb' => '000000',
-        'hpancb' => 'NOPE',
-        'ipclient' => '127.0.0.1',
         'originetr' => 'FRA',
-        'veres' => null,
-        'pares' => null,
+        'reference' => 'D2345677',
+        'texte-libre' => 'PHPUnit',
+        'TPE' => '9344512',
+        'vld' => '1219',
     ];
 
     public function testPaymentResponseConstruct()
     {
         $response = new Response($this->data);
-
         $this->assertTrue($response instanceof Response);
     }
 
     public function testPaymentResponseMissingResponseKey()
     {
-        $this->expectExceptionObject(PaymentException::missingResponseKey('date'));
+        $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
         new Response([]);
     }
 
     public function testPaymentResponseExceptionDateTime()
     {
-        $this->expectExceptionObject(PaymentException::invalidDatetime());
+        $this->expectExceptionObject(Exception::invalidResponseDateTime());
 
         $data = $this->data;
         $data['date'] = 'oups';
@@ -54,9 +69,10 @@ class PaymentResponseTest extends TestCase
         new Response($data);
     }
 
+
     public function testPaymentResponseExceptionReturnCode()
     {
-        $this->expectExceptionObject(PaymentException::invalidReturnCode('foo'));
+        $this->expectExceptionObject(PaymentException::invalidResponseReturnCode('foo'));
 
         $data = $this->data;
         $data['code-retour'] = 'foo';
@@ -66,7 +82,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionCardVerificationStatus()
     {
-        $this->expectExceptionObject(PaymentException::invalidCardVerificationStatus('nope'));
+        $this->expectExceptionObject(PaymentException::invalidResponseCardVerificationStatus('nope'));
 
         $data = $this->data;
         $data['cvx'] = 'nope';
@@ -76,7 +92,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionCardBrand()
     {
-        $this->expectExceptionObject(PaymentException::invalidCardBrand('foo'));
+        $this->expectExceptionObject(PaymentException::invalidResponseCardBrand('foo'));
 
         $data = $this->data;
         $data['brand'] = 'foo';
@@ -84,19 +100,9 @@ class PaymentResponseTest extends TestCase
         new Response($data);
     }
 
-    public function testPaymentResponseExceptionDDDSStatus()
-    {
-        $this->expectExceptionObject(PaymentException::invalidDDDSStatus('42'));
-
-        $data = $this->data;
-        $data['status3ds'] = '42';
-
-        new Response($data);
-    }
-
     public function testPaymentResponseExceptionRejectReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidRejectReason('foobar'));
+        $this->expectExceptionObject(PaymentException::invalidResponseRejectReason('foobar'));
 
         $data = $this->data;
         $data['motifrefus'] = 'foobar';
@@ -106,7 +112,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionPaymentMethod()
     {
-        $this->expectExceptionObject(PaymentException::invalidPaymentMethod('bar'));
+        $this->expectExceptionObject(PaymentException::invalidResponsePaymentMethod('bar'));
 
         $data = $this->data;
         $data['modepaiement'] = 'bar';
@@ -116,7 +122,7 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseExceptionFilteredReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidFilteredReason('10'));
+        $this->expectExceptionObject(PaymentException::invalidResponseFilteredReason('10'));
 
         $data = $this->data;
         $data['filtragecause'] = '10';
@@ -133,6 +139,10 @@ class PaymentResponseTest extends TestCase
         $data['filtrage_etat'] = 'test';
         $data['cbenregistree'] = '1';
         $data['cbmasquee'] = '1234XXXXXXXXXXX1234';
+        $data['motifrefus'] = 'Interdit';
+        $data['filtragecause'] = '1';
+        $data['cbenregistree'] = '1';
+
 
         $response = new Response($data);
 
@@ -141,5 +151,55 @@ class PaymentResponseTest extends TestCase
         $this->assertTrue($response->filteredStatus === 'test');
         $this->assertTrue($response->cardBookmarked === true);
         $this->assertTrue($response->cardMask === '1234XXXXXXXXXXX1234');
+    }
+
+    public function testAuthenticationDecode()
+    {
+        $data = $this->data;
+
+        $response = new Response($data);
+
+        $this->assertEquals('3DSecure', $response->authentication->protocol);
+        $this->assertEquals('authenticated', $response->authentication->status);
+        $this->assertEquals('1.0.2', $response->authentication->version);
+        $this->assertEquals('Y', $response->authentication->details['PARes']);
+        $this->assertEquals('Y', $response->authentication->details['VERes']);
+        $this->assertEquals('1', $response->authentication->details['status3DS']);
+    }
+
+    public function testSealIsValid()
+    {
+        $data = [
+            'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJBUmVzIiA6ICJZIiwKICAgICAgImF1dGhlbnRpY2F0aW9uVmFsdWUiIDogIlFVRkNRa05EUkVSRlJVWkdRVUZDUWtORFJFUT0iLAogICAgICAibGlhYmlsaXR5U2hpZnQiIDogIlkiLAogICAgICAibWVyY2hhbnRQcmVmZXJlbmNlIiA6ICJub19wcmVmZXJlbmNlIiwKICAgICAgInRyYW5zYWN0aW9uSUQiIDogIjdjOTgyNTVhLWE5YzctNDYxYy1hZDEyLWM3NjM5MzczZDljYiIKICAgfSwKICAgInByb3RvY29sIiA6ICIzRFNlY3VyZSIsCiAgICJzdGF0dXMiIDogImF1dGhlbnRpY2F0ZWQiLAogICAidmVyc2lvbiIgOiAiMi4xLjAiCn0K',
+            'bincb' => '000003',
+            'brand' => 'MC',
+            'code-retour' => 'payetest',
+            'cvx' => 'oui',
+            'hpancb' => '6FF1313F3B6FE9B053B21CBDEE516603CB8CF01E',
+            'ipclient' => '80.15.24.220',
+            'modepaiement' => 'CB',
+            'numauto' => '000000',
+            'originecb' => 'FRA',
+            'originetr' => 'FRA',
+            'vld' => '1221',
+            'date' => '23/07/2019_a_11:55:47',
+            'montant' => '42.42EUR',
+            'reference' => '12345678',
+            'texte-libre' => 'PHPUnit',
+            'TPE' => '9344512',
+            'montantech' => '50EUR',
+            'filtragevaleur' => 'foobar',
+            'filtrage_etat' => 'test',
+            'cbenregistree' => '1',
+            'cbmasquee' => '1234XXXXXXXXXXX1234',
+            'motifrefus' => 'Interdit',
+            'filtragecause' => '1',
+        ];
+
+        $data['MAC'] = $this->generateSeal($data);
+
+        $response = new Response($data);
+        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY), '3.0');
+        $this->assertTrue($sealValid);
     }
 }

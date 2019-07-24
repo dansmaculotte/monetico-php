@@ -51,6 +51,9 @@ class Payment implements Method
     /** @var array */
     public $commitments;
 
+    /** @var int */
+    const MAC_COMMITMENTS = 4;
+
     /** @var array */
     const PAYMENT_WAYS = [
         '1euro',
@@ -265,20 +268,17 @@ class Payment implements Method
      */
     private function commitmentsFields()
     {
-        $commitments = $this->commitments;
-        $commitmentsCount = count($commitments);
-
-        return [
-            'dateech1' => ($commitmentsCount >= 1) ? $commitments[0]['date'] : '',
-            'dateech2' => ($commitmentsCount >= 2) ? $commitments[1]['date'] : '',
-            'dateech3' => ($commitmentsCount >= 3) ? $commitments[2]['date'] : '',
-            'dateech4' => ($commitmentsCount >= 4) ? $commitments[3]['date'] : '',
-            'montantech1' => ($commitmentsCount >= 1) ? $commitments[0]['amount'] . $this->currency : '',
-            'montantech2' => ($commitmentsCount >= 2) ? $commitments[1]['amount'] . $this->currency : '',
-            'montantech3' => ($commitmentsCount >= 3) ? $commitments[2]['amount'] . $this->currency : '',
-            'montantech4' => ($commitmentsCount >= 4) ? $commitments[3]['amount'] . $this->currency : '',
-            'nbrech' => ($commitmentsCount > 0) ? $commitmentsCount : '',
+        $commitmentsCount = count($this->commitments);
+        $commitments = [
+            'nbrech' => ($commitmentsCount > 0) ? $commitmentsCount : ''
         ];
+
+        for ($i = 1; $i <= self::MAC_COMMITMENTS; $i++) {
+            $commitments["dateech${i}"] = ($commitmentsCount >= $i) ? $this->commitments[$i - 1]['date'] : '';
+            $commitments["montantech${i}"] = ($commitmentsCount >= $i) ? $this->commitments[$i - 1]['amount'] . $this->currency : '';
+        }
+
+        return $commitments;
     }
 
     /**

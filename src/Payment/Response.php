@@ -390,7 +390,7 @@ class Response
         $query = http_build_query($fields, null, '*');
         $query = urldecode($query);
 
-        $hash =  strtoupper(hash_hmac(
+        $hash = strtoupper(hash_hmac(
             'sha1',
             $query,
             $securityKey

@@ -99,7 +99,7 @@ class Client
             'addressLine3' => $addressLine3,
             'city' => $city,
             'postalCode' => $postalCode,
-            'country ' => $country ,
+            'country' => $country,
             'stateOrProvince' => $stateOrProvince,
             'countrySubdivision' => $countrySubdivision,
             'email' => $email,

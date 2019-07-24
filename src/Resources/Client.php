@@ -60,7 +60,7 @@ class Client
         string $addressLine3 = null,
         string $city = null,
         string $postalCode = null,
-        string $country  = null,
+        string $country = null,
         string $stateOrProvince = null,
         string $countrySubdivision = null,
         string $email = null,

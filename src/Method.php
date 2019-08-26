@@ -2,11 +2,29 @@
 
 namespace DansMaCulotte\Monetico;
 
-interface Method
+abstract class Method
 {
-    public function generateSeal($securityKey, $fields);
+    public function generateSeal($securityKey, $fields)
+    {
+        ksort($fields);
 
-    public function generateFields($seal, $fields);
+        $query = http_build_query($fields, null, '*');
+        $query = urldecode($query);
 
-    public function validate();
+        return strtoupper(hash_hmac(
+            'sha1',
+            $query,
+            $securityKey
+        ));
+    }
+
+    public function generateFields($seal, $fields)
+    {
+        return array_merge(
+            $fields,
+            ['MAC' => $seal]
+        );
+    }
+
+    abstract public function validate();
 }

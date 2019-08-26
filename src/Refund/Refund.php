@@ -2,15 +2,12 @@
 
 namespace DansMaCulotte\Monetico\Refund;
 
-use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Method;
 use DateTime;
 
-class Refund implements Method
+class Refund extends Method
 {
-    use BaseMethod;
-
     /** @var \DateTime */
     public $datetime;
 

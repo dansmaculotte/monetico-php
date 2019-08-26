@@ -2,7 +2,6 @@
 
 namespace DansMaCulotte\Monetico\Payment;
 
-use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Method;
@@ -11,10 +10,8 @@ use DansMaCulotte\Monetico\Resources\AddressShipping;
 use DansMaCulotte\Monetico\Resources\Client;
 use DateTime;
 
-class Payment implements Method
+class Payment extends Method
 {
-    use BaseMethod;
-
     /** @var string */
     public $reference;
 

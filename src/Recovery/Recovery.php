@@ -2,17 +2,13 @@
 
 namespace DansMaCulotte\Monetico\Recovery;
 
-use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use DansMaCulotte\Monetico\Method;
 use DateTime;
 
-class Recovery implements Method
+class Recovery extends Method
 {
-    use BaseMethod;
-
-
     /** @var \DateTime */
     public $dateTime;
 

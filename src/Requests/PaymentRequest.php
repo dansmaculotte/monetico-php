@@ -276,8 +276,8 @@ class PaymentRequest extends AbstractRequest
     private function urlFields(): array
     {
         return [
-            'url_retour_ok' => $this->successUrl . '?reference=' . $this->reference,
-            'url_retour_err' => $this->errorUrl . '?reference=' . $this->reference,
+            'url_retour_ok' => $this->successUrl,
+            'url_retour_err' => $this->errorUrl,
         ];
     }
 

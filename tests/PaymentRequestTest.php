@@ -4,19 +4,18 @@ use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Resources\AddressBilling;
-use DansMaCulotte\Monetico\Resources\AddressShipping;
-use DansMaCulotte\Monetico\Resources\Client;
+use DansMaCulotte\Monetico\Requests\PaymentRequest;
+use DansMaCulotte\Monetico\Resources\AddressResource;
+use DansMaCulotte\Monetico\Resources\ClientResource;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
 
-class PaymentTest extends TestCase
+class PaymentRequestTest extends TestCase
 {
     public function testPaymentConstruct()
     {
-        $payment = new Payment([
+        $payment = new PaymentRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -24,16 +23,41 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $this->assertTrue($payment instanceof Payment);
+        $this->assertTrue($payment instanceof PaymentRequest);
+    }
+
+    public function testPaymentUrl()
+    {
+        $payment = new PaymentRequest([
+            'reference' => 'ABCDEF123',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
+        ]);
+
+        $url = $payment->getUrl();
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
+
+        $url = $payment->getUrl(true);
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }
 
     public function testPaymentExceptionReference()
     {
         $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknow'));
 
-        new Payment([
+        new PaymentRequest([
             'reference' => 'thisisabigerroryouknow',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -41,6 +65,8 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
     }
 
@@ -48,7 +74,7 @@ class PaymentTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidLanguage('WTF'));
 
-        new Payment([
+        new PaymentRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'WTF',
@@ -56,6 +82,8 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
     }
 
@@ -63,7 +91,7 @@ class PaymentTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
 
-        new Payment([
+        new PaymentRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -71,12 +99,14 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => '42',
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
     }
 
     public function testPaymentOptions()
     {
-        $payment = new Payment([
+        $payment = new PaymentRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -84,6 +114,8 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
         $payment->setCardAlias('foobar');
@@ -131,15 +163,17 @@ class PaymentTest extends TestCase
 
     public function testPaymentCommitments()
     {
-        $payment = new Payment(
+        $payment = new PaymentRequest(
             [
-            'reference' => 'ABCDEF123',
-            'description' => 'PHPUnit',
-            'language' => 'FR',
-            'email' => 'john@english.fr',
-            'amount' => 200,
-            'currency' => 'EUR',
-            'dateTime' => Carbon::create(2019, 1, 1),
+                'reference' => 'ABCDEF123',
+                'description' => 'PHPUnit',
+                'language' => 'FR',
+                'email' => 'john@english.fr',
+                'amount' => 200,
+                'currency' => 'EUR',
+                'dateTime' => Carbon::create(2019, 1, 1),
+                'successUrl' => 'https://127.0.0.1/success',
+                'errorUrl' => 'https://127.0.0.1/error'
             ],
             [
                 [
@@ -171,10 +205,7 @@ class PaymentTest extends TestCase
             $payment->fieldsToArray(
                 'FOOBAR',
                 3.0,
-                'FOO',
-                'https://127.0.0.1',
-                'https://127.0.0.1/success',
-                'https://127.0.0.1/error'
+                'FOO'
             )
         );
 
@@ -209,7 +240,7 @@ class PaymentTest extends TestCase
 
     public function testSetOrderContext()
     {
-        $payment = new Payment([
+        $payment = new PaymentRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -217,21 +248,25 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $addressBilling = new AddressBilling('7 rue melingue', 'Caen', '14000', 'France');
+        $addressBilling = new AddressResource('7 rue melingue', 'Caen', '14000', 'France');
         $payment->setAddressBilling($addressBilling);
 
-        $addressShipping = new AddressShipping('7 rue melingue', 'Caen', '14000', 'France');
+        $addressShipping = new AddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $addressShipping->setOptionalField('email', 'john@english.fr');
         $payment->setAddressShipping($addressShipping);
 
-        $client = new Client('MR', 'FooBoo', 'Foo', 'Boo');
+        $client = new ClientResource('MR', 'FooBoo', 'Foo', 'Boo');
         $payment->setClient($client);
 
         $this->assertEquals('7 rue melingue', $payment->addressShipping->data['addressLine1']);
         $this->assertEquals('Caen', $payment->addressShipping->data['city']);
         $this->assertEquals('14000', $payment->addressShipping->data['postalCode']);
         $this->assertEquals('France', $payment->addressShipping->data['country']);
+        $this->assertEquals('john@english.fr', $payment->addressShipping->data['email']);
 
         $this->assertEquals('7 rue melingue', $payment->addressBilling->data['addressLine1']);
         $this->assertEquals('Caen', $payment->addressBilling->data['city']);
@@ -246,7 +281,7 @@ class PaymentTest extends TestCase
 
     public function testSet3DSecure()
     {
-        $payment = new Payment([
+        $payment = new PaymentRequest([
             'reference' => '12345679',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -254,6 +289,8 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 07, 23),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
         $payment->setThreeDSecureChallenge('challenge_mandated');
@@ -263,10 +300,7 @@ class PaymentTest extends TestCase
         $fields = $payment->fieldsToArray(
             EPT_CODE,
             '3.0',
-            COMPANY_CODE,
-            'https://dev.dansmaculotte.com',
-            'https://dev.dansmaculotte.com/success',
-            'https://dev.dansmaculotte.com/error'
+            COMPANY_CODE
         );
 
         $seal = $payment->generateSeal(
@@ -286,7 +320,7 @@ class PaymentTest extends TestCase
     {
         $this->expectExceptionObject(PaymentException::invalidThreeDSecureChallenge('invalid_choice'));
 
-        $payment = new Payment([
+        $payment = new PaymentRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -294,6 +328,8 @@ class PaymentTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
         $payment->setThreeDSecureChallenge('invalid_choice');

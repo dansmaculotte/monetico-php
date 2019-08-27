@@ -1,26 +1,11 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Refund;
+namespace DansMaCulotte\Monetico\Responses;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
 
-class Response
+class RefundResponse extends AbstractResponse
 {
-    /** @var float */
-    const SERVICE_VERSION = 1.0;
-
-    /** @var string */
-    public $returnCode;
-
-    /** @var string */
-    public $description;
-
-    /** @var float  */
-    public $version;
-
-    /** @var string  */
-    public $reference;
-
     /** @var string */
     public $fileNumber;
 
@@ -40,25 +25,9 @@ class Response
      * @param array $data
      * @throws Exception
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
-        $this->version = self::SERVICE_VERSION;
-
-        $requiredKeys = [
-            'cdr',
-            'lib',
-            'reference',
-        ];
-
-        foreach ($requiredKeys as $key) {
-            if (!in_array($key, array_keys($data))) {
-                throw Exception::missingResponseKey($key);
-            }
-        }
-
-        $this->returnCode = $data['cdr'];
-        $this->description = $data['lib'];
-        $this->reference = $data['reference'];
+        parent::__construct($data);
 
         if (isset($data['numero_dossier'])) {
             $this->fileNumber = $data['numero_dossier'];

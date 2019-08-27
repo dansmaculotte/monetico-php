@@ -3,7 +3,7 @@
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Responses\PaymentResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
@@ -48,15 +48,15 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseConstruct()
     {
-        $response = new Response($this->data);
-        $this->assertTrue($response instanceof Response);
+        $response = new PaymentResponse($this->data);
+        $this->assertTrue($response instanceof PaymentResponse);
     }
 
     public function testPaymentResponseMissingResponseKey()
     {
         $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
-        new Response([]);
+        new PaymentResponse([]);
     }
 
     public function testPaymentResponseExceptionDateTime()
@@ -66,7 +66,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['date'] = 'oups';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
 
@@ -77,7 +77,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['code-retour'] = 'foo';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
     public function testPaymentResponseExceptionCardVerificationStatus()
@@ -87,7 +87,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['cvx'] = 'nope';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
     public function testPaymentResponseExceptionCardBrand()
@@ -97,7 +97,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['brand'] = 'foo';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
     public function testPaymentResponseExceptionRejectReason()
@@ -107,7 +107,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['motifrefus'] = 'foobar';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
     public function testPaymentResponseExceptionPaymentMethod()
@@ -117,7 +117,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['modepaiement'] = 'bar';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
     public function testPaymentResponseExceptionFilteredReason()
@@ -127,7 +127,7 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['filtragecause'] = '10';
 
-        new Response($data);
+        new PaymentResponse($data);
     }
 
     public function testPaymentWithOptionals()
@@ -144,7 +144,7 @@ class PaymentResponseTest extends TestCase
         $data['cbenregistree'] = '1';
 
 
-        $response = new Response($data);
+        $response = new PaymentResponse($data);
 
         $this->assertTrue($response->commitmentAmount === '50EUR');
         $this->assertTrue($response->filteredValue === 'foobar');
@@ -157,7 +157,7 @@ class PaymentResponseTest extends TestCase
     {
         $data = $this->data;
 
-        $response = new Response($data);
+        $response = new PaymentResponse($data);
 
         $this->assertEquals('3DSecure', $response->authentication->protocol);
         $this->assertEquals('authenticated', $response->authentication->status);
@@ -198,8 +198,8 @@ class PaymentResponseTest extends TestCase
 
         $data['MAC'] = $this->generateSeal($data);
 
-        $response = new Response($data);
-        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY), '3.0');
+        $response = new PaymentResponse($data);
+        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
         $this->assertTrue($sealValid);
     }
 }

@@ -3,14 +3,14 @@
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
-use DansMaCulotte\Monetico\Recovery\Recovery;
+use DansMaCulotte\Monetico\Requests\RecoveryRequest;
 use PHPUnit\Framework\TestCase;
 
-class RecoveryTest extends TestCase
+class RecoveryRequestTest extends TestCase
 {
     public function testRecoveryConstruct()
     {
-        $recovery = new Recovery([
+        $recovery = new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -22,14 +22,37 @@ class RecoveryTest extends TestCase
             'amountLeft' => 50
         ]);
 
-        $this->assertTrue($recovery instanceof Recovery);
+        $this->assertTrue($recovery instanceof RecoveryRequest);
+    }
+
+    public function testRecoveryUrl()
+    {
+        $recovery = new RecoveryRequest([
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'reference' => 'ABC123',
+            'language' => 'FR',
+            'currency' => 'EUR',
+            'amount' => 100,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
+            'amountLeft' => 50
+        ]);
+
+        $url = $recovery->getUrl();
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
+
+        $url = $recovery->getUrl(true);
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
     }
 
     public function testRecoveryConstructExceptionInvalidAmounts()
     {
         $this->expectExceptionObject(RecoveryException::invalidAmounts(100, 30, 0, 50));
 
-        new Recovery([
+        new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -46,7 +69,7 @@ class RecoveryTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
 
-        new Recovery([
+        new RecoveryRequest([
             'dateTime' => 'invalid',
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -63,7 +86,7 @@ class RecoveryTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidOrderDate());
 
-        new Recovery([
+        new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 1, 1),
             'orderDate' => 'invalid',
             'reference' => 'ABC123',
@@ -80,7 +103,7 @@ class RecoveryTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
 
-        new Recovery([
+        new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'thisisatoolongreference',
@@ -97,7 +120,7 @@ class RecoveryTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidLanguage('English'));
 
-        new Recovery([
+        new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -112,7 +135,7 @@ class RecoveryTest extends TestCase
 
     public function testRecoveryOptions()
     {
-        $recovery = new Recovery([
+        $recovery = new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -144,7 +167,7 @@ class RecoveryTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
 
-        $recovery = new Recovery([
+        $recovery = new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',

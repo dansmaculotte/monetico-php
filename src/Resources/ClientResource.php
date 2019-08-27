@@ -2,7 +2,7 @@
 
 namespace DansMaCulotte\Monetico\Resources;
 
-class Client
+class ClientResource
 {
     /** @var array */
     public $data = [];

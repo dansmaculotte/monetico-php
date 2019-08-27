@@ -30,22 +30,18 @@ use DansMaCulotte\Monetico\Monetico;
 $monetico = new Monetico(
     'EPT_CODE',
     'SECURITY_KEY',
-    'COMPANY_CODE',
-    'RETURN_URL',
-    'RETURN_SUCCESS_URL',
-    'RETURN_ERROR_URL'
+    'COMPANY_CODE'
 );
 ```
 
 ### Payment
 
 ```php
-use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Resources\AddressBilling;
-use DansMaCulotte\Monetico\Resources\AddressShipping;
-use DansMaCulotte\Monetico\Resources\Client;
+use DansMaCulotte\Monetico\Requests\PaymentRequest;
+use DansMaCulotte\Monetico\Resources\AddressResource;
+use DansMaCulotte\Monetico\Resources\ClientResource;
 
-$payment = new Payment(array(
+$payment = new PaymentRequest([
     'reference' => 'ABCDEF123',
     'description' => 'Documentation',
     'language' => 'FR',
@@ -53,41 +49,42 @@ $payment = new Payment(array(
     'amount' => 42,
     'currency' => 'EUR',
     'datetime' => Carbon::create(2019, 1, 1),
-));
+    'successUrl' => 'http://localhost/thanks',
+    'errorUrl' => 'http://localhost/oops',
+]);
 
-$addressBilling = new AddressBilling('7 rue melingue', 'Caen', '14000', 'France');
-$payment->setAddressBilling($addressBilling);
+$address = new AddressResource('7 rue melingue', 'Caen', '14000', 'France');
+$payment->setAddressBilling($address);
+$address->setOptionalField('email', 'john@snow.stark');
+$payment->setAddressShipping($address);
 
-$addressShipping = new AddressShipping('7 rue melingue', 'Caen', '14000', 'France');
-$payment->setAddressShipping($addressShipping);
-
-$client = new Client('MR', 'John', 'Stark', 'Snow');
+$client = new ClientResource('MR', 'John', 'Stark', 'Snow');
 $payment->setClient($client);
 
-$url = $monetico->getPaymentUrl();
-$fields = $monetico->getPaymentFields($payment);
+$url = $payment->getUrl();
+$fields = $monetico->getFields($payment);
 ```
 
 ```php
-Use DansMaCulotte\Monetico\Payment\Response;
-use DansMaCulotte\Monetico\Payment\Receipt;
+use DansMaCulotte\Monetico\Responses\PaymentResponse;
+use DansMaCulotte\Monetico\Receips\PaymentReceipt;
 
 // $data = json_decode($body, true);
 
-$response = new Response($data);
+$response = new PaymentResponse($data);
 
-$result = $monetico->validateSeal($response);
+$result = $monetico->validate($response);
 
-$receipt = new Receipt($result);
+$receipt = new PaymentReceipt($result);
 ```
 
 ### Recovery
 
 ```php
-Use DansMaCulotte\Monetico\Recovery\Recovery;
-use DansMaCulotte\Monetico\Recovery\Response;
+use DansMaCulotte\Monetico\Requests\RecoveryRequest;
+use DansMaCulotte\Monetico\Responses\RecoveryResponse;
 
-$recovery = new Recovery([
+$recovery = new RecoveryRequest([
     'reference' => 'AXCDEF123',
     'language' => 'FR',
     'amount' => 42.42,
@@ -99,24 +96,24 @@ $recovery = new Recovery([
     'dateTime' => Carbon::create(2019, 07, 17),
 ]);
 
-$url = $monetico->getRecoveryUrl();
-$fields = $monetico->getRecoveryFields($recovery);
+$url = $recovery->getUrl();
+$fields = $monetico->getFields($recovery);
 
 $client = new GuzzleHttp\Client();
 $data = $client->request('POST', $url, $fields);
 
 // $data = json_decode($data, true);
 
-$response = new Response($data);
+$response = new RecoveryResponse($data);
 ```
 
 ### Cancel
 
 ```php
-use DansMaCulotte\Monetico\Cancel\Cancel;
-use DansMaCulotte\Monetico\Cancel\Response;
+use DansMaCulotte\Monetico\Requests\CancelRequest;
+use DansMaCulotte\Monetico\Responses\CancelResponse;
 
-$cancel = new Cancel([
+$cancel = new CancelRequest([
     'dateTime' => Carbon::create(2019, 2, 1),
     'orderDate' => Carbon::create(2019, 1, 1),
     'reference' => 'ABC123',
@@ -126,24 +123,24 @@ $cancel = new Cancel([
     'amountRecovered' => 0,
 ]);
 
-$url = $monetico->getCancelUrl();
-$fields = $monetico->getCancelFields($recovery);
+$url = $cancel->getUrl();
+$fields = $monetico->getFields($cancel);
 
 $client = new GuzzleHttp\Client();
 $data = $client->request('POST', $url, $fields);
 
 // $data = json_decode($data, true);
 
-$response = new Response($data);
+$response = new CancelResponse($data);
 ```
 
 ### Refund
 
 ```php
-use DansMaCulotte\Monetico\Refund\Refund;
-use DansMaCulotte\Monetico\Refund\Response;
+use DansMaCulotte\Monetico\Requests\RefundRequest;
+use DansMaCulotte\Monetico\Responses\RefundResponse;
 
-$refund = new Refund([
+$refund = new RefundRequest([
     'datetime' => Carbon::create(2019, 2, 1),
     'orderDatetime' => Carbon::create(2019, 1, 1),
     'recoveryDatetime' => Carbon::create(2019, 1, 1),
@@ -156,15 +153,15 @@ $refund = new Refund([
     'maxRefundAmount' => 80,
 ]);
 
-$url = $monetico->getRefundUrl();
-$fields = $monetico->getRefundFields($recovery);
+$url = $refund->getUrl();
+$fields = $monetico->getFields($recovery);
 
 $client = new GuzzleHttp\Client();
 $data = $client->request('POST', $url, $fields);
 
 // $data = json_decode($data, true);
 
-$response = new Response($data);
+$response = new RefundResponse($data);
 ```
 ## License
 

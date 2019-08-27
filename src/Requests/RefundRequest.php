@@ -1,12 +1,11 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Refund;
+namespace DansMaCulotte\Monetico\Requests;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Method;
 use DateTime;
 
-class Refund extends Method
+class RefundRequest extends AbstractRequest
 {
     /** @var \DateTime */
     public $datetime;
@@ -56,6 +55,9 @@ class Refund extends Method
     /** @var string */
     const DATE_FORMAT = 'd/m/Y';
 
+    /** @var string */
+    const REQUEST_URI = 'recredit_paiement.cgi';
+
     /**
      * Refund constructor.
      * @param array $data
@@ -75,6 +77,14 @@ class Refund extends Method
         $this->language = $data['language'];
 
         $this->validate();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRequestUri(): string
+    {
+        return self::REQUEST_URI;
     }
 
     /**
@@ -98,7 +108,13 @@ class Refund extends Method
         $this->invoiceType = $invoiceType;
     }
 
-    public function fieldsToArray($eptCode, $version, $companyCode)
+    /**
+     * @param string $eptCode
+     * @param string $version
+     * @param string $companyCode
+     * @return array
+     */
+    public function fieldsToArray(string $eptCode, string $version, string $companyCode): array
     {
         $fields = array_merge([
             'TPE' => $eptCode,
@@ -129,7 +145,7 @@ class Refund extends Method
     /**
      * @throws Exception
      */
-    public function validate()
+    public function validate(): bool
     {
         if (!$this->datetime instanceof DateTime) {
             throw Exception::invalidDatetime();
@@ -150,5 +166,7 @@ class Refund extends Method
         if (strlen($this->language) != 2) {
             throw Exception::invalidLanguage($this->language);
         }
+
+        return true;
     }
 }

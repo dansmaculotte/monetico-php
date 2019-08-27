@@ -1,14 +1,14 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\AuthenticationException;
-use DansMaCulotte\Monetico\Resources\Authentication;
+use DansMaCulotte\Monetico\Resources\AuthenticationResource;
 use PHPUnit\Framework\TestCase;
 
 class AuthenticationResourceTest extends TestCase
 {
     public function testAuthenticationConstruct()
     {
-        $authentication = new Authentication(
+        $authentication = new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -22,14 +22,14 @@ class AuthenticationResourceTest extends TestCase
                 "disablingReason" => "seuilnonatteint"
             ]
         );
-        $this->assertTrue($authentication instanceof Authentication);
+        $this->assertTrue($authentication instanceof AuthenticationResource);
     }
 
     public function testAuthenticationConstructExceptionInvalidProtocol()
     {
         $this->expectExceptionObject(AuthenticationException::invalidProtocol('invalid'));
 
-        new Authentication(
+        new AuthenticationResource(
             'invalid',
             'authenticated',
             '2.1.0',
@@ -48,7 +48,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidStatus('invalid'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'invalid',
             '2.1.0',
@@ -67,7 +67,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidVersion('0.5'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '0.5',
@@ -86,7 +86,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidLiabilityShift('X'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -105,7 +105,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidVERes('X'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -125,7 +125,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidPARes('X'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -145,7 +145,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidARes('X'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -164,7 +164,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidCRes('D'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -182,7 +182,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidMerchantPreference('invalid'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -199,7 +199,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidDDDSStatus(10));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',
@@ -216,7 +216,7 @@ class AuthenticationResourceTest extends TestCase
     {
         $this->expectExceptionObject(AuthenticationException::invalidDisablingReason('invalid'));
 
-        new Authentication(
+        new AuthenticationResource(
             '3DSecure',
             'authenticated',
             '2.1.0',

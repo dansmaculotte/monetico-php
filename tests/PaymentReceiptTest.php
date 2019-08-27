@@ -1,24 +1,24 @@
 <?php
 
-use DansMaCulotte\Monetico\Payment\Receipt;
+use DansMaCulotte\Monetico\Receipts\PaymentReceipt;
 use PHPUnit\Framework\TestCase;
 
 class PaymentReceiptTest extends TestCase
 {
     public function testPaymentReceiptConstruct()
     {
-        $receipt = new Receipt(true);
+        $receipt = new PaymentReceipt(true);
 
-        $this->assertTrue($receipt instanceof Receipt);
+        $this->assertTrue($receipt instanceof PaymentReceipt);
     }
 
     public function testPaymentReceiptOuput()
     {
-        $receipt = new Receipt(true);
+        $receipt = new PaymentReceipt(true);
 
         $this->assertTrue((string) $receipt === "version=2\ncdr=0\n");
 
-        $receipt = new Receipt(false);
+        $receipt = new PaymentReceipt(false);
 
         $this->assertTrue((string) $receipt === "version=2\ncdr=1\n");
     }

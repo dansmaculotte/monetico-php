@@ -1,15 +1,15 @@
 <?php
 
 use Carbon\Carbon;
-use DansMaCulotte\Monetico\Cancel\Cancel;
 use DansMaCulotte\Monetico\Exceptions\Exception;
+use DansMaCulotte\Monetico\Requests\CancelRequest;
 use PHPUnit\Framework\TestCase;
 
-class CancelTest extends TestCase
+class CancelRequestTest extends TestCase
 {
     public function testCancelConstruct()
     {
-        $cancel = new Cancel([
+        $cancel = new CancelRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -19,14 +19,35 @@ class CancelTest extends TestCase
             'amountRecovered' => 0,
         ]);
 
-        $this->assertTrue($cancel instanceof Cancel);
+        $this->assertTrue($cancel instanceof CancelRequest);
+    }
+
+    public function testCancelUrl()
+    {
+        $cancel = new CancelRequest([
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'reference' => 'ABC123',
+            'language' => 'FR',
+            'currency' => 'EUR',
+            'amount' => 100,
+            'amountRecovered' => 0,
+        ]);
+
+        $url = $cancel->getUrl();
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
+
+        $url = $cancel->getUrl(true);
+
+        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
     }
 
     public function testRecoveryConstructExceptionInvalidDatetime()
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
 
-        new Cancel([
+        new CancelRequest([
             'dateTime' => 'invalid',
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',
@@ -41,7 +62,7 @@ class CancelTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidOrderDate());
 
-        new Cancel([
+        new CancelRequest([
             'dateTime' => Carbon::create(2019, 1, 1),
             'orderDate' => 'invalid',
             'reference' => 'ABC123',
@@ -56,7 +77,7 @@ class CancelTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
 
-        new Cancel([
+        new CancelRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'thisisatoolongreference',
@@ -71,7 +92,7 @@ class CancelTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidLanguage('English'));
 
-        new Cancel([
+        new CancelRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
             'reference' => 'ABC123',

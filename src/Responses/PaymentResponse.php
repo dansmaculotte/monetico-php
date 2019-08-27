@@ -1,16 +1,17 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Payment;
+namespace DansMaCulotte\Monetico\Responses;
 
+use DansMaCulotte\Monetico\Exceptions\AuthenticationException;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
-use DansMaCulotte\Monetico\Resources\Authentication;
+use DansMaCulotte\Monetico\Resources\AuthenticationResource;
 use DateTime;
 
-class Response
+class PaymentResponse extends AbstractResponse
 {
     /** @var string */
-    private $eptCode;
+    public $eptCode;
 
     /** @var \DateTime */
     public $dateTime;
@@ -19,16 +20,7 @@ class Response
     public $amount;
 
     /** @var string */
-    public $reference;
-
-    /** @var string */
     public $seal;
-
-    /** @var string */
-    public $description;
-
-    /** @var string */
-    public $returnCode;
 
     /** @var string */
     public $cardVerificationStatus;
@@ -54,9 +46,6 @@ class Response
     /** @var string */
     public $cardMask = null;
 
-    /** @var int */
-    public $DDDSStatus;
-
     /** @var string */
     public $rejectReason = null;
 
@@ -68,12 +57,6 @@ class Response
 
     /** @var string */
     public $transactionCountry;
-
-    /** @var string */
-    public $veresStatus;
-
-    /** @var string */
-    public $paresStatus;
 
     /** @var string */
     public $paymentMethod = null;
@@ -90,7 +73,7 @@ class Response
     /** @var string */
     public $filteredStatus = null;
 
-    /** @var Authentication */
+    /** @var AuthenticationResource */
     public $authentication = null;
 
     /** @var string */
@@ -127,8 +110,6 @@ class Response
         'na' => 'Non disponible',
     ];
 
-
-
     /** @var array  */
     const REJECT_REASONS = [
         'Appel Phonie',
@@ -158,103 +139,67 @@ class Response
      * OutputPayload constructor.
      *
      * @param array $data
-     *
      * @throws \Exception
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
-        $this->validateRequiredKeys($data);
+        parent::__construct($data);
 
-        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $data['date']);
+        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $this->dateTime);
         if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidResponseDateTime();
         }
 
-        $this->eptCode = $data['TPE'];
-
-        // ToDo: Split amount and currency with ISO4217
-        $this->amount = $data['montant'];
-        $this->reference = $data['reference'];
-        $this->seal = $data['MAC'];
-        $this->description = $data['texte-libre'];
-        $this->authenticationHash = $data['authentification'];
-
-        $this->returnCode = $data['code-retour'];
         if (!in_array($this->returnCode, self::RETURN_CODES)) {
             throw PaymentException::invalidResponseReturnCode($this->returnCode);
         }
 
-        $this->cardVerificationStatus = $data['cvx'];
         if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
             throw PaymentException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
         }
 
-        $this->cardExpirationDate = $data['vld'];
-
-        $this->cardBrand = $data['brand'];
         if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
             throw PaymentException::invalidResponseCardBrand($this->cardBrand);
         }
 
-        // ToDo: Check Country
-        $this->cardCountry = $data['originecb'];
-        $this->authNumber = $data['numauto'];
-        $this->cardBIN = $data['bincb'];
-        $this->cardHash = $data['hpancb'];
-        $this->clientIp = $data['ipclient'];
-
-        // ToDo: Check Country
-        $this->transactionCountry = $data['originetr'];
-
-        $this->setAuthentication($data['authentification']);
+        $this->setAuthentication($this->authenticationHash);
         $this->setOptions($data);
         $this->setErrorsOptions($data);
     }
 
-
-    /**
-     * @param $data
-     * @throws Exception
-     */
-    private function validateRequiredKeys($data)
+    public function getRequiredKeys(): array
     {
-        $requiredKeys = [
-            'TPE',
-            'date',
-            'montant',
-            'reference',
-            'MAC',
-            'authentification',
-            'texte-libre',
-            'code-retour',
-            'cvx',
-            'vld',
-            'brand',
-            'numauto',
-            'originecb',
-            'bincb',
-            'hpancb',
-            'ipclient',
-            'originetr',
+        return [
+            'TPE' => 'eptCode',
+            'date' => 'dateTime',
+            'montant' => 'amount',
+            'reference' => 'reference',
+            'MAC' => 'seal',
+            'authentification' => 'authenticationHash',
+            'texte-libre' => 'description',
+            'code-retour' => 'returnCode',
+            'cvx' => 'cardVerificationStatus',
+            'vld' => 'cardExpirationDate',
+            'brand' => 'cardBrand',
+            'numauto' => 'authNumber',
+            'originecb' => 'cardCountry',
+            'bincb' => 'cardBIN',
+            'hpancb' => 'cardHash',
+            'ipclient' => 'clientIp',
+            'originetr' => 'transactionCountry',
         ];
-
-        foreach ($requiredKeys as $key) {
-            if (!in_array($key, array_keys($data))) {
-                throw Exception::missingResponseKey($key);
-            }
-        }
     }
 
     /**
-     * @param $authentication
-     * @throws \DansMaCulotte\Monetico\Exceptions\AuthenticationException
+     * @param string $authentication
+     * @throws AuthenticationException
      */
-    private function setAuthentication($authentication)
+    private function setAuthentication(string $authentication): void
     {
         $authentication = base64_decode($authentication);
         $authentication = json_decode($authentication);
 
-        $this->authentication = new Authentication(
+        $this->authentication = new AuthenticationResource(
             $authentication->protocol,
             $authentication->status,
             $authentication->version,
@@ -263,10 +208,10 @@ class Response
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @throws PaymentException
      */
-    private function setOptions($data)
+    private function setOptions(array $data): void
     {
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
@@ -290,10 +235,10 @@ class Response
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @throws PaymentException
      */
-    private function setErrorsOptions($data)
+    private function setErrorsOptions(array $data): void
     {
         if (isset($data['filtragecause'])) {
             $this->filteredReason = (int) $data['filtragecause'];
@@ -318,7 +263,11 @@ class Response
         }
     }
 
-    private function fieldsToArray($eptCode)
+    /**
+     * @param string $eptCode
+     * @return array
+     */
+    private function fieldsToArray(string $eptCode): array
     {
         $fields = [
             'TPE' => $eptCode,
@@ -377,11 +326,9 @@ class Response
      *
      * @param string $eptCode
      * @param string $securityKey
-     * @param string $version
-     *
      * @return bool
      */
-    public function validateSeal($eptCode, $securityKey, $version)
+    public function validateSeal(string $eptCode, string $securityKey): bool
     {
         $fields = $this->fieldsToArray($eptCode);
 

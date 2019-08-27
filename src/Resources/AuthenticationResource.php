@@ -4,7 +4,7 @@ namespace DansMaCulotte\Monetico\Resources;
 
 use DansMaCulotte\Monetico\Exceptions\AuthenticationException;
 
-class Authentication
+class AuthenticationResource
 {
     /** @var array */
     public $details = [];

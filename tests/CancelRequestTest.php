@@ -24,21 +24,11 @@ class CancelRequestTest extends TestCase
 
     public function testCancelUrl()
     {
-        $cancel = new CancelRequest([
-            'dateTime' => Carbon::create(2019, 2, 1),
-            'orderDate' => Carbon::create(2019, 1, 1),
-            'reference' => 'ABC123',
-            'language' => 'FR',
-            'currency' => 'EUR',
-            'amount' => 100,
-            'amountRecovered' => 0,
-        ]);
-
-        $url = $cancel->getUrl();
+        $url = CancelRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
 
-        $url = $cancel->getUrl(true);
+        $url = CancelRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
     }

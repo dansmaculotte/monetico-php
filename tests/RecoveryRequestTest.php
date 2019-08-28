@@ -27,23 +27,11 @@ class RecoveryRequestTest extends TestCase
 
     public function testRecoveryUrl()
     {
-        $recovery = new RecoveryRequest([
-            'dateTime' => Carbon::create(2019, 2, 1),
-            'orderDate' => Carbon::create(2019, 1, 1),
-            'reference' => 'ABC123',
-            'language' => 'FR',
-            'currency' => 'EUR',
-            'amount' => 100,
-            'amountToRecover' => 50,
-            'amountRecovered' => 0,
-            'amountLeft' => 50
-        ]);
-
-        $url = $recovery->getUrl();
+        $url = RecoveryRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
 
-        $url = $recovery->getUrl(true);
+        $url = RecoveryRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
     }

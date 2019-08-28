@@ -9,9 +9,6 @@ abstract class AbstractRequest
     /** @var string */
     const REQUEST_URL = Monetico::MAIN_REQUEST_URL;
 
-    /** @var string */
-    const REQUEST_URI = '';
-
     /**
      * @param string $securityKey
      * @param array $fields
@@ -47,7 +44,7 @@ abstract class AbstractRequest
     /**
      * @return string
      */
-    protected function getRequestUrl(): string
+    protected static function getRequestUrl(): string
     {
         return self::REQUEST_URL;
     }
@@ -55,23 +52,20 @@ abstract class AbstractRequest
     /**
      * @return string
      */
-    protected function getRequestUri(): string
-    {
-        return self::REQUEST_URI;
-    }
+    abstract protected static function getRequestUri(): string;
 
     /**
      * @param bool $testMode
      * @return string
      */
-    public function getUrl(bool $testMode = false): string
+    public static function getUrl(bool $testMode = false): string
     {
-        $requestUrl = $this->getRequestUrl();
+        $requestUrl = self::getRequestUrl();
         if ($testMode) {
             $requestUrl .= '/test';
         }
 
-        return $requestUrl . '/' . $this->getRequestUri();
+        return $requestUrl . '/' . static::getRequestUri();
     }
 
     /**

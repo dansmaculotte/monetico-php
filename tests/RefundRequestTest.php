@@ -27,24 +27,11 @@ class RefundRequestTest extends TestCase
 
     public function testRefundUrl()
     {
-        $refund = new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
-            'authorizationNumber' => '1222',
-            'reference' => 'ABC123',
-            'language' => 'FR',
-            'currency' => 'EUR',
-            'amount' => 100,
-            'refundAmount' => 50,
-            'maxRefundAmount' => 80,
-        ]);
-
-        $url = $refund->getUrl();
+        $url = RefundRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/recredit_paiement.cgi');
 
-        $url = $refund->getUrl(true);
+        $url = RefundRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/recredit_paiement.cgi');
     }

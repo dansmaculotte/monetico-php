@@ -82,7 +82,7 @@ class RefundRequest extends AbstractRequest
     /**
      * @return string
      */
-    protected function getRequestUri(): string
+    protected static function getRequestUri(): string
     {
         return self::REQUEST_URI;
     }

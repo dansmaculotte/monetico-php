@@ -32,23 +32,11 @@ class PaymentRequestTest extends TestCase
 
     public function testPaymentUrl()
     {
-        $payment = new PaymentRequest([
-            'reference' => 'ABCDEF123',
-            'description' => 'PHPUnit',
-            'language' => 'FR',
-            'email' => 'john@english.fr',
-            'amount' => 42.42,
-            'currency' => 'EUR',
-            'dateTime' => Carbon::create(2019, 1, 1),
-            'successUrl' => 'https://127.0.0.1/success',
-            'errorUrl' => 'https://127.0.0.1/error'
-        ]);
-
-        $url = $payment->getUrl();
+        $url = PaymentRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
 
-        $url = $payment->getUrl(true);
+        $url = PaymentRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }

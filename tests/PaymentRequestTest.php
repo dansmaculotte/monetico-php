@@ -6,7 +6,10 @@ use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Requests\PaymentRequest;
 use DansMaCulotte\Monetico\Resources\BillingAddressResource;
+use DansMaCulotte\Monetico\Resources\CartItemResource;
+use DansMaCulotte\Monetico\Resources\CartResource;
 use DansMaCulotte\Monetico\Resources\ClientResource;
+use DansMaCulotte\Monetico\Resources\ShippingAddressResource;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
@@ -240,18 +243,24 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $addressBilling = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
-        $payment->setBillingAddress($addressBilling);
+        $billingAddress = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $payment->setBillingAddress($billingAddress);
 
-        $addressShipping = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
-        $addressShipping->setParameter('email', 'john@english.fr');
-        $payment->setShippingAddress($addressShipping);
+        $shippingAddress = new ShippingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $shippingAddress->setParameter('email', 'john@english.fr');
+        $payment->setShippingAddress($shippingAddress);
 
         $client = new ClientResource();
         $client->setParameter('civility', 'MR');
         $client->setParameter('firstName', 'Foo');
         $client->setParameter('lastName', 'Boo');
         $payment->setClient($client);
+
+        $cart = new CartResource();
+        $item = new CartItemResource(10, 2);
+        $item->setParameter('name', 'Pen');
+        $cart->addItem($item);
+        $payment->setCart($cart);
 
         $this->assertEquals('7 rue melingue', $payment->shippingAddress->getParameter('addressLine1'));
         $this->assertEquals('Caen', $payment->shippingAddress->getParameter('city'));

@@ -204,9 +204,9 @@ class PaymentRequest extends AbstractRequest
 
 
     /**
-     * @param BillingAddressResource $shippingAddress
+     * @param ShippingAddressResource $shippingAddress
      */
-    public function setShippingAddress(BillingAddressResource $shippingAddress): void
+    public function setShippingAddress(ShippingAddressResource $shippingAddress): void
     {
         $this->shippingAddress = $shippingAddress;
     }

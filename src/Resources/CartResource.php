@@ -16,18 +16,23 @@ class CartResource extends Ressource
         'giftCardCurrency',
         'preOrderDate',
         'preorderIndicator',
+        'shoppingCartItems',
     ];
 
     /**
      * Client constructor.
      *
+     * @param array $fields
      * @throws Exception
      */
-    public function __construct()
+    public function __construct(array $fields = [])
     {
-        parent::__construct([
-            self::ITEMS_KEY => [],
-        ]);
+        parent::__construct(array_merge(
+            $fields,
+            [
+                self::ITEMS_KEY => [],
+            ]
+        ));
     }
 
     /**

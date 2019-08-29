@@ -55,10 +55,14 @@ $payment = new PaymentRequest([
 
 $address = new AddressResource('7 rue melingue', 'Caen', '14000', 'France');
 $payment->setAddressBilling($address);
-$address->setOptionalField('email', 'john@snow.stark');
+$address->setParameter('email', 'john@snow.stark');
 $payment->setAddressShipping($address);
 
-$client = new ClientResource('MR', 'John', 'Stark', 'Snow');
+$client = new ClientResource([
+    'civility' => 'Mr',
+    'firstName' => 'John',
+    'lastName' => 'Snow',
+]);
 $payment->setClient($client);
 
 $url = $payment->getUrl();

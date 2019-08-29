@@ -79,13 +79,13 @@ class AuthenticationResource
     /**
      * Authentication constructor.
      *
-     * @param $protocol
-     * @param $status
-     * @param $version
-     * @param $details
+     * @param string $protocol
+     * @param string $status
+     * @param string $version
+     * @param array $details
      * @throws AuthenticationException
      */
-    public function __construct($protocol, $status, $version, $details)
+    public function __construct(string $protocol, string $status, string $version, array $details)
     {
         $this->protocol = $protocol;
         if ($this->protocol !== self::PROTOCOL) {
@@ -98,7 +98,7 @@ class AuthenticationResource
         }
 
         $this->version = $version;
-        if (!in_array($version, self::VERSIONS)) {
+        if (!in_array($this->version, self::VERSIONS)) {
             throw AuthenticationException::invalidVersion($this->version);
         }
 

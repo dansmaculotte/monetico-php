@@ -4,8 +4,10 @@ namespace DansMaCulotte\Monetico\Requests;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
-use DansMaCulotte\Monetico\Resources\AddressResource;
+use DansMaCulotte\Monetico\Resources\BillingAddressResource;
+use DansMaCulotte\Monetico\Resources\CartResource;
 use DansMaCulotte\Monetico\Resources\ClientResource;
+use DansMaCulotte\Monetico\Resources\ShippingAddressResource;
 use DateTime;
 
 class PaymentRequest extends AbstractRequest
@@ -40,14 +42,17 @@ class PaymentRequest extends AbstractRequest
     /** @var array */
     public $options;
 
-    /** @var AddressResource */
-    public $addressBilling;
+    /** @var BillingAddressResource */
+    public $billingAddress;
 
-    /** @var AddressResource */
-    public $addressShipping;
+    /** @var ShippingAddressResource */
+    public $shippingAddress;
 
     /** @var ClientResource */
     public $client;
+
+    /** @var CartResource */
+    public $cart;
 
     /** @var array */
     public $commitments;
@@ -190,20 +195,20 @@ class PaymentRequest extends AbstractRequest
     }
 
     /**
-     * @param AddressResource $addressBilling
+     * @param BillingAddressResource $billingAddress
      */
-    public function setAddressBilling(AddressResource $addressBilling): void
+    public function setBillingAddress(BillingAddressResource $billingAddress): void
     {
-        $this->addressBilling = $addressBilling;
+        $this->billingAddress = $billingAddress;
     }
 
 
     /**
-     * @param AddressResource $addressShipping
+     * @param BillingAddressResource $shippingAddress
      */
-    public function setAddressShipping(AddressResource $addressShipping): void
+    public function setShippingAddress(BillingAddressResource $shippingAddress): void
     {
-        $this->addressShipping = $addressShipping;
+        $this->shippingAddress = $shippingAddress;
     }
 
     /**
@@ -212,6 +217,14 @@ class PaymentRequest extends AbstractRequest
     public function setClient(ClientResource $client): void
     {
         $this->client = $client;
+    }
+
+    /**
+     * @param CartResource $cart
+     */
+    public function setCart(CartResource $cart): void
+    {
+        $this->cart = $cart;
     }
 
     /**
@@ -240,9 +253,10 @@ class PaymentRequest extends AbstractRequest
     public function orderContextBase64(): string
     {
         $contextCommand = [
-            'billing' => (isset($this->addressBilling)) ? $this->addressBilling->data : [],
-            'shipping' => (isset($this->addressShipping)) ? $this->addressShipping->data : [],
-            'client' => (isset($this->client)) ? $this->client->data : [],
+            'billing' => $this->billingAddress ? $this->billingAddress->getParameters() : [],
+            'shipping' => $this->shippingAddress ? $this->shippingAddress->getParameters() : [],
+            'client' => $this->client ? $this->client->getParameters() : [],
+            'shoppingCart' => $this->cart ? $this->cart->getParameters() : [],
         ];
 
         return base64_encode(json_encode($contextCommand));

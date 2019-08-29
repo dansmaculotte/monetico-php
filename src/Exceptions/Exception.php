@@ -108,4 +108,13 @@ class Exception extends \Exception
     {
         return new self("orderDate value is not a DateTime object");
     }
+
+    /**
+     * @param string $name
+     * @return Exception
+     */
+    public static function invalidResourceParameter(string $name): self
+    {
+        return new self("resource parameter is invalid: {$name}");
+    }
 }

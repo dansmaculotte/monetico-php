@@ -5,7 +5,7 @@ use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Requests\PaymentRequest;
-use DansMaCulotte\Monetico\Resources\AddressResource;
+use DansMaCulotte\Monetico\Resources\BillingAddressResource;
 use DansMaCulotte\Monetico\Resources\ClientResource;
 use PHPUnit\Framework\TestCase;
 
@@ -240,31 +240,33 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $addressBilling = new AddressResource('7 rue melingue', 'Caen', '14000', 'France');
-        $payment->setAddressBilling($addressBilling);
+        $addressBilling = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $payment->setBillingAddress($addressBilling);
 
-        $addressShipping = new AddressResource('7 rue melingue', 'Caen', '14000', 'France');
-        $addressShipping->setOptionalField('email', 'john@english.fr');
-        $payment->setAddressShipping($addressShipping);
+        $addressShipping = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $addressShipping->setParameter('email', 'john@english.fr');
+        $payment->setShippingAddress($addressShipping);
 
-        $client = new ClientResource('MR', 'FooBoo', 'Foo', 'Boo');
+        $client = new ClientResource();
+        $client->setParameter('civility', 'MR');
+        $client->setParameter('firstName', 'Foo');
+        $client->setParameter('lastName', 'Boo');
         $payment->setClient($client);
 
-        $this->assertEquals('7 rue melingue', $payment->addressShipping->data['addressLine1']);
-        $this->assertEquals('Caen', $payment->addressShipping->data['city']);
-        $this->assertEquals('14000', $payment->addressShipping->data['postalCode']);
-        $this->assertEquals('France', $payment->addressShipping->data['country']);
-        $this->assertEquals('john@english.fr', $payment->addressShipping->data['email']);
+        $this->assertEquals('7 rue melingue', $payment->shippingAddress->getParameter('addressLine1'));
+        $this->assertEquals('Caen', $payment->shippingAddress->getParameter('city'));
+        $this->assertEquals('14000', $payment->shippingAddress->getParameter('postalCode'));
+        $this->assertEquals('France', $payment->shippingAddress->getParameter('country'));
+        $this->assertEquals('john@english.fr', $payment->shippingAddress->getParameter('email'));
 
-        $this->assertEquals('7 rue melingue', $payment->addressBilling->data['addressLine1']);
-        $this->assertEquals('Caen', $payment->addressBilling->data['city']);
-        $this->assertEquals('14000', $payment->addressBilling->data['postalCode']);
-        $this->assertEquals('France', $payment->addressBilling->data['country']);
+        $this->assertEquals('7 rue melingue', $payment->billingAddress->getParameter('addressLine1'));
+        $this->assertEquals('Caen', $payment->billingAddress->getParameter('city'));
+        $this->assertEquals('14000', $payment->billingAddress->getParameter('postalCode'));
+        $this->assertEquals('France', $payment->billingAddress->getParameter('country'));
 
-        $this->assertEquals('MR', $payment->client->data['civility']);
-        $this->assertEquals('FooBoo', $payment->client->data['name']);
-        $this->assertEquals('Foo', $payment->client->data['firstName']);
-        $this->assertEquals('Boo', $payment->client->data['lastName']);
+        $this->assertEquals('MR', $payment->client->getParameter('civility'));
+        $this->assertEquals('Foo', $payment->client->getParameter('firstName'));
+        $this->assertEquals('Boo', $payment->client->getParameter('lastName'));
     }
 
     public function testSet3DSecure()

@@ -1,14 +1,14 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Exceptions\CaptureException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Responses\PaymentResponse;
+use DansMaCulotte\Monetico\Responses\CaptureResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
 
-class PaymentResponseTest extends TestCase
+class CaptureResponseTest extends TestCase
 {
     private function generateSeal($data)
     {
@@ -48,15 +48,15 @@ class PaymentResponseTest extends TestCase
 
     public function testPaymentResponseConstruct()
     {
-        $response = new PaymentResponse($this->data);
-        $this->assertTrue($response instanceof PaymentResponse);
+        $response = new CaptureResponse($this->data);
+        $this->assertTrue($response instanceof CaptureResponse);
     }
 
     public function testPaymentResponseMissingResponseKey()
     {
         $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
-        new PaymentResponse([]);
+        new CaptureResponse([]);
     }
 
     public function testPaymentResponseExceptionDateTime()
@@ -66,68 +66,68 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['date'] = 'oups';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
 
     public function testPaymentResponseExceptionReturnCode()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseReturnCode('foo'));
+        $this->expectExceptionObject(CaptureException::invalidResponseReturnCode('foo'));
 
         $data = $this->data;
         $data['code-retour'] = 'foo';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
     public function testPaymentResponseExceptionCardVerificationStatus()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseCardVerificationStatus('nope'));
+        $this->expectExceptionObject(CaptureException::invalidResponseCardVerificationStatus('nope'));
 
         $data = $this->data;
         $data['cvx'] = 'nope';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
     public function testPaymentResponseExceptionCardBrand()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseCardBrand('foo'));
+        $this->expectExceptionObject(CaptureException::invalidResponseCardBrand('foo'));
 
         $data = $this->data;
         $data['brand'] = 'foo';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
     public function testPaymentResponseExceptionRejectReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseRejectReason('foobar'));
+        $this->expectExceptionObject(CaptureException::invalidResponseRejectReason('foobar'));
 
         $data = $this->data;
         $data['motifrefus'] = 'foobar';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
     public function testPaymentResponseExceptionPaymentMethod()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponsePaymentMethod('bar'));
+        $this->expectExceptionObject(CaptureException::invalidResponsePaymentMethod('bar'));
 
         $data = $this->data;
         $data['modepaiement'] = 'bar';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
     public function testPaymentResponseExceptionFilteredReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseFilteredReason('10'));
+        $this->expectExceptionObject(CaptureException::invalidResponseFilteredReason('10'));
 
         $data = $this->data;
         $data['filtragecause'] = '10';
 
-        new PaymentResponse($data);
+        new CaptureResponse($data);
     }
 
     public function testPaymentWithOptionals()
@@ -144,7 +144,7 @@ class PaymentResponseTest extends TestCase
         $data['cbenregistree'] = '1';
 
 
-        $response = new PaymentResponse($data);
+        $response = new CaptureResponse($data);
 
         $this->assertTrue($response->commitmentAmount === '50EUR');
         $this->assertTrue($response->filteredValue === 'foobar');
@@ -157,7 +157,7 @@ class PaymentResponseTest extends TestCase
     {
         $data = $this->data;
 
-        $response = new PaymentResponse($data);
+        $response = new CaptureResponse($data);
 
         $this->assertEquals('3DSecure', $response->authentication->protocol);
         $this->assertEquals('authenticated', $response->authentication->status);
@@ -198,7 +198,7 @@ class PaymentResponseTest extends TestCase
 
         $data['MAC'] = $this->generateSeal($data);
 
-        $response = new PaymentResponse($data);
+        $response = new CaptureResponse($data);
         $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
         $this->assertTrue($sealValid);
     }

@@ -86,7 +86,7 @@ class Monetico
      */
     public function getFields(AbstractRequest $request): array
     {
-        $fields = $request->fieldsToArray(
+        $fields = $request->toArray(
             $this->eptCode,
             $this->companyCode,
             self::SERVICE_VERSION

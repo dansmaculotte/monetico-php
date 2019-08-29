@@ -2,9 +2,9 @@
 
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Exceptions\CaptureException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Requests\PaymentRequest;
+use DansMaCulotte\Monetico\Requests\CaptureRequest;
 use DansMaCulotte\Monetico\Resources\BillingAddressResource;
 use DansMaCulotte\Monetico\Resources\CartItemResource;
 use DansMaCulotte\Monetico\Resources\CartResource;
@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
 
-class PaymentRequestTest extends TestCase
+class CaptureRequestTest extends TestCase
 {
     public function testPaymentConstruct()
     {
-        $payment = new PaymentRequest([
+        $payment = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -30,16 +30,16 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $this->assertTrue($payment instanceof PaymentRequest);
+        $this->assertTrue($payment instanceof CaptureRequest);
     }
 
     public function testPaymentUrl()
     {
-        $url = PaymentRequest::getUrl();
+        $url = CaptureRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
 
-        $url = PaymentRequest::getUrl(true);
+        $url = CaptureRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }
@@ -48,7 +48,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknow'));
 
-        new PaymentRequest([
+        new CaptureRequest([
             'reference' => 'thisisabigerroryouknow',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -65,7 +65,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidLanguage('WTF'));
 
-        new PaymentRequest([
+        new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'WTF',
@@ -82,7 +82,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
 
-        new PaymentRequest([
+        new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -97,7 +97,7 @@ class PaymentRequestTest extends TestCase
 
     public function testPaymentOptions()
     {
-        $payment = new PaymentRequest([
+        $payment = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -154,7 +154,7 @@ class PaymentRequestTest extends TestCase
 
     public function testPaymentCommitments()
     {
-        $payment = new PaymentRequest(
+        $payment = new CaptureRequest(
             [
                 'reference' => 'ABCDEF123',
                 'description' => 'PHPUnit',
@@ -193,7 +193,7 @@ class PaymentRequestTest extends TestCase
 
         $fields = $payment->generateFields(
             'FOO',
-            $payment->fieldsToArray(
+            $payment->toArray(
                 'FOOBAR',
                 3.0,
                 'FOO'
@@ -231,7 +231,7 @@ class PaymentRequestTest extends TestCase
 
     public function testSetOrderContext()
     {
-        $payment = new PaymentRequest([
+        $payment = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -280,7 +280,7 @@ class PaymentRequestTest extends TestCase
 
     public function testSet3DSecure()
     {
-        $payment = new PaymentRequest([
+        $payment = new CaptureRequest([
             'reference' => '12345679',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -296,7 +296,7 @@ class PaymentRequestTest extends TestCase
         $payment->setCardAlias('martin');
         $payment->setSignLabel('toto');
 
-        $fields = $payment->fieldsToArray(
+        $fields = $payment->toArray(
             EPT_CODE,
             '3.0',
             COMPANY_CODE
@@ -317,9 +317,9 @@ class PaymentRequestTest extends TestCase
 
     public function testPaymentException3DSecure()
     {
-        $this->expectExceptionObject(PaymentException::invalidThreeDSecureChallenge('invalid_choice'));
+        $this->expectExceptionObject(CaptureException::invalidThreeDSecureChallenge('invalid_choice'));
 
-        $payment = new PaymentRequest([
+        $payment = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',

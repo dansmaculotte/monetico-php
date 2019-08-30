@@ -8,7 +8,7 @@ use DateTime;
 class RefundRequest extends AbstractRequest
 {
     /** @var \DateTime */
-    public $datetime;
+    public $dateTime;
 
     /** @var \DateTime */
     public $orderDate;
@@ -65,9 +65,9 @@ class RefundRequest extends AbstractRequest
      */
     public function __construct($data = [])
     {
-        $this->datetime = $data['datetime'];
-        $this->orderDate = $data['orderDatetime'];
-        $this->recoveryDate = $data['recoveryDatetime'];
+        $this->dateTime = $data['dateTime'];
+        $this->orderDate = $data['orderDate'];
+        $this->recoveryDate = $data['recoveryDate'];
         $this->authorizationNumber = $data['authorizationNumber'];
         $this->currency = $data['currency'];
         $this->amount = $data['amount'];
@@ -118,7 +118,7 @@ class RefundRequest extends AbstractRequest
     {
         $fields = array_merge([
             'TPE' => $eptCode,
-            'date' => $this->datetime->format(self::DATETIME_FORMAT),
+            'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'date_commande' => $this->orderDate->format(self::DATE_FORMAT),
             'date_remise' => $this->recoveryDate->format(self::DATE_FORMAT),
             'num_autorisation' => $this->authorizationNumber,
@@ -147,7 +147,7 @@ class RefundRequest extends AbstractRequest
      */
     public function validate(): bool
     {
-        if (!$this->datetime instanceof DateTime) {
+        if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
         }
 

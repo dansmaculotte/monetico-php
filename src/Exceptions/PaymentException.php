@@ -2,11 +2,11 @@
 
 namespace DansMaCulotte\Monetico\Exceptions;
 
-class CaptureException extends \Exception
+class PaymentException extends \Exception
 {
     /**
      * @param string $ThreeDSecureChallenge
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidThreeDSecureChallenge(string $ThreeDSecureChallenge): self
     {
@@ -15,7 +15,7 @@ class CaptureException extends \Exception
 
     /**
      * @param string $returnCode
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidResponseReturnCode(string $returnCode): self
     {
@@ -24,7 +24,7 @@ class CaptureException extends \Exception
 
     /**
      * @param string $status
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidResponseCardVerificationStatus(string $status): self
     {
@@ -33,7 +33,7 @@ class CaptureException extends \Exception
 
     /**
      * @param string $brand
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidResponseCardBrand(string $brand): self
     {
@@ -42,7 +42,7 @@ class CaptureException extends \Exception
 
     /**
      * @param string $rejectReason
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidResponseRejectReason(string $rejectReason): self
     {
@@ -52,7 +52,7 @@ class CaptureException extends \Exception
     /**
      * @param string $paymentMethod
      *
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidResponsePaymentMethod(string $paymentMethod): self
     {
@@ -62,7 +62,7 @@ class CaptureException extends \Exception
     /**
      * @param string $filteredReason
      *
-     * @return CaptureException
+     * @return PaymentException
      */
     public static function invalidResponseFilteredReason(string $filteredReason): self
     {

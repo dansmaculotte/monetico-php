@@ -3,11 +3,11 @@
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Requests\CancelRecurringRequest;
-use DansMaCulotte\Monetico\Requests\CaptureRequest;
 use DansMaCulotte\Monetico\Requests\CancelRequest;
+use DansMaCulotte\Monetico\Requests\PaymentRequest;
+use DansMaCulotte\Monetico\Requests\RecoveryRequest;
 use DansMaCulotte\Monetico\Requests\RefundRequest;
-use DansMaCulotte\Monetico\Responses\CaptureResponse;
+use DansMaCulotte\Monetico\Responses\PaymentResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
@@ -55,7 +55,7 @@ class MoneticoTest extends TestCase
             COMPANY_CODE
         );
 
-        $payment = new CaptureRequest([
+        $payment = new PaymentRequest([
             'reference' => 'AYCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -125,7 +125,7 @@ class MoneticoTest extends TestCase
 
         $data['MAC'] = $seal;
 
-        $response = new CaptureResponse($data);
+        $response = new PaymentResponse($data);
 
         $isValid = $monetico->validate($response);
         $this->assertTrue($isValid);
@@ -139,7 +139,7 @@ class MoneticoTest extends TestCase
             COMPANY_CODE
         );
 
-        $recovery = new CancelRequest([
+        $recovery = new RecoveryRequest([
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
@@ -185,7 +185,7 @@ class MoneticoTest extends TestCase
             COMPANY_CODE
         );
 
-        $cancel = new CancelRecurringRequest([
+        $cancel = new CancelRequest([
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,

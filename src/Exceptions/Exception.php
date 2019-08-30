@@ -23,21 +23,98 @@ class Exception extends \Exception
 
 
     /**
-     * @param $name
      * @return Exception
      */
-    public static function invalidDateTime($name): self
+    public static function invalidDatetime(): self
     {
-        return new self("{$name} value is not a DateTime object");
+        return new self("dateTime value is not a DateTime object");
+    }
+
+    /**
+     * @return Exception
+     */
+    public static function invalidRecoveryDate(): self
+    {
+        return new self("recoveryDate value is not a DateTime object");
+    }
+
+    /**
+     * @param string $invoiceType
+     * @return Exception
+     */
+    public static function invalidResponseInvoiceType(string $invoiceType): self
+    {
+        return new self("type_facture value is invalid: ${invoiceType}");
+    }
+
+    /**
+     * @param string $invoiceType
+     * @return Exception
+     */
+    public static function invalidInvoiceType(string $invoiceType): self
+    {
+        return new self("invoiceType value is invalid: ${invoiceType}");
+    }
+
+    /**
+     * @param string $language
+     * @return Exception
+     */
+    public static function invalidLanguage(string $language): self
+    {
+        return new self("language value is invalid, should be 12 characters long maximum: ${language}");
+    }
+
+    /**
+     * @param string $reference
+     * @return Exception
+     */
+    public static function invalidReference(string $reference): self
+    {
+        return new self("reference value is invalid, should be 12 characters long maximum: ${reference}");
     }
 
     /**
      * @param string $key
-     * @param $value
      * @return Exception
      */
-    public static function invalidValue(string $key, $value): self
+    public static function missingResponseKey(string $key): self
     {
-        return new self("{$key} is invalid: ${value}");
+        return new self("${key} is missing");
+    }
+
+    /**
+     *
+     * @return Exception
+     */
+    public static function invalidResponseDateTime(): self
+    {
+        return new self("date value is invalid");
+    }
+
+    /**
+     * @param string $fileNumber
+     * @return Exception
+     */
+    public static function invalidResponseFileNumber($fileNumber): self
+    {
+        return new self("numero_dossier value is invalid: ${fileNumber}");
+    }
+
+    /**
+     * @return Exception
+     */
+    public static function invalidOrderDate(): self
+    {
+        return new self("orderDate value is not a DateTime object");
+    }
+
+    /**
+     * @param string $name
+     * @return Exception
+     */
+    public static function invalidResourceParameter(string $name): self
+    {
+        return new self("resource parameter is invalid: {$name}");
     }
 }

@@ -3,14 +3,14 @@
 namespace DansMaCulotte\Monetico\Requests;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Exceptions\PaymentException;
 use DansMaCulotte\Monetico\Resources\BillingAddressResource;
 use DansMaCulotte\Monetico\Resources\CartResource;
 use DansMaCulotte\Monetico\Resources\ClientResource;
 use DansMaCulotte\Monetico\Resources\ShippingAddressResource;
 use DateTime;
 
-class CaptureRequest extends AbstractRequest
+class PaymentRequest extends AbstractRequest
 {
     /** @var string */
     public $reference;
@@ -108,13 +108,13 @@ class CaptureRequest extends AbstractRequest
         $this->options = $options;
         $this->commitments = $commitments;
 
-        $this->validateData();
+        $this->validate();
     }
 
     /**
      * @throws Exception
      */
-    public function validateData(): bool
+    public function validate(): bool
     {
         if (strlen($this->reference) > 12) {
             throw Exception::invalidReference($this->reference);
@@ -173,12 +173,12 @@ class CaptureRequest extends AbstractRequest
      * 3DSecure V2 Choice
      *
      * @param string $choice
-     * @throws CaptureException
+     * @throws PaymentException
      */
     public function setThreeDSecureChallenge(string $choice): void
     {
         if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES)) {
-            throw CaptureException::invalidThreeDSecureChallenge($choice);
+            throw PaymentException::invalidThreeDSecureChallenge($choice);
         }
 
         $this->options['threeDsecureChallenge'] = $choice;
@@ -335,7 +335,7 @@ class CaptureRequest extends AbstractRequest
      * @param array $options
      * @return array
      */
-    public function toArray(string $eptCode, string $companyCode, string $version): array
+    public function fieldsToArray(string $eptCode, string $companyCode, string $version): array
     {
         return array_merge(
             $this->baseFields($eptCode, $companyCode, $version),

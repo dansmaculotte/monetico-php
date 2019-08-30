@@ -76,7 +76,7 @@ class RefundRequest extends AbstractRequest
         $this->reference = $data['reference'];
         $this->language = $data['language'];
 
-        $this->validateData();
+        $this->validate();
     }
 
     /**
@@ -114,7 +114,7 @@ class RefundRequest extends AbstractRequest
      * @param string $companyCode
      * @return array
      */
-    public function toArray(string $eptCode, string $version, string $companyCode): array
+    public function fieldsToArray(string $eptCode, string $version, string $companyCode): array
     {
         $fields = array_merge([
             'TPE' => $eptCode,
@@ -145,7 +145,7 @@ class RefundRequest extends AbstractRequest
     /**
      * @throws Exception
      */
-    public function validateData(): bool
+    public function validate(): bool
     {
         if (!$this->datetime instanceof DateTime) {
             throw Exception::invalidDatetime();

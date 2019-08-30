@@ -4,10 +4,10 @@ use \DansMaCulotte\Monetico\Exceptions\Exception;
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Requests\CancelRequest;
-use DansMaCulotte\Monetico\Requests\PaymentRequest;
+use DansMaCulotte\Monetico\Requests\CaptureRequest;
 use DansMaCulotte\Monetico\Requests\RecoveryRequest;
 use DansMaCulotte\Monetico\Requests\RefundRequest;
-use DansMaCulotte\Monetico\Responses\PaymentResponse;
+use DansMaCulotte\Monetico\Responses\CaptureResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
@@ -55,7 +55,7 @@ class MoneticoTest extends TestCase
             COMPANY_CODE
         );
 
-        $payment = new PaymentRequest([
+        $capture = new CaptureRequest([
             'reference' => 'AYCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -67,7 +67,7 @@ class MoneticoTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $fields = $monetico->getFields($payment);
+        $fields = $monetico->getFields($capture);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -125,7 +125,7 @@ class MoneticoTest extends TestCase
 
         $data['MAC'] = $seal;
 
-        $response = new PaymentResponse($data);
+        $response = new CaptureResponse($data);
 
         $isValid = $monetico->validate($response);
         $this->assertTrue($isValid);

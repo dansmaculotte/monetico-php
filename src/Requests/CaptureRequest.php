@@ -3,14 +3,14 @@
 namespace DansMaCulotte\Monetico\Requests;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Exceptions\CaptureException;
 use DansMaCulotte\Monetico\Resources\BillingAddressResource;
 use DansMaCulotte\Monetico\Resources\CartResource;
 use DansMaCulotte\Monetico\Resources\ClientResource;
 use DansMaCulotte\Monetico\Resources\ShippingAddressResource;
 use DateTime;
 
-class PaymentRequest extends AbstractRequest
+class CaptureRequest extends AbstractRequest
 {
     /** @var string */
     public $reference;
@@ -173,12 +173,12 @@ class PaymentRequest extends AbstractRequest
      * 3DSecure V2 Choice
      *
      * @param string $choice
-     * @throws PaymentException
+     * @throws CaptureException
      */
     public function setThreeDSecureChallenge(string $choice): void
     {
         if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES)) {
-            throw PaymentException::invalidThreeDSecureChallenge($choice);
+            throw CaptureException::invalidThreeDSecureChallenge($choice);
         }
 
         $this->options['threeDsecureChallenge'] = $choice;

@@ -2,9 +2,9 @@
 
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Exceptions\CaptureException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Requests\PaymentRequest;
+use DansMaCulotte\Monetico\Requests\CaptureRequest;
 use DansMaCulotte\Monetico\Resources\BillingAddressResource;
 use DansMaCulotte\Monetico\Resources\CartItemResource;
 use DansMaCulotte\Monetico\Resources\CartResource;
@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
 
-class PaymentRequestTest extends TestCase
+class CaptureRequestTest extends TestCase
 {
     public function testPaymentConstruct()
     {
-        $payment = new PaymentRequest([
+        $capture = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -30,16 +30,16 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $this->assertTrue($payment instanceof PaymentRequest);
+        $this->assertTrue($capture instanceof CaptureRequest);
     }
 
     public function testPaymentUrl()
     {
-        $url = PaymentRequest::getUrl();
+        $url = CaptureRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
 
-        $url = PaymentRequest::getUrl(true);
+        $url = CaptureRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }
@@ -48,7 +48,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknow'));
 
-        new PaymentRequest([
+        new CaptureRequest([
             'reference' => 'thisisabigerroryouknow',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -65,7 +65,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidLanguage('WTF'));
 
-        new PaymentRequest([
+        new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'WTF',
@@ -82,7 +82,7 @@ class PaymentRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
 
-        new PaymentRequest([
+        new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -97,7 +97,7 @@ class PaymentRequestTest extends TestCase
 
     public function testPaymentOptions()
     {
-        $payment = new PaymentRequest([
+        $capture = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -109,52 +109,52 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $payment->setCardAlias('foobar');
-        $this->assertArrayHasKey('aliascb', $payment->options);
-        $this->assertTrue($payment->options['aliascb'] === 'foobar');
+        $capture->setCardAlias('foobar');
+        $this->assertArrayHasKey('aliascb', $capture->options);
+        $this->assertTrue($capture->options['aliascb'] === 'foobar');
 
-        $payment->setForceCard();
-        $this->assertArrayHasKey('forcesaisiecb', $payment->options);
-        $this->assertTrue($payment->options['forcesaisiecb'] === '1');
+        $capture->setForceCard();
+        $this->assertArrayHasKey('forcesaisiecb', $capture->options);
+        $this->assertTrue($capture->options['forcesaisiecb'] === '1');
 
-        $payment->setForceCard(false);
-        $this->assertTrue($payment->options['forcesaisiecb'] === '0');
+        $capture->setForceCard(false);
+        $this->assertTrue($capture->options['forcesaisiecb'] === '0');
 
-        $payment->setDisable3DS();
-        $this->assertArrayHasKey('3dsdebrayable', $payment->options);
-        $this->assertTrue($payment->options['3dsdebrayable'] === '1');
+        $capture->setDisable3DS();
+        $this->assertArrayHasKey('3dsdebrayable', $capture->options);
+        $this->assertTrue($capture->options['3dsdebrayable'] === '1');
 
-        $payment->setDisable3DS(false);
-        $this->assertTrue($payment->options['3dsdebrayable'] === '0');
+        $capture->setDisable3DS(false);
+        $this->assertTrue($capture->options['3dsdebrayable'] === '0');
 
-        $payment->setSignLabel('FooBar');
-        $this->assertArrayHasKey('libelleMonetique', $payment->options);
-        $this->assertTrue($payment->options['libelleMonetique'] === 'FooBar');
+        $capture->setSignLabel('FooBar');
+        $this->assertArrayHasKey('libelleMonetique', $capture->options);
+        $this->assertTrue($capture->options['libelleMonetique'] === 'FooBar');
 
-        $payment->setDisabledPaymentWays([
+        $capture->setDisabledPaymentWays([
             '1euro',
             '3xcb',
             '4xcb',
             'fivory',
             'paypal'
         ]);
-        $this->assertArrayHasKey('desactivemoyenpaiement', $payment->options);
-        $this->assertTrue($payment->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory,paypal');
+        $this->assertArrayHasKey('desactivemoyenpaiement', $capture->options);
+        $this->assertTrue($capture->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory,paypal');
 
-        $payment->setDisabledPaymentWays([
+        $capture->setDisabledPaymentWays([
             '1euro',
             '3xcb',
             '4xcb',
             'fivory',
             'foobar'
         ]);
-        $this->assertArrayHasKey('desactivemoyenpaiement', $payment->options);
-        $this->assertTrue($payment->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory');
+        $this->assertArrayHasKey('desactivemoyenpaiement', $capture->options);
+        $this->assertTrue($capture->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory');
     }
 
     public function testPaymentCommitments()
     {
-        $payment = new PaymentRequest(
+        $capture = new CaptureRequest(
             [
                 'reference' => 'ABCDEF123',
                 'description' => 'PHPUnit',
@@ -186,14 +186,14 @@ class PaymentRequestTest extends TestCase
             ]
         );
 
-        $seal = $payment->generateSeal(
+        $seal = $capture->generateSeal(
             'FOO',
             []
         );
 
-        $fields = $payment->generateFields(
+        $fields = $capture->generateFields(
             'FOO',
-            $payment->fieldsToArray(
+            $capture->fieldsToArray(
                 'FOOBAR',
                 3.0,
                 'FOO'
@@ -231,7 +231,7 @@ class PaymentRequestTest extends TestCase
 
     public function testSetOrderContext()
     {
-        $payment = new PaymentRequest([
+        $capture = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -244,43 +244,43 @@ class PaymentRequestTest extends TestCase
         ]);
 
         $billingAddress = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
-        $payment->setBillingAddress($billingAddress);
+        $capture->setBillingAddress($billingAddress);
 
         $shippingAddress = new ShippingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
         $shippingAddress->setParameter('email', 'john@english.fr');
-        $payment->setShippingAddress($shippingAddress);
+        $capture->setShippingAddress($shippingAddress);
 
         $client = new ClientResource();
         $client->setParameter('civility', 'MR');
         $client->setParameter('firstName', 'Foo');
         $client->setParameter('lastName', 'Boo');
-        $payment->setClient($client);
+        $capture->setClient($client);
 
         $cart = new CartResource();
         $item = new CartItemResource(10, 2);
         $item->setParameter('name', 'Pen');
         $cart->addItem($item);
-        $payment->setCart($cart);
+        $capture->setCart($cart);
 
-        $this->assertEquals('7 rue melingue', $payment->shippingAddress->getParameter('addressLine1'));
-        $this->assertEquals('Caen', $payment->shippingAddress->getParameter('city'));
-        $this->assertEquals('14000', $payment->shippingAddress->getParameter('postalCode'));
-        $this->assertEquals('France', $payment->shippingAddress->getParameter('country'));
-        $this->assertEquals('john@english.fr', $payment->shippingAddress->getParameter('email'));
+        $this->assertEquals('7 rue melingue', $capture->shippingAddress->getParameter('addressLine1'));
+        $this->assertEquals('Caen', $capture->shippingAddress->getParameter('city'));
+        $this->assertEquals('14000', $capture->shippingAddress->getParameter('postalCode'));
+        $this->assertEquals('France', $capture->shippingAddress->getParameter('country'));
+        $this->assertEquals('john@english.fr', $capture->shippingAddress->getParameter('email'));
 
-        $this->assertEquals('7 rue melingue', $payment->billingAddress->getParameter('addressLine1'));
-        $this->assertEquals('Caen', $payment->billingAddress->getParameter('city'));
-        $this->assertEquals('14000', $payment->billingAddress->getParameter('postalCode'));
-        $this->assertEquals('France', $payment->billingAddress->getParameter('country'));
+        $this->assertEquals('7 rue melingue', $capture->billingAddress->getParameter('addressLine1'));
+        $this->assertEquals('Caen', $capture->billingAddress->getParameter('city'));
+        $this->assertEquals('14000', $capture->billingAddress->getParameter('postalCode'));
+        $this->assertEquals('France', $capture->billingAddress->getParameter('country'));
 
-        $this->assertEquals('MR', $payment->client->getParameter('civility'));
-        $this->assertEquals('Foo', $payment->client->getParameter('firstName'));
-        $this->assertEquals('Boo', $payment->client->getParameter('lastName'));
+        $this->assertEquals('MR', $capture->client->getParameter('civility'));
+        $this->assertEquals('Foo', $capture->client->getParameter('firstName'));
+        $this->assertEquals('Boo', $capture->client->getParameter('lastName'));
     }
 
     public function testSet3DSecure()
     {
-        $payment = new PaymentRequest([
+        $capture = new CaptureRequest([
             'reference' => '12345679',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -292,22 +292,22 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $payment->setThreeDSecureChallenge('challenge_mandated');
-        $payment->setCardAlias('martin');
-        $payment->setSignLabel('toto');
+        $capture->setThreeDSecureChallenge('challenge_mandated');
+        $capture->setCardAlias('martin');
+        $capture->setSignLabel('toto');
 
-        $fields = $payment->fieldsToArray(
+        $fields = $capture->fieldsToArray(
             EPT_CODE,
             '3.0',
             COMPANY_CODE
         );
 
-        $seal = $payment->generateSeal(
+        $seal = $capture->generateSeal(
             Monetico::getUsableKey(SECURITY_KEY),
             $fields
         );
 
-        $fields = $payment->generateFields(
+        $fields = $capture->generateFields(
             $seal,
             $fields
         );
@@ -317,9 +317,9 @@ class PaymentRequestTest extends TestCase
 
     public function testPaymentException3DSecure()
     {
-        $this->expectExceptionObject(PaymentException::invalidThreeDSecureChallenge('invalid_choice'));
+        $this->expectExceptionObject(CaptureException::invalidThreeDSecureChallenge('invalid_choice'));
 
-        $payment = new PaymentRequest([
+        $capture = new CaptureRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -331,6 +331,6 @@ class PaymentRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $payment->setThreeDSecureChallenge('invalid_choice');
+        $capture->setThreeDSecureChallenge('invalid_choice');
     }
 }

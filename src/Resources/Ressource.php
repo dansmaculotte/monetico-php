@@ -52,10 +52,6 @@ class Ressource
             throw Exception::invalidResourceParameter($name);
         }
 
-        if (!$value) {
-            return ;
-        }
-
         $this->parameters[$name] = $value;
     }
 

@@ -71,7 +71,7 @@ class Exception extends \Exception
      */
     public static function invalidReference(string $reference): self
     {
-        return new self("reference value is invalid, should be 12 characters long maximum: ${reference}");
+        return new self("reference value is invalid, should be 50 characters long maximum: ${reference}");
     }
 
     /**

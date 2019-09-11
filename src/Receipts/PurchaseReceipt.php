@@ -2,7 +2,7 @@
 
 namespace DansMaCulotte\Monetico\Receipts;
 
-class CaptureReceipt
+class PurchaseReceipt
 {
     /** @var string */
     const OUTPUT_FORMAT = "version=2\ncdr=%s\n";

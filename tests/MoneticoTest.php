@@ -4,10 +4,10 @@ use \DansMaCulotte\Monetico\Exceptions\Exception;
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Monetico;
 use DansMaCulotte\Monetico\Requests\CancelRequest;
-use DansMaCulotte\Monetico\Requests\CaptureRequest;
+use DansMaCulotte\Monetico\Requests\PurchaseRequest;
 use DansMaCulotte\Monetico\Requests\RecoveryRequest;
 use DansMaCulotte\Monetico\Requests\RefundRequest;
-use DansMaCulotte\Monetico\Responses\CaptureResponse;
+use DansMaCulotte\Monetico\Responses\PurchaseResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
@@ -55,7 +55,7 @@ class MoneticoTest extends TestCase
             COMPANY_CODE
         );
 
-        $capture = new CaptureRequest([
+        $capture = new PurchaseRequest([
             'reference' => 'AYCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -125,7 +125,7 @@ class MoneticoTest extends TestCase
 
         $data['MAC'] = $seal;
 
-        $response = new CaptureResponse($data);
+        $response = new PurchaseResponse($data);
 
         $isValid = $monetico->validate($response);
         $this->assertTrue($isValid);
@@ -221,9 +221,9 @@ class MoneticoTest extends TestCase
         );
 
         $refund = new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',

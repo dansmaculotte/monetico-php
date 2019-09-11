@@ -4,11 +4,11 @@ namespace DansMaCulotte\Monetico\Responses;
 
 use DansMaCulotte\Monetico\Exceptions\AuthenticationException;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Exceptions\PurchaseException;
 use DansMaCulotte\Monetico\Resources\AuthenticationResource;
 use DateTime;
 
-class CaptureResponse extends AbstractResponse
+class PurchaseResponse extends AbstractResponse
 {
     /** @var string */
     public $eptCode;
@@ -151,15 +151,15 @@ class CaptureResponse extends AbstractResponse
         }
 
         if (!in_array($this->returnCode, self::RETURN_CODES)) {
-            throw CaptureException::invalidResponseReturnCode($this->returnCode);
+            throw PurchaseException::invalidResponseReturnCode($this->returnCode);
         }
 
         if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
-            throw CaptureException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
+            throw PurchaseException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
         }
 
         if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
-            throw CaptureException::invalidResponseCardBrand($this->cardBrand);
+            throw PurchaseException::invalidResponseCardBrand($this->cardBrand);
         }
 
         $this->setAuthentication($this->authenticationHash);
@@ -209,14 +209,14 @@ class CaptureResponse extends AbstractResponse
 
     /**
      * @param array $data
-     * @throws CaptureException
+     * @throws PurchaseException
      */
     private function setOptions(array $data): void
     {
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
             if (!in_array($this->paymentMethod, self::PAYMENT_METHODS)) {
-                throw CaptureException::invalidResponsePaymentMethod($this->paymentMethod);
+                throw PurchaseException::invalidResponsePaymentMethod($this->paymentMethod);
             }
         }
 
@@ -236,21 +236,21 @@ class CaptureResponse extends AbstractResponse
 
     /**
      * @param array $data
-     * @throws CaptureException
+     * @throws PurchaseException
      */
     private function setErrorsOptions(array $data): void
     {
         if (isset($data['filtragecause'])) {
             $this->filteredReason = (int) $data['filtragecause'];
             if (!in_array($this->filteredReason, self::FILTERED_REASONS)) {
-                throw CaptureException::invalidResponseFilteredReason($this->filteredReason);
+                throw PurchaseException::invalidResponseFilteredReason($this->filteredReason);
             }
         }
 
         if (isset($data['motifrefus'])) {
             $this->rejectReason = $data['motifrefus'];
             if (!in_array($this->rejectReason, self::REJECT_REASONS)) {
-                throw CaptureException::invalidResponseRejectReason($this->rejectReason);
+                throw PurchaseException::invalidResponseRejectReason($this->rejectReason);
             }
         }
 

@@ -2,9 +2,9 @@
 
 use Carbon\Carbon;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\CaptureException;
+use DansMaCulotte\Monetico\Exceptions\PurchaseException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Requests\CaptureRequest;
+use DansMaCulotte\Monetico\Requests\PurchaseRequest;
 use DansMaCulotte\Monetico\Resources\BillingAddressResource;
 use DansMaCulotte\Monetico\Resources\CartItemResource;
 use DansMaCulotte\Monetico\Resources\CartResource;
@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
 
-class CaptureRequestTest extends TestCase
+class PurchaseRequestTest extends TestCase
 {
     public function testPaymentConstruct()
     {
-        $capture = new CaptureRequest([
+        $capture = new PurchaseRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -30,28 +30,28 @@ class CaptureRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $this->assertTrue($capture instanceof CaptureRequest);
+        $this->assertTrue($capture instanceof PurchaseRequest);
     }
 
     public function testPaymentUrl()
     {
-        $url = CaptureRequest::getUrl();
+        $url = PurchaseRequest::getUrl();
 
         $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
 
-        $url = CaptureRequest::getUrl(true);
+        $url = PurchaseRequest::getUrl(true);
 
         $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }
 
     public function testPaymentExceptionReference()
     {
-        $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknow'));
+        $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknowthisisabigerroryouknowthisisabigerroryouknow'));
 
-        new CaptureRequest([
-            'reference' => 'thisisabigerroryouknow',
+        new PurchaseRequest([
+            'reference' => 'thisisabigerroryouknowthisisabigerroryouknowthisisabigerroryouknow',
             'description' => 'PHPUnit',
-            'language' => 'FR',
+            'language' => 'fr',
             'email' => 'john@english.fr',
             'amount' => 42.42,
             'currency' => 'EUR',
@@ -65,7 +65,7 @@ class CaptureRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidLanguage('WTF'));
 
-        new CaptureRequest([
+        new PurchaseRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'WTF',
@@ -82,7 +82,7 @@ class CaptureRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
 
-        new CaptureRequest([
+        new PurchaseRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -97,7 +97,7 @@ class CaptureRequestTest extends TestCase
 
     public function testPaymentOptions()
     {
-        $capture = new CaptureRequest([
+        $capture = new PurchaseRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -154,7 +154,7 @@ class CaptureRequestTest extends TestCase
 
     public function testPaymentCommitments()
     {
-        $capture = new CaptureRequest(
+        $capture = new PurchaseRequest(
             [
                 'reference' => 'ABCDEF123',
                 'description' => 'PHPUnit',
@@ -231,7 +231,7 @@ class CaptureRequestTest extends TestCase
 
     public function testSetOrderContext()
     {
-        $capture = new CaptureRequest([
+        $capture = new PurchaseRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -280,7 +280,7 @@ class CaptureRequestTest extends TestCase
 
     public function testSet3DSecure()
     {
-        $capture = new CaptureRequest([
+        $capture = new PurchaseRequest([
             'reference' => '12345679',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -317,9 +317,9 @@ class CaptureRequestTest extends TestCase
 
     public function testPaymentException3DSecure()
     {
-        $this->expectExceptionObject(CaptureException::invalidThreeDSecureChallenge('invalid_choice'));
+        $this->expectExceptionObject(PurchaseException::invalidThreeDSecureChallenge('invalid_choice'));
 
-        $capture = new CaptureRequest([
+        $capture = new PurchaseRequest([
             'reference' => 'ABCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',

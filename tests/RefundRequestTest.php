@@ -10,9 +10,9 @@ class RefundRequestTest extends TestCase
     public function testRefundConstruct()
     {
         $refund = new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',
@@ -39,9 +39,9 @@ class RefundRequestTest extends TestCase
     public function testRefundWithOptions()
     {
         $refund = new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',
@@ -64,9 +64,9 @@ class RefundRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidDatetime());
         new RefundRequest([
-            'datetime' => 'invalid',
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => 'invalid',
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',
@@ -82,9 +82,9 @@ class RefundRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidOrderDate());
         new RefundRequest([
-            'datetime' => Carbon::create(2019, 1, 1),
-            'orderDatetime' => 'invalid',
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 1, 1),
+            'orderDate' => 'invalid',
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',
@@ -99,9 +99,9 @@ class RefundRequestTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidRecoveryDate());
         new RefundRequest([
-            'datetime' => Carbon::create(2019, 1, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' =>'invalid',
+            'dateTime' => Carbon::create(2019, 1, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' =>'invalid',
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',
@@ -117,9 +117,9 @@ class RefundRequestTest extends TestCase
         $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
 
         new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'thisisatoolongreference',
             'language' => 'FR',
@@ -135,9 +135,9 @@ class RefundRequestTest extends TestCase
         $this->expectExceptionObject(Exception::invalidLanguage('invalid'));
 
         new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'invalid',
@@ -153,9 +153,9 @@ class RefundRequestTest extends TestCase
         $this->expectExceptionObject(Exception::invalidInvoiceType('invalid'));
 
         $refund = new RefundRequest([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',

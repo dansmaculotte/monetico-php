@@ -97,7 +97,7 @@ class CaptureRequest extends AbstractRequest
     public function __construct(array $data = [], array $commitments = [], array $options = [])
     {
         $this->reference = $data['reference'];
-        $this->language = $data['language'];
+        $this->language = strtoupper($data['language']);
         $this->dateTime = $data['dateTime'];
         $this->description = $data['description'];
         $this->email = $data['email'];
@@ -116,7 +116,7 @@ class CaptureRequest extends AbstractRequest
      */
     public function validate(): bool
     {
-        if (strlen($this->reference) > 12) {
+        if (strlen($this->reference) > 50) {
             throw Exception::invalidReference($this->reference);
         }
 

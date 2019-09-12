@@ -27,19 +27,18 @@ class CartResource extends Ressource
      */
     public function __construct(array $fields = [])
     {
-        parent::__construct(array_merge(
-            $fields,
-            [
-                self::ITEMS_KEY => [],
-            ]
-        ));
+        parent::__construct($fields);
+        $this->setParameter(self::ITEMS_KEY, []);
     }
 
     /**
      * @param CartItemResource $item
+     * @throws Exception
      */
     public function addItem(CartItemResource $item): void
     {
-        array_push($this->parameters[self::ITEMS_KEY], $item->getParameters());
+        $items = $this->getParameter(self::ITEMS_KEY);
+
+        array_push($items, $item->getParameters());
     }
 }

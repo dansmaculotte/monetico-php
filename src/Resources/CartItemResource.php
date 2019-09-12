@@ -17,18 +17,4 @@ class CartItemResource extends Ressource
         'productSKU',
         'productRisk',
     ];
-
-    /**
-     * CartItemResource constructor.
-     * @param int $unitPrice
-     * @param int $quantity
-     * @throws Exception
-     */
-    public function __construct(int $unitPrice, int $quantity)
-    {
-        parent::__construct([
-            'unitPrice' => $unitPrice,
-            'quantity' => $quantity,
-        ]);
-    }
 }

@@ -243,10 +243,20 @@ class PurchaseRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $billingAddress = new BillingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $billingAddress = new BillingAddressResource([
+            'addressLine1' => '7 rue melingue',
+            'city' => 'Caen',
+            'postalCode' => '14000',
+            'country' => 'France',
+        ]);
         $capture->setBillingAddress($billingAddress);
 
-        $shippingAddress = new ShippingAddressResource('7 rue melingue', 'Caen', '14000', 'France');
+        $shippingAddress = new ShippingAddressResource([
+            'addressLine1' => '7 rue melingue',
+            'city' => 'Caen',
+            'postalCode' => '14000',
+            'country' => 'France',
+        ]);
         $shippingAddress->setParameter('email', 'john@english.fr');
         $capture->setShippingAddress($shippingAddress);
 
@@ -257,7 +267,10 @@ class PurchaseRequestTest extends TestCase
         $capture->setClient($client);
 
         $cart = new CartResource();
-        $item = new CartItemResource(10, 2);
+        $item = new CartItemResource([
+            'unitPrice' => 10,
+            'quantity' => 2,
+        ]);
         $item->setParameter('name', 'Pen');
         $cart->addItem($item);
         $capture->setCart($cart);

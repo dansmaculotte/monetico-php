@@ -264,13 +264,11 @@ class PurchaseResponse extends AbstractResponse
     }
 
     /**
-     * @param string $eptCode
      * @return array
      */
-    private function fieldsToArray(string $eptCode): array
+    public function toArray(): array
     {
         $fields = [
-            'TPE' => $eptCode,
             'authentification' => $this->authenticationHash,
             'bincb' => $this->cardBIN,
             'brand' => $this->cardBrand,
@@ -330,7 +328,12 @@ class PurchaseResponse extends AbstractResponse
      */
     public function validateSeal(string $eptCode, string $securityKey): bool
     {
-        $fields = $this->fieldsToArray($eptCode);
+        $fields = array_merge(
+            [
+                'TPE' => $eptCode,
+            ],
+            $this->toArray()
+        );
 
         ksort($fields);
 

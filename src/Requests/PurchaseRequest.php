@@ -252,12 +252,23 @@ class PurchaseRequest extends AbstractRequest
      */
     public function orderContextBase64(): string
     {
-        $contextCommand = [
-            'billing' => $this->billingAddress ? $this->billingAddress->getParameters() : [],
-            'shipping' => $this->shippingAddress ? $this->shippingAddress->getParameters() : [],
-            'client' => $this->client ? $this->client->getParameters() : [],
-            'shoppingCart' => $this->cart ? $this->cart->getParameters() : [],
-        ];
+        $contextCommand = [];
+
+        if ($this->billingAddress) {
+            $contextCommand['billing'] = $this->billingAddress->getParameters();
+        }
+
+        if ($this->shippingAddress) {
+            $contextCommand['shipping'] = $this->shippingAddress->getParameters();
+        }
+
+        if ($this->client) {
+            $contextCommand['client'] = $this->client->getParameters();
+        }
+
+        if ($this->cart) {
+            $contextCommand['shoppingCart'] = $this->cart->getParameters();
+        }
 
         return base64_encode(json_encode($contextCommand));
     }

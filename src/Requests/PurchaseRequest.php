@@ -270,7 +270,7 @@ class PurchaseRequest extends AbstractRequest
             $contextCommand['shoppingCart'] = $this->cart->getParameters();
         }
 
-        return base64_encode(json_encode($contextCommand));
+        return base64_encode(json_encode($contextCommand, JSON_UNESCAPED_UNICODE));
     }
 
     /**

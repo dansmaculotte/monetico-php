@@ -41,7 +41,7 @@ class PurchaseResponse extends AbstractResponse
     public $cardHash;
 
     /** @var bool */
-    public $cardBookmarked = null;
+    public $cardSaved = null;
 
     /** @var string */
     public $cardMask = null;
@@ -78,6 +78,15 @@ class PurchaseResponse extends AbstractResponse
 
     /** @var string */
     public $authenticationHash = null;
+
+    /** @var string */
+    public $cardType;
+
+    /** @var string */
+    public $accountType;
+
+    /** @var string */
+    public $virtualCard;
 
     /** @var string */
     const DATETIME_FORMAT = 'd/m/Y_\a_H:i:s';
@@ -181,12 +190,25 @@ class PurchaseResponse extends AbstractResponse
             'cvx' => 'cardVerificationStatus',
             'vld' => 'cardExpirationDate',
             'brand' => 'cardBrand',
-            'numauto' => 'authNumber',
             'originecb' => 'cardCountry',
             'bincb' => 'cardBIN',
             'hpancb' => 'cardHash',
             'ipclient' => 'clientIp',
             'originetr' => 'transactionCountry',
+            'usage' => 'cardType',
+            'typecompte' => 'accountType',
+            'ecard' => 'virtualCard',
+//            'numauto' => 'authNumber',
+//            'motifrefus' => 'rejectReason',
+//            'montantech' => 'commitmentAmount',
+//            'numerodossier' => 'folderNumber',
+//            'typefacture' => 'invoiceType',
+//            'filtragecause' => 'filteredReason',
+//            'filtragevaleur' => 'filteredValue',
+//            'filtrage_etat' => 'filteredStatus',
+//            'cbenregistre' => 'cardSaved',
+//            'cbmasquee' => 'cardMask',
+//            'modepaiement' => 'paymentMethod',
         ];
     }
 
@@ -196,6 +218,7 @@ class PurchaseResponse extends AbstractResponse
      */
     private function setAuthentication(string $authentication): void
     {
+
         $authentication = base64_decode($authentication);
         $authentication = json_decode($authentication);
 
@@ -203,7 +226,7 @@ class PurchaseResponse extends AbstractResponse
             $authentication->protocol,
             $authentication->status,
             $authentication->version,
-            (array) $authentication->details
+            (isset($authentication->details)) ? $authentication->details : []
         );
     }
 
@@ -213,6 +236,10 @@ class PurchaseResponse extends AbstractResponse
      */
     private function setOptions(array $data): void
     {
+        if (isset($data['numauto'])) {
+            $this->authNumber = $data['numauto'];
+        }
+
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
             if (!in_array($this->paymentMethod, self::PAYMENT_METHODS)) {
@@ -226,7 +253,7 @@ class PurchaseResponse extends AbstractResponse
         }
 
         if (isset($data['cbenregistree'])) {
-            $this->cardBookmarked = (bool) $data['cbenregistree'];
+            $this->cardSaved = (bool) $data['cbenregistree'];
         }
 
         if (isset($data['cbmasquee'])) {
@@ -279,13 +306,19 @@ class PurchaseResponse extends AbstractResponse
             'ipclient' => $this->clientIp,
             'modepaiement' => $this->paymentMethod,
             'montant' => $this->amount,
-            'numauto' => $this->authNumber,
             'originecb' => $this->cardCountry,
             'originetr' => $this->transactionCountry,
             'reference' => $this->reference,
             'texte-libre' => $this->description,
             'vld' => $this->cardExpirationDate,
+            'usage' => $this->cardType,
+            'typecompte' => $this->accountType,
+            'ecard' => $this->virtualCard,
         ];
+
+        if (isset($this->authNumber)) {
+            $fields['numauto'] = $this->authNumber;
+        }
 
         if (isset($this->rejectReason)) {
             $fields['motifrefus'] = $this->rejectReason;
@@ -294,6 +327,14 @@ class PurchaseResponse extends AbstractResponse
 
         if (isset($this->commitmentAmount)) {
             $fields['montantech'] = $this->commitmentAmount;
+        }
+
+        if (isset($this->folderNumber)) {
+            $fields['numerodossier'] = $this->folderNumber;
+        }
+
+        if (isset($this->invoiceType)) {
+            $fields['typefacture'] = $this->invoiceType;
         }
 
         if (isset($this->filteredReason)) {
@@ -308,12 +349,16 @@ class PurchaseResponse extends AbstractResponse
             $fields['filtrage_etat'] = $this->filteredStatus;
         }
 
-        if (isset($this->cardBookmarked)) {
-            $fields['cbenregistree'] = $this->cardBookmarked;
+        if (isset($this->cardSaved)) {
+            $fields['cbenregistree'] = $this->cardSaved;
         }
 
         if (isset($this->cardMask)) {
             $fields['cbmasquee'] = $this->cardMask;
+        }
+
+        if (isset($this->paymentMethod)) {
+            $fields['modepaiement'] = $this->paymentMethod;
         }
 
         return $fields;

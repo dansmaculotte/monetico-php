@@ -226,7 +226,7 @@ class PurchaseResponse extends AbstractResponse
             $authentication->protocol,
             $authentication->status,
             $authentication->version,
-            (isset($authentication->details)) ? $authentication->details : []
+            (isset($authentication->details)) ? (array)$authentication->details : []
         );
     }
 

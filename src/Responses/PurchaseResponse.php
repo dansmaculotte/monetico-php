@@ -218,14 +218,13 @@ class PurchaseResponse extends AbstractResponse
      */
     private function setAuthentication(string $authentication): void
     {
-
         $authentication = base64_decode($authentication);
-        $authentication = json_decode($authentication);
+        $authentication = json_decode($authentication, true);
 
         $this->authentication = new AuthenticationResource(
-            $authentication->protocol,
-            $authentication->status,
-            $authentication->version,
+            $authentication['protocol'],
+            $authentication['status'],
+            $authentication['version'],
             (isset($authentication->details)) ? $authentication->details : []
         );
     }

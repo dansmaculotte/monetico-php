@@ -110,6 +110,9 @@ class MoneticoTest extends TestCase
             'reference' => 'D2345677',
             'texte-libre' => 'PHPUnit',
             'vld' => '1219',
+            'usage' => 'credit',
+            'typecompte' => 'particulier',
+            'ecard' => 'non',
         ];
 
         ksort($data);

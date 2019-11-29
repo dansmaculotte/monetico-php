@@ -281,7 +281,7 @@ class PurchaseRequest extends AbstractRequest
      */
     private function baseFields(string $eptCode, string $companyCode, string $version): array
     {
-        return [
+        $fields = [
             'TPE' => $eptCode,
             'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'contexte_commande' => $this->orderContextBase64(),
@@ -293,6 +293,10 @@ class PurchaseRequest extends AbstractRequest
             'texte-libre' => $this->description,
             'version' => $version
         ];
+
+        if ($this->description) {
+            $fields['texte-libre'] = $this->description;
+        }
     }
 
     /**
@@ -330,12 +334,12 @@ class PurchaseRequest extends AbstractRequest
     private function optionsFields(): array
     {
         return [
-            'ThreeDSecureChallenge' => (isset($this->options['threeDsecureChallenge'])) ? $this->options['threeDsecureChallenge'] : '',
-            '3dsdebrayable' => (isset($this->options['3dsdebrayable'])) ? $this->options['3dsdebrayable'] : '',
-            'aliascb' => (isset($this->options['aliascb'])) ? $this->options['aliascb'] : '',
-            'desactivemoyenpaiement' => (isset($this->options['desactivemoyenpaiement'])) ? $this->options['desactivemoyenpaiement'] : '',
-            'forcesaisiecb' => (isset($this->options['forcesaisiecb'])) ? $this->options['forcesaisiecb'] : '',
-            'libelleMonetique' => (isset($this->options['libelleMonetique'])) ? $this->options['libelleMonetique'] : '',
+            'ThreeDSecureChallenge' => $this->options['threeDsecureChallenge'] ?? '',
+            '3dsdebrayable' => $this->options['3dsdebrayable'] ?? '',
+            'aliascb' => $this->options['aliascb'] ?? '',
+            'desactivemoyenpaiement' => $this->options['desactivemoyenpaiement'] ?? '',
+            'forcesaisiecb' => $this->options['forcesaisiecb'] ?? '',
+            'libelleMonetique' => $this->options['libelleMonetique'] ?? '',
         ];
     }
 

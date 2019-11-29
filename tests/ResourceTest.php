@@ -1,9 +1,9 @@
 <?php
 
 
+use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Resources\CartResource;
 use PHPUnit\Framework\TestCase;
-use DansMaCulotte\Monetico\Exceptions\Exception;
 
 class ResourceTest extends TestCase
 {

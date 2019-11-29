@@ -44,6 +44,9 @@ class PurchaseResponseTest extends TestCase
         'texte-libre' => 'PHPUnit',
         'TPE' => '9344512',
         'vld' => '1219',
+        'usage' => 'credit',
+        'typecompte' => 'particulier',
+        'ecard' => 'non',
     ];
 
     public function testPaymentResponseConstruct()
@@ -149,7 +152,7 @@ class PurchaseResponseTest extends TestCase
         $this->assertTrue($response->commitmentAmount === '50EUR');
         $this->assertTrue($response->filteredValue === 'foobar');
         $this->assertTrue($response->filteredStatus === 'test');
-        $this->assertTrue($response->cardBookmarked === true);
+        $this->assertTrue($response->cardSaved === true);
         $this->assertTrue($response->cardMask === '1234XXXXXXXXXXX1234');
     }
 
@@ -162,9 +165,7 @@ class PurchaseResponseTest extends TestCase
         $this->assertEquals('3DSecure', $response->authentication->protocol);
         $this->assertEquals('authenticated', $response->authentication->status);
         $this->assertEquals('1.0.2', $response->authentication->version);
-        $this->assertEquals('Y', $response->authentication->details['PARes']);
-        $this->assertEquals('Y', $response->authentication->details['VERes']);
-        $this->assertEquals('1', $response->authentication->details['status3DS']);
+        $this->assertEmpty($response->authentication->details);
     }
 
     public function testSealIsValid()
@@ -194,6 +195,9 @@ class PurchaseResponseTest extends TestCase
             'cbmasquee' => '1234XXXXXXXXXXX1234',
             'motifrefus' => 'Interdit',
             'filtragecause' => '1',
+            'usage' => 'credit',
+            'typecompte' => 'particulier',
+            'ecard' => 'non',
         ];
 
         $data['MAC'] = $this->generateSeal($data);

@@ -3,8 +3,6 @@
 
 namespace DansMaCulotte\Monetico\Resources;
 
-use DansMaCulotte\Monetico\Exceptions\Exception;
-
 class CartItemResource extends Ressource
 {
     protected $keys = [

@@ -2,8 +2,6 @@
 
 namespace DansMaCulotte\Monetico\Resources;
 
-use DansMaCulotte\Monetico\Exceptions\Exception;
-
 class ShippingAddressResource extends Ressource
 {
     /** @var array */

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.3](https://github.com/dansmaculotte/monetico-php/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2019-11-30)
+
+
+### Bug Fixes
+
+* add missing fields in purchase response ([b4c633b](https://github.com/dansmaculotte/monetico-php/commit/b4c633bc3519f99cc10f927505ee551f189870c9))
+* bad naming, update with camelCase ([4cc2d15](https://github.com/dansmaculotte/monetico-php/commit/4cc2d152b7409a5292840388e65e71c7d9ff2cdb))
+* do not escape to unicode for context_command ([1d578b6](https://github.com/dansmaculotte/monetico-php/commit/1d578b63e5fd063d932c00547bb774073bd9e231))
+* missing return in baseFields ([9f894da](https://github.com/dansmaculotte/monetico-php/commit/9f894daf806823f010d36fa07612541de4dcc6ec))
+* reference limit to 50 and uppercase language ([609808d](https://github.com/dansmaculotte/monetico-php/commit/609808d6dfab7fe5024eac52cc9f0260ff4b0bba))
+* return if value is not defined in setParameter method ([44af33b](https://github.com/dansmaculotte/monetico-php/commit/44af33bb38659f74d0780e7f400df60a20491226))
+
 ## [2.0.0-beta.2](https://github.com/dansmaculotte/monetico-php/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2019-08-29)
 
 

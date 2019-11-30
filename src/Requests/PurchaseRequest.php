@@ -294,9 +294,7 @@ class PurchaseRequest extends AbstractRequest
             'version' => $version
         ];
 
-        if ($this->description) {
-            $fields['texte-libre'] = $this->description;
-        }
+        return $fields;
     }
 
     /**

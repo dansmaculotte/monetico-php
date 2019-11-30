@@ -220,9 +220,437 @@ It is recommended to limit reference length to 12 characters to keep it from bei
     - `lyfpay`
 - Example: `lyfpay`
 
-### Models
+#### Payment by instalment
 
-#### `billing`
+##### `nbrech`
+
+> The number of instalments
+
+- Type: `Integer`
+- Required: `false`
+- Values: `2` `3` `4`
+
+##### `dateech[N]`
+
+> The execution dates where `N` is the number of instalments
+
+- Type: `String`
+- Required: `false`
+- Validation: `DD/MM/YYYY`
+- Example: `24/05/2019`
+
+##### `montantech[N]`
+
+> The amounts where `N` is the number of instalments
+
+- Type: `String`
+- Required: `false`
+- Validation: `[0-9]+(\.[0-9]{1,2})?[A-Z]{3}`
+- Example: `33.50EUR` `42EUR`
+
+##### `numero_dossier`
+
+> Please explain
+
+- Type: `String`
+- Required: `false`
+- Validation: `[A-Z0-9]{1,12}`
+- Example: `20150901PRE1`
+
+#### Cofidis payment method (3xCB, 4xCB)
+
+> These details are used to pre-fill cofidis form
+
+##### `civiliteclient`
+
+> Customer civility
+
+- Type: `String`
+- Required: `false`
+- Values:
+    - `MR`
+    - `MME`
+    - `MLLE`
+
+##### `nomclient`
+
+> Customer last name
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Záàâäãåçéèêëíìîïñóòôöõúùûüýÿ-]{1,50}`
+- Example: `Dupont`
+
+##### `prenomclient`
+
+> Customer first name
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Záàâäãåçéèêëíìîïñóòôöõúùûüýÿ-]{1,50}`
+- Example: `Thomas`
+
+##### `adresseclient`
+
+> Customer address
+
+- Type: `String`
+- Required: `false`
+- Validation: `.{1,100}`
+- Example: `20 rue des champs`
+
+##### `complementadresseclient`
+
+> Customer address
+
+- Type: `String`
+- Required: `false`
+- Validation: `.{1,50}`
+- Example: `Appartement B`
+
+##### `codepostalclient`
+
+> Customer postal code
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Z0-9]{1,10}`
+- Example: `67200`
+
+##### `villeclient`
+
+> Customer city
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Z]{1,50}`
+- Example: `Strasbourg`
+
+##### `paysclient`
+
+> Customer country
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Z]{2}`
+- Example: `FR`
+
+##### `telephonefixeclient`
+
+> Customer home phone number
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Z]{2}`
+- Example: `0312345678`
+
+##### `telephonemobileclient`
+
+> Customer mobile phone number
+
+- Type: `String`
+- Required: `false`
+- Validation: `[a-zA-Z]{2}`
+- Example: `0312345678`
+
+##### `departementnaissanceclient`
+
+> Customer birth department number
+
+- Type: `String`
+- Required: `false`
+- Validation: `[0-9]{2,3}`
+- Example: `67`
+
+##### `datenaissanceclient`
+
+> Customer birth date
+
+- Type: `String`
+- Required: `false`
+- Validation: `[0-9]{8}` `YYYYMMDD`
+- Example: `19900103`
+
+##### `prescore`
+
+> Cofidis pre score
+
+- Type: `String`
+- Required: `false`
+- Validation: `[0-9]`
+- Example: `1234567`
+
+## Response
+
+### Fields
+
+#### `code-retour`
+
+> Payment result
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `payetest`
+    - `paiement`
+    - `annulation`
+    - `paiement_pf[N]`
+    - `Annulation_pf[N]`
+    
+#### `MAC`
+
+> Seal used to certify payload
+
+- Type: `String`
+- Required: `true`
+- Validation: `[A-F]{40}`
+- Example: `f97861e0f3e296b7eece2cfd86dc46c43ac88049`
+
+#### `TPE`
+
+> TPE Virtual Number
+
+- Type: `String`
+- Required: `true`
+- Validation: `[A-Za-z0-9]{7}`
+- Example: `1234567`
+
+#### `montant`
+
+> Order amount with taxes
+
+- Type: `String`
+- Required: `true`
+- Validation: `[0-9]+(\.[0-9]{1,2})?[A-Z]{3}`
+- Example: `95.25EUR` `42EUR` `56.54USD`
+
+#### `reference`
+
+> Order unique reference
+
+- Type: `String`
+- Required: `true`
+- Validation: `^[\x20-\x7E]{1,50}$`
+- Example: `REF7896543`
+
+#### `texte-libre`
+
+> Request field `texte-libre`
+
+- Type: `String`
+- Required: `true`
+- Validation: `.{1.3200}`
+- Example: `Livraison relais colis rue des tourterelles`
+
+#### `date`
+
+> Payment authorization date
+
+- Type: `String`
+- Required: `true`
+- Validation: `DD/MM/YYYY_a_HH:MM:SS`
+- Example: `24/05/2019_a_10:00:25`
+
+#### `cvx`
+
+> Indicates whether CVC code has been submitted or not
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `oui`: `true`
+    - `non`: `false`
+    
+#### `vld`
+
+> Expiring date of the payment card
+
+- Type: `String`
+- Required: `true`
+- Validation: `MMYY`
+- Example: `1019`
+
+#### `brand`
+
+> Payment card brand
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `AM`: American Express
+    - `CB`: GIE CB
+    - `MC`: Mastercard
+    - `VI`: Visa
+    - `na`: Not available (default)
+
+#### `numauto`
+
+> Authorization number provided by customer bank's if payment has been authorized
+
+- Type: `String`
+- Required: `true`
+- Example: `000002`
+
+#### `authentification`
+
+> Base64 encoded JSON authentication details
+
+- Type: [authentification](#authentification)
+- Required: `true`
+
+#### `usage`
+
+> Card type
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `credit`
+    - `debit`
+    - `prepaye`
+    - `inconnu`
+    
+#### `typecompte`
+
+> Account type associated to card
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `particulier`
+    - `commercial`
+    - `inconnu`
+    
+#### `ecard`
+
+> Virtual card
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `oui`: `true`
+    - `non`: `false`
+    
+#### `motifrefus`
+
+> Reason of denied payment
+
+- Type: `String`
+- Required: `true`
+- Values:
+    - `Appel Phonie`
+    - `Refus`
+    - `Interdit`
+    - `filtrage`
+    - `scoring`
+    - `3DSecure`
+
+#### `originecb`
+
+> Bank country of card
+
+- Type: `String`
+- Required: `true`
+- Validation: [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1)
+- Example: `FR`
+
+#### `bincb`
+
+> Bank BIN code of card
+
+- Type: `String`
+- Required: `true`
+
+#### `hpancb`
+
+> HMAC-SHA1 of card number
+
+- Type: `String`
+- Required: `true`
+
+#### `ipclient`
+
+> IP address of customer
+
+- Type: `String`
+- Required: `true`
+
+#### `montantech`
+
+> The amount of payment if payment by instalment
+
+- Type: `String`
+- Required: `true`
+
+#### `numero_dossier`
+
+> Please explain
+
+- Type: `String`
+- Required: `true`
+- Validation: `[A-Z0-9]{1,12}`
+- Example: `20150901PRE1`
+
+#### `typefacture`
+
+> Please explain
+
+- Type: `String`
+- Required: `true` if `TPE` is in pre-authorized mode
+- Value: `preauto`
+
+#### `filtragecause`
+
+> Detailed reason of denied payment if `motifrefus` is `filtrage`
+
+- Type: `Interger`
+- Values: `1` to `16`
+
+#### `filtragevaleur`
+
+> Value causing the denial of payment if `motifrefus` is `filtrage`
+
+- Type: `String`
+
+#### `filtrage_etat`
+
+> Indicates if `filtrage` is in mode `information`
+
+- Type: `String`
+- Value: `information`
+
+#### `cbenregistree`
+
+> Indicates if card has been saved as an alias
+
+- Type: `String`
+- Values:
+    - `0`: `false`
+    - `1`: `true`
+    
+#### `cbmasquee`
+
+> Card mask
+
+- Type: `String`
+- Example: `123456******1234`
+
+#### `modepaiement`
+
+> Payment method
+
+- Type: `String`
+- Values:
+    - `CB`
+    - `paypal`
+    - `1euro`
+    - `3xcb`
+    - `4xcb`
+    - `audiotel`
+
+## Models
+
+### `billing`
 
 > Billing address details
 
@@ -308,7 +736,7 @@ It is recommended to limit reference length to 12 characters to keep it from bei
     - Validation: `\+[0-9]{2}-[0-9]{1,18}`
     - Example: `+33-612345678`
     
-#### `shipping`
+### `shipping`
 
 > Shipping address details
 
@@ -411,7 +839,7 @@ It is recommended to limit reference length to 12 characters to keep it from bei
     - Type: `Boolean`
     - Required: `false`
 
-#### `shoppingCart`
+### `shoppingCart`
 
 > Customer cart details
 
@@ -487,7 +915,7 @@ It is recommended to limit reference length to 12 characters to keep it from bei
                 - `normal`
                 - `high`
 
-#### `client`
+### `client`
 
 > Customer details
 
@@ -646,3 +1074,95 @@ It is recommended to limit reference length to 12 characters to keep it from bei
     - Required: `false`
     - Validation: `YYYY-MM-DD`
 
+### `authentification`
+
+- `status`:
+    - Type: `String`
+    - Required: `true`
+    - Values:
+        - `authenticated`
+        - `authentication_not_performed`
+        - `not_authenticated`
+        - `authentication_rejected`
+        - `authentication_attempted`
+        - `not_enrolled`
+        - `disabled`
+- `protocol`:
+    - Type: `String`
+    - Required: `true`
+    - Value: `3DSecure`
+- `version`:
+    - Type: `String`
+    - Required: `true`
+    - Values:
+        - `1.0.2`
+        - `2.1.0`
+- `details`: (object)
+    - `liabilityShift`:
+        - Type: `String`
+        - Required: `true` if `version` is `^2.0`
+        - Values:
+            - `Y`
+            - `N`
+            - `NA`
+    - `VERes`:
+        - Type: `String`
+        - Required: `true` if `version` is `^1.0`
+        - Values:
+            - `Y`
+            - `N`
+            - `U`
+    - `PARes`:
+        - Type: `String`
+        - Required: `true` if `version` is `^1.0`
+        - Values:
+            - `Y`
+            - `N`
+            - `U`
+            - `A`
+    - `ARes`:
+        - Type: `String`
+        - Required: `true` if `version` is `^2.0`
+        - Values:
+            - `Y`
+            - `R`
+            - `C`
+            - `U`
+            - `A`
+            - `N`
+    - `CRes`:
+        - Type: `String`
+        - Required: `true` if `version` is `^2.0`
+        - Values:
+            - `Y`
+            - `N`
+    - `merchantPreference`:
+        - Type: `String`
+        - Required: `true`
+        - Values:
+            - `no_preference`
+            - `challenge_preferred`
+            - `challenge_mandated`
+            - `no_challenge_requested`
+            - `no_challenge_requested_strong_authentication`
+            - `no_challenge_requested_trusted_third_party`
+            - `no_challenge_requested_risk_analysis`
+    - `transactionID`:
+        - Type: `String`
+        - Required: `true` if `version` is `^2.0`
+        - Validation: `UUID`
+    - `status3DS`:
+        - Type: `Integer`
+        - Required: `true` if `version` is `^1.0`
+        - Values:
+            - `-1`
+            - `1`
+            - `4`
+    - `disablingReason`:
+        - Type: `String`
+        - Required: `true` if `version` is `^1.0`
+        - Values:
+            - `commercant`
+            - `seuilnonatteint`
+            - `scoring`
+        

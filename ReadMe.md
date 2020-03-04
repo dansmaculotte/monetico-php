@@ -56,7 +56,7 @@ $purchase = new PurchaseRequest([
     'email' => 'john@snow.stark',
     'amount' => 42,
     'currency' => 'EUR',
-    'datetime' => Carbon::create(2019, 1, 1),
+    'datetime' => new DateTime(),
     'successUrl' => 'http://localhost/thanks',
     'errorUrl' => 'http://localhost/oops',
 ]);
@@ -131,8 +131,8 @@ $recovery = new RecoveryRequest([
     'amountRecovered' => 0,
     'amountLeft' => 42.42,
     'currency' => 'EUR',
-    'orderDate' => Carbon::create(2019, 07, 17),
-    'dateTime' => Carbon::create(2019, 07, 17),
+    'orderDate' => new DateTime(),
+    'dateTime' => new DateTime(),
 ]);
 
 $url = RecoveryRequest::getUrl();
@@ -160,8 +160,8 @@ $monetico = new Monetico(
 );
 
 $cancel = new CancelRequest([
-    'dateTime' => Carbon::create(2019, 2, 1),
-    'orderDate' => Carbon::create(2019, 1, 1),
+    'dateTime' => new DateTime(),
+    'orderDate' => new DateTime(),
     'reference' => 'ABC123',
     'language' => 'FR',
     'currency' => 'EUR',
@@ -194,9 +194,9 @@ $monetico = new Monetico(
 );
 
 $refund = new RefundRequest([
-    'datetime' => Carbon::create(2019, 2, 1),
-    'orderDatetime' => Carbon::create(2019, 1, 1),
-    'recoveryDatetime' => Carbon::create(2019, 1, 1),
+    'datetime' => new DateTime(),
+    'orderDatetime' => new DateTime(),
+    'recoveryDatetime' => new DateTime(),
     'authorizationNumber' => '1222',
     'reference' => 'ABC123',
     'language' => 'FR',

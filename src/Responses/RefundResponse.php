@@ -38,7 +38,7 @@ class RefundResponse extends AbstractResponse
 
         if (isset($data['type_facture'])) {
             $this->invoiceType = $data['type_facture'];
-            if (!in_array($this->invoiceType, self::INVOICE_TYPES)) {
+            if (!in_array($this->invoiceType, self::INVOICE_TYPES, true)) {
                 throw Exception::invalidResponseInvoiceType($this->invoiceType);
             }
         }

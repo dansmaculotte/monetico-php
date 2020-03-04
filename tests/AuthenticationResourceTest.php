@@ -13,16 +13,16 @@ class AuthenticationResourceTest extends TestCase
             'authenticated',
             '2.1.0',
             [
-                "liabilityShift" => "Y",
-                "ARes" => "C",
-                "CRes" => "Y",
-                "merchantPreference" => "no_preference",
-                "transactionID" => "555bd9d9-1cf1-4ba8-b37c-1a96bc8b603a",
-                "authenticationValue" => "cmJvd0I4SHk3UTRkYkFSQ3FYY3U=",
-                "disablingReason" => "seuilnonatteint"
+                'liabilityShift' => 'Y',
+                'ARes' => 'C',
+                'CRes' => 'Y',
+                'merchantPreference' => 'no_preference',
+                'transactionID' => '555bd9d9-1cf1-4ba8-b37c-1a96bc8b603a',
+                'authenticationValue' => 'cmJvd0I4SHk3UTRkYkFSQ3FYY3U=',
+                'disablingReason' => 'seuilnonatteint'
             ]
         );
-        $this->assertTrue($authentication instanceof AuthenticationResource);
+        $this->assertInstanceOf(AuthenticationResource::class, $authentication);
     }
 
     public function testAuthenticationConstructExceptionInvalidProtocol()
@@ -34,12 +34,12 @@ class AuthenticationResourceTest extends TestCase
             'authenticated',
             '2.1.0',
             [
-                "liabilityShift" => "Y",
-                "ARes" => "C",
-                "CRes" => "Y",
-                "merchantPreference" => "no_preference",
-                "transactionID" => "555bd9d9-1cf1-4ba8-b37c-1a96bc8b603a",
-                "authenticationValue" => "cmJvd0I4SHk3UTRkYkFSQ3FYY3U="
+                'liabilityShift' => 'Y',
+                'ARes' => 'C',
+                'CRes' => 'Y',
+                'merchantPreference' => 'no_preference',
+                'transactionID' => '555bd9d9-1cf1-4ba8-b37c-1a96bc8b603a',
+                'authenticationValue' => 'cmJvd0I4SHk3UTRkYkFSQ3FYY3U='
             ]
         );
     }
@@ -58,7 +58,7 @@ class AuthenticationResourceTest extends TestCase
                 "CRes" => "Y",
                 "merchantPreference" => "no_preference",
                 "transactionID" => "555bd9d9-1cf1-4ba8-b37c-1a96bc8b603a",
-                "authenticationValue" => "cmJvd0I4SHk3UTRkYkFSQ3FYY3U="
+                'authenticationValue' => "cmJvd0I4SHk3UTRkYkFSQ3FYY3U="
             ]
         );
     }

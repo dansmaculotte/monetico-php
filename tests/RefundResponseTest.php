@@ -17,7 +17,7 @@ class RefundResponseTest extends TestCase
             'type_facture' => 'complementaire'
         ]);
 
-        $this->assertTrue($response instanceof RefundResponse);
+        $this->assertInstanceOf(RefundResponse::class, $response);
     }
 
     public function testRefundResponseConstructExceptionMissingResponseKey()

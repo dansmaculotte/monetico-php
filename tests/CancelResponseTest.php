@@ -19,6 +19,6 @@ class CancelResponseTest extends TestCase
             'type_facture' => 'preauto',
         ]);
 
-        $this->assertTrue($response instanceof CancelResponse);
+        $this->assertInstanceOf(CancelResponse::class, $response);
     }
 }

@@ -19,18 +19,18 @@ class CancelRequestTest extends TestCase
             'amountRecovered' => 0,
         ]);
 
-        $this->assertTrue($cancel instanceof CancelRequest);
+        $this->assertInstanceOf(CancelRequest::class, $cancel);
     }
 
     public function testCancelUrl()
     {
         $url = CancelRequest::getUrl();
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/capture_paiement.cgi');
 
         $url = CancelRequest::getUrl(true);
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/test/capture_paiement.cgi');
     }
 
     public function testRecoveryConstructExceptionInvalidDatetime()

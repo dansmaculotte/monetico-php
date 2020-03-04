@@ -53,7 +53,7 @@ abstract class AbstractResponse
     {
         $keys = $this->getRequiredKeys();
         foreach ($keys as $key => $value) {
-            if (!in_array($key, array_keys($data))) {
+            if (!array_key_exists($key, $data)) {
                 throw Exception::missingResponseKey($key);
             }
         }

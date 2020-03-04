@@ -22,7 +22,7 @@ class RecoveryException extends \Exception
      */
     public static function invalidResponseDebitDate(): self
     {
-        return new self("date_debit value is invalid");
+        return new self('date_debit value is invalid');
     }
 
     /**
@@ -30,6 +30,6 @@ class RecoveryException extends \Exception
      */
     public static function invalidResponseAuthorizationDate(): self
     {
-        return new self("date_autorisation value is invalid");
+        return new self('date_autorisation value is invalid');
     }
 }

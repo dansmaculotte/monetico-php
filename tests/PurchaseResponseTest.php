@@ -52,7 +52,7 @@ class PurchaseResponseTest extends TestCase
     public function testPaymentResponseConstruct()
     {
         $response = new PurchaseResponse($this->data);
-        $this->assertTrue($response instanceof PurchaseResponse);
+        $this->assertInstanceOf(PurchaseResponse::class, $response);
     }
 
     public function testPaymentResponseMissingResponseKey()

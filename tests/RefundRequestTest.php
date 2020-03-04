@@ -29,11 +29,11 @@ class RefundRequestTest extends TestCase
     {
         $url = RefundRequest::getUrl();
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/recredit_paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/recredit_paiement.cgi');
 
         $url = RefundRequest::getUrl(true);
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/recredit_paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/test/recredit_paiement.cgi');
     }
 
     public function testRefundWithOptions()
@@ -57,7 +57,7 @@ class RefundRequestTest extends TestCase
         $refund->setInvoiceType('preauto');
         $this->assertEquals('preauto', $refund->invoiceType);
 
-        $this->assertTrue($refund instanceof RefundRequest);
+        $this->assertInstanceOf(RefundRequest::class, $refund);
     }
 
     public function testRefundConstructExceptionInvalidDatetime()

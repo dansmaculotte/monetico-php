@@ -40,7 +40,7 @@ class CancelRequest extends RecoveryRequest
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
 

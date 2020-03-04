@@ -18,7 +18,7 @@ class Exception extends \Exception
      */
     public static function invalidSecurityKey(): self
     {
-        return new self("Security key is invalid, should be 40 characters long.");
+        return new self('Security key is invalid, should be 40 characters long.');
     }
 
 
@@ -27,7 +27,7 @@ class Exception extends \Exception
      */
     public static function invalidDatetime(): self
     {
-        return new self("dateTime value is not a DateTime object");
+        return new self('dateTime value is not a DateTime object');
     }
 
     /**
@@ -35,7 +35,7 @@ class Exception extends \Exception
      */
     public static function invalidRecoveryDate(): self
     {
-        return new self("recoveryDate value is not a DateTime object");
+        return new self('recoveryDate value is not a DateTime object');
     }
 
     /**
@@ -89,7 +89,7 @@ class Exception extends \Exception
      */
     public static function invalidResponseDateTime(): self
     {
-        return new self("date value is invalid");
+        return new self('date value is invalid');
     }
 
     /**
@@ -106,7 +106,7 @@ class Exception extends \Exception
      */
     public static function invalidOrderDate(): self
     {
-        return new self("orderDate value is not a DateTime object");
+        return new self('orderDate value is not a DateTime object');
     }
 
     /**

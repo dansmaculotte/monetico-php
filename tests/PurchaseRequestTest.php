@@ -30,18 +30,18 @@ class PurchaseRequestTest extends TestCase
             'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $this->assertTrue($capture instanceof PurchaseRequest);
+        $this->assertInstanceOf(PurchaseRequest::class, $capture);
     }
 
     public function testPaymentUrl()
     {
         $url = PurchaseRequest::getUrl();
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/paiement.cgi');
 
         $url = PurchaseRequest::getUrl(true);
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/test/paiement.cgi');
     }
 
     public function testPaymentExceptionReference()
@@ -111,25 +111,25 @@ class PurchaseRequestTest extends TestCase
 
         $capture->setCardAlias('foobar');
         $this->assertArrayHasKey('aliascb', $capture->options);
-        $this->assertTrue($capture->options['aliascb'] === 'foobar');
+        $this->assertSame($capture->options['aliascb'], 'foobar');
 
         $capture->setForceCard();
         $this->assertArrayHasKey('forcesaisiecb', $capture->options);
-        $this->assertTrue($capture->options['forcesaisiecb'] === '1');
+        $this->assertSame($capture->options['forcesaisiecb'], '1');
 
         $capture->setForceCard(false);
-        $this->assertTrue($capture->options['forcesaisiecb'] === '0');
+        $this->assertSame($capture->options['forcesaisiecb'], '0');
 
         $capture->setDisable3DS();
         $this->assertArrayHasKey('3dsdebrayable', $capture->options);
-        $this->assertTrue($capture->options['3dsdebrayable'] === '1');
+        $this->assertSame($capture->options['3dsdebrayable'], '1');
 
         $capture->setDisable3DS(false);
-        $this->assertTrue($capture->options['3dsdebrayable'] === '0');
+        $this->assertSame($capture->options['3dsdebrayable'], '0');
 
         $capture->setSignLabel('FooBar');
         $this->assertArrayHasKey('libelleMonetique', $capture->options);
-        $this->assertTrue($capture->options['libelleMonetique'] === 'FooBar');
+        $this->assertSame($capture->options['libelleMonetique'], 'FooBar');
 
         $capture->setDisabledPaymentWays([
             '1euro',
@@ -139,7 +139,7 @@ class PurchaseRequestTest extends TestCase
             'paypal'
         ]);
         $this->assertArrayHasKey('desactivemoyenpaiement', $capture->options);
-        $this->assertTrue($capture->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory,paypal');
+        $this->assertSame($capture->options['desactivemoyenpaiement'], '1euro,3xcb,4xcb,fivory,paypal');
 
         $capture->setDisabledPaymentWays([
             '1euro',
@@ -149,7 +149,7 @@ class PurchaseRequestTest extends TestCase
             'foobar'
         ]);
         $this->assertArrayHasKey('desactivemoyenpaiement', $capture->options);
-        $this->assertTrue($capture->options['desactivemoyenpaiement'] === '1euro,3xcb,4xcb,fivory');
+        $this->assertSame($capture->options['desactivemoyenpaiement'], '1euro,3xcb,4xcb,fivory');
     }
 
     public function testPaymentCommitments()
@@ -202,31 +202,31 @@ class PurchaseRequestTest extends TestCase
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('nbrech', $fields);
-        $this->assertTrue($fields['nbrech'] === 4);
+        $this->assertSame($fields['nbrech'], 4);
 
         $this->assertArrayHasKey('dateech1', $fields);
-        $this->assertTrue($fields['dateech1'] === '06/01/2019');
+        $this->assertSame($fields['dateech1'], '06/01/2019');
 
         $this->assertArrayHasKey('montantech1', $fields);
-        $this->assertTrue($fields['montantech1'] === '50EUR');
+        $this->assertSame($fields['montantech1'], '50EUR');
 
         $this->assertArrayHasKey('dateech2', $fields);
-        $this->assertTrue($fields['dateech2'] === '12/01/2019');
+        $this->assertSame($fields['dateech2'], '12/01/2019');
 
         $this->assertArrayHasKey('montantech2', $fields);
-        $this->assertTrue($fields['montantech2'] === '100EUR');
+        $this->assertSame($fields['montantech2'], '100EUR');
 
         $this->assertArrayHasKey('dateech3', $fields);
-        $this->assertTrue($fields['dateech3'] === '24/01/2019');
+        $this->assertSame($fields['dateech3'], '24/01/2019');
 
         $this->assertArrayHasKey('montantech3', $fields);
-        $this->assertTrue($fields['montantech3'] === '20EUR');
+        $this->assertSame($fields['montantech3'], '20EUR');
 
         $this->assertArrayHasKey('dateech4', $fields);
-        $this->assertTrue($fields['dateech4'] === '02/02/2019');
+        $this->assertSame($fields['dateech4'], '02/02/2019');
 
         $this->assertArrayHasKey('montantech4', $fields);
-        $this->assertTrue($fields['montantech4'] === '30EUR');
+        $this->assertSame($fields['montantech4'], '30EUR');
     }
 
     public function testSetOrderContext()

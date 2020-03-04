@@ -39,11 +39,11 @@ class Monetico
         string $securityKey,
         string $companyCode
     ) {
-        if (strlen($eptCode) != 7) {
+        if (strlen($eptCode) !== 7) {
             throw Exception::invalidEptCode($eptCode);
         }
 
-        if (strlen($securityKey) != 40) {
+        if (strlen($securityKey) !== 40) {
             throw Exception::invalidSecurityKey();
         }
 
@@ -66,10 +66,10 @@ class Monetico
         $cca0 = ord($hexFinal);
 
         if ($cca0 > 70 && $cca0 < 97) {
-            $hexStrKey .= chr($cca0 - 23) . substr($hexFinal, 1, 1);
+            $hexStrKey .= chr($cca0 - 23) . $hexFinal[1];
         } else {
-            if (substr($hexFinal, 1, 1) == 'M') {
-                $hexStrKey .= substr($hexFinal, 0, 1) . '0';
+            if ($hexFinal[1] === 'M') {
+                $hexStrKey .= $hexFinal[0] . '0';
             } else {
                 $hexStrKey .= substr($hexFinal, 0, 2);
             }

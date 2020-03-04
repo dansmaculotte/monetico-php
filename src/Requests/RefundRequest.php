@@ -102,7 +102,7 @@ class RefundRequest extends AbstractRequest
      */
     public function setInvoiceType(string $invoiceType)
     {
-        if (!in_array($invoiceType, self::INVOICE_TYPES)) {
+        if (!in_array($invoiceType, self::INVOICE_TYPES, true)) {
             throw Exception::invalidInvoiceType($invoiceType);
         }
         $this->invoiceType = $invoiceType;
@@ -163,7 +163,7 @@ class RefundRequest extends AbstractRequest
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
 

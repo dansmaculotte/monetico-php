@@ -17,7 +17,7 @@ class RecoveryResponseTest extends TestCase
             'aut' => '123456',
         ]);
 
-        $this->assertTrue($response instanceof RecoveryResponse);
+        $this->assertInstanceOf(RecoveryResponse::class, $response);
     }
 
     public function testRecoveryResponseWithAuthorization()
@@ -37,7 +37,7 @@ class RecoveryResponseTest extends TestCase
             'type_facture' => 'preauto',
         ]);
 
-        $this->assertTrue($response instanceof RecoveryResponse);
+        $this->assertInstanceOf(RecoveryResponse::class, $response);
     }
 
     public function testRecoveryResponseConstructExceptionMissingResponseKey()

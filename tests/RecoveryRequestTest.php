@@ -29,11 +29,11 @@ class RecoveryRequestTest extends TestCase
     {
         $url = RecoveryRequest::getUrl();
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/capture_paiement.cgi');
 
         $url = RecoveryRequest::getUrl(true);
 
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
+        $this->assertSame($url, 'https://p.monetico-services.com/test/capture_paiement.cgi');
     }
 
     public function testRecoveryConstructExceptionInvalidAmounts()

@@ -9,17 +9,17 @@ class PurchaseReceiptTest extends TestCase
     {
         $receipt = new PurchaseReceipt(true);
 
-        $this->assertTrue($receipt instanceof PurchaseReceipt);
+        $this->assertInstanceOf(PurchaseReceipt::class, $receipt);
     }
 
     public function testPaymentReceiptOuput()
     {
         $receipt = new PurchaseReceipt(true);
 
-        $this->assertTrue((string) $receipt === "version=2\ncdr=0\n");
+        $this->assertSame((string) $receipt, "version=2\ncdr=0\n");
 
         $receipt = new PurchaseReceipt(false);
 
-        $this->assertTrue((string) $receipt === "version=2\ncdr=1\n");
+        $this->assertSame((string) $receipt, "version=2\ncdr=1\n");
     }
 }

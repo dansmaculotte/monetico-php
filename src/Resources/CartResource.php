@@ -39,6 +39,8 @@ class CartResource extends Ressource
     {
         $items = $this->getParameter(self::ITEMS_KEY);
 
-        array_push($items, $item->getParameters());
+        $items[] = $item->getParameters();
+
+        $this->setParameter(self::ITEMS_KEY, $items);
     }
 }

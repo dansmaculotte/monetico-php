@@ -93,12 +93,12 @@ class AuthenticationResource
         }
 
         $this->status = $status;
-        if (!in_array($this->status, self::STATUSES)) {
+        if (!in_array($this->status, self::STATUSES, true)) {
             throw AuthenticationException::invalidStatus($this->status);
         }
 
         $this->version = $version;
-        if (!in_array($this->version, self::VERSIONS)) {
+        if (!in_array($this->version, self::VERSIONS, true)) {
             throw AuthenticationException::invalidVersion($this->version);
         }
 
@@ -113,14 +113,14 @@ class AuthenticationResource
     public function setDetails(array $details)
     {
         if (isset($details['liabilityShift'])) {
-            if (!in_array($details['liabilityShift'], self::LIABILITY_SHIFTS)) {
+            if (!in_array($details['liabilityShift'], self::LIABILITY_SHIFTS, true)) {
                 throw AuthenticationException::invalidLiabilityShift($details['liabilityShift']);
             }
             $this->details['liabilityShift'] = $details['liabilityShift'];
         }
 
         if (isset($details['merchantPreference'])) {
-            if (!in_array($details['merchantPreference'], self::MERCHANT_PREFERENCES)) {
+            if (!in_array($details['merchantPreference'], self::MERCHANT_PREFERENCES, true)) {
                 throw AuthenticationException::invalidMerchantPreference($details['merchantPreference']);
             }
             $this->details['merchantPreference'] = $details['merchantPreference'];
@@ -134,14 +134,14 @@ class AuthenticationResource
         }
 
         if (isset($details['status3DS'])) {
-            if (!in_array($details['status3DS'], self::DDDS_STATUSES)) {
+            if (!in_array($details['status3DS'], self::DDDS_STATUSES, true)) {
                 throw AuthenticationException::invalidDDDSStatus($details['status3DS']);
             }
             $this->details['status3DS'] = $details['status3DS'];
         }
 
         if (isset($details['disablingReason'])) {
-            if (!in_array($details['disablingReason'], self::DISABLING_REASONS)) {
+            if (!in_array($details['disablingReason'], self::DISABLING_REASONS, true)) {
                 throw AuthenticationException::invalidDisablingReason($details['disablingReason']);
             }
             $this->details['disablingReason'] = $details['disablingReason'];
@@ -155,28 +155,28 @@ class AuthenticationResource
     private function setDetailsMessages($details)
     {
         if (isset($details['VERes'])) {
-            if (!in_array($details['VERes'], self::VERES_OPTIONS)) {
+            if (!in_array($details['VERes'], self::VERES_OPTIONS, true)) {
                 throw AuthenticationException::invalidVERes($details['VERes']);
             }
             $this->details['VERes'] = $details['VERes'];
         }
 
         if (isset($details['PARes'])) {
-            if (!in_array($details['PARes'], self::PARES_OPTIONS)) {
+            if (!in_array($details['PARes'], self::PARES_OPTIONS, true)) {
                 throw AuthenticationException::invalidPARes($details['PARes']);
             }
             $this->details['PARes'] = $details['PARes'];
         }
 
         if (isset($details['ARes'])) {
-            if (!in_array($details['ARes'], self::ARES_OPTIONS)) {
+            if (!in_array($details['ARes'], self::ARES_OPTIONS, true)) {
                 throw AuthenticationException::invalidARes($details['ARes']);
             }
             $this->details['ARes'] = $details['ARes'];
         }
 
         if (isset($details['CRes'])) {
-            if (!in_array($details['CRes'], self::CRES_OPTIONS)) {
+            if (!in_array($details['CRes'], self::CRES_OPTIONS, true)) {
                 throw AuthenticationException::invalidCRes($details['CRes']);
             }
             $this->details['CRes'] = $details['CRes'];

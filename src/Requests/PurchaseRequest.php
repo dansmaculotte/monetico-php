@@ -120,7 +120,7 @@ class PurchaseRequest extends AbstractRequest
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
 
@@ -177,7 +177,7 @@ class PurchaseRequest extends AbstractRequest
      */
     public function setThreeDSecureChallenge(string $choice): void
     {
-        if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES)) {
+        if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES, true)) {
             throw PurchaseException::invalidThreeDSecureChallenge($choice);
         }
 
@@ -237,12 +237,12 @@ class PurchaseRequest extends AbstractRequest
         $_ways = [];
 
         foreach ($ways as $way) {
-            if (in_array($way, self::PAYMENT_WAYS)) {
-                array_push($_ways, $way);
+            if (in_array($way, self::PAYMENT_WAYS, true)) {
+                $_ways[] = $way;
             }
         }
 
-        $this->options['desactivemoyenpaiement'] = join(',', $_ways);
+        $this->options['desactivemoyenpaiement'] = implode(',', $_ways);
     }
 
     /**
@@ -345,7 +345,6 @@ class PurchaseRequest extends AbstractRequest
      * @param string $eptCode
      * @param string $companyCode
      * @param string $version
-     * @param array $options
      * @return array
      */
     public function fieldsToArray(string $eptCode, string $companyCode, string $version): array

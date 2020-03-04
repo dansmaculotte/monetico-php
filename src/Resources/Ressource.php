@@ -30,7 +30,7 @@ class Ressource
      */
     public function getParameter(string $name)
     {
-        if (!in_array($name, $this->keys)) {
+        if (!in_array($name, $this->keys, true)) {
             throw Exception::invalidResourceParameter($name);
         }
 
@@ -48,7 +48,7 @@ class Ressource
      */
     public function setParameter(string $name, $value = null): void
     {
-        if (!in_array($name, $this->keys)) {
+        if (!in_array($name, $this->keys, true)) {
             throw Exception::invalidResourceParameter($name);
         }
 

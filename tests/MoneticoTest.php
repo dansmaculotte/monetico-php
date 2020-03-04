@@ -22,7 +22,7 @@ class MoneticoTest extends TestCase
             COMPANY_CODE
         );
 
-        $this->assertTrue($monetico instanceof Monetico);
+        $this->assertInstanceOf(Monetico::class, $monetico);
     }
 
     public function testMoneticoExceptionEptCode()

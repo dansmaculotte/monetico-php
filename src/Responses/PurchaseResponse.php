@@ -159,15 +159,15 @@ class PurchaseResponse extends AbstractResponse
             throw Exception::invalidResponseDateTime();
         }
 
-        if (!in_array($this->returnCode, self::RETURN_CODES)) {
+        if (!in_array($this->returnCode, self::RETURN_CODES, true)) {
             throw PurchaseException::invalidResponseReturnCode($this->returnCode);
         }
 
-        if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
+        if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES, true)) {
             throw PurchaseException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
         }
 
-        if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
+        if (!array_key_exists($this->cardBrand, self::CARD_BRANDS)) {
             throw PurchaseException::invalidResponseCardBrand($this->cardBrand);
         }
 
@@ -198,17 +198,6 @@ class PurchaseResponse extends AbstractResponse
             'usage' => 'cardType',
             'typecompte' => 'accountType',
             'ecard' => 'virtualCard',
-//            'numauto' => 'authNumber',
-//            'motifrefus' => 'rejectReason',
-//            'montantech' => 'commitmentAmount',
-//            'numerodossier' => 'folderNumber',
-//            'typefacture' => 'invoiceType',
-//            'filtragecause' => 'filteredReason',
-//            'filtragevaleur' => 'filteredValue',
-//            'filtrage_etat' => 'filteredStatus',
-//            'cbenregistre' => 'cardSaved',
-//            'cbmasquee' => 'cardMask',
-//            'modepaiement' => 'paymentMethod',
         ];
     }
 
@@ -225,7 +214,7 @@ class PurchaseResponse extends AbstractResponse
             $authentication['protocol'],
             $authentication['status'],
             $authentication['version'],
-            (isset($authentication->details)) ? $authentication->details : []
+            $authentication->details ?? []
         );
     }
 
@@ -241,7 +230,7 @@ class PurchaseResponse extends AbstractResponse
 
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
-            if (!in_array($this->paymentMethod, self::PAYMENT_METHODS)) {
+            if (!in_array($this->paymentMethod, self::PAYMENT_METHODS, true)) {
                 throw PurchaseException::invalidResponsePaymentMethod($this->paymentMethod);
             }
         }
@@ -268,14 +257,14 @@ class PurchaseResponse extends AbstractResponse
     {
         if (isset($data['filtragecause'])) {
             $this->filteredReason = (int) $data['filtragecause'];
-            if (!in_array($this->filteredReason, self::FILTERED_REASONS)) {
+            if (!in_array($this->filteredReason, self::FILTERED_REASONS, true)) {
                 throw PurchaseException::invalidResponseFilteredReason($this->filteredReason);
             }
         }
 
         if (isset($data['motifrefus'])) {
             $this->rejectReason = $data['motifrefus'];
-            if (!in_array($this->rejectReason, self::REJECT_REASONS)) {
+            if (!in_array($this->rejectReason, self::REJECT_REASONS, true)) {
                 throw PurchaseException::invalidResponseRejectReason($this->rejectReason);
             }
         }
@@ -390,6 +379,6 @@ class PurchaseResponse extends AbstractResponse
             $securityKey
         ));
 
-        return $hash == $this->seal;
+        return $hash === $this->seal;
     }
 }

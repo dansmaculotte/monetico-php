@@ -106,7 +106,7 @@ class RecoveryRequest extends AbstractRequest
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
 
@@ -147,7 +147,7 @@ class RecoveryRequest extends AbstractRequest
      */
     public function setInvoiceType(string $invoiceType): void
     {
-        if (!in_array($invoiceType, self::INVOICE_TYPES)) {
+        if (!in_array($invoiceType, self::INVOICE_TYPES, true)) {
             throw Exception::invalidInvoiceType($invoiceType);
         }
         $this->invoiceType = $invoiceType;

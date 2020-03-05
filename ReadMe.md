@@ -2,7 +2,7 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/DansMaCulotte/monetico-php.svg?style=flat-square)](https://packagist.org/packages/dansmaculotte/monetico-php)
 [![Total Downloads](https://img.shields.io/packagist/dt/DansMaCulotte/monetico-php.svg?style=flat-square)](https://packagist.org/packages/dansmaculotte/monetico-php)
-[![Build Status](https://img.shields.io/travis/DansMaCulotte/monetico-php/master.svg?style=flat-square)](https://travis-ci.org/dansmaculotte/monetico-php)
+[![Build Status](https://img.shields.io/github/workflow/status/dansmaculotte/monetico-php/run-tests?label=tests&style=flat-square)](https://github.com/dansmaculotte/monetico-php/actions?query=workflow%3Arun-tests)
 [![Quality Score](https://img.shields.io/scrutinizer/g/DansMaCulotte/monetico-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/dansmaculotte/monetico-php)
 [![Code Coverage](https://img.shields.io/coveralls/github/DansMaCulotte/monetico-php.svg?style=flat-square)](https://coveralls.io/github/dansmaculotte/monetico-php)
 

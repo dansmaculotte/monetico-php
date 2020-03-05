@@ -1,20 +1,17 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Payment;
+namespace DansMaCulotte\Monetico\Requests;
 
-use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
-use DansMaCulotte\Monetico\Method;
-use DansMaCulotte\Monetico\Resources\AddressBilling;
-use DansMaCulotte\Monetico\Resources\AddressShipping;
-use DansMaCulotte\Monetico\Resources\Client;
+use DansMaCulotte\Monetico\Exceptions\PurchaseException;
+use DansMaCulotte\Monetico\Resources\BillingAddressResource;
+use DansMaCulotte\Monetico\Resources\CartResource;
+use DansMaCulotte\Monetico\Resources\ClientResource;
+use DansMaCulotte\Monetico\Resources\ShippingAddressResource;
 use DateTime;
 
-class Payment implements Method
+class PurchaseRequest extends AbstractRequest
 {
-    use BaseMethod;
-
     /** @var string */
     public $reference;
 
@@ -36,17 +33,26 @@ class Payment implements Method
     /** @var \DateTime */
     public $dateTime;
 
+    /** @var */
+    public $successUrl;
+
+    /** @var */
+    public $errorUrl;
+
     /** @var array */
     public $options;
 
-    /** @var AddressBilling */
-    public $addressBilling;
+    /** @var BillingAddressResource */
+    public $billingAddress;
 
-    /** @var AddressShipping */
-    public $addressShipping;
+    /** @var ShippingAddressResource */
+    public $shippingAddress;
 
-    /** @var Client */
+    /** @var ClientResource */
     public $client;
+
+    /** @var CartResource */
+    public $cart;
 
     /** @var array */
     public $commitments;
@@ -77,6 +83,9 @@ class Payment implements Method
     /** @var string */
     const DATETIME_FORMAT = 'd/m/Y:H:i:s';
 
+    /** @var string */
+    const REQUEST_URI = 'paiement.cgi';
+
     /**
      * InputPayload constructor.
      *
@@ -85,15 +94,17 @@ class Payment implements Method
      * @param array $options
      * @throws Exception
      */
-    public function __construct($data = [], $commitments = [], $options = [])
+    public function __construct(array $data = [], array $commitments = [], array $options = [])
     {
         $this->reference = $data['reference'];
-        $this->language = $data['language'];
+        $this->language = strtoupper($data['language']);
         $this->dateTime = $data['dateTime'];
         $this->description = $data['description'];
         $this->email = $data['email'];
         $this->amount = $data['amount'];
         $this->currency = $data['currency'];
+        $this->successUrl = $data['successUrl'];
+        $this->errorUrl = $data['errorUrl'];
         $this->options = $options;
         $this->commitments = $commitments;
 
@@ -103,19 +114,29 @@ class Payment implements Method
     /**
      * @throws Exception
      */
-    public function validate()
+    public function validate(): bool
     {
-        if (strlen($this->reference) > 12) {
+        if (strlen($this->reference) > 50) {
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
 
         if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
         }
+
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getRequestUri(): string
+    {
+        return self::REQUEST_URI;
     }
 
     /**
@@ -123,7 +144,7 @@ class Payment implements Method
      *
      * @param string $alias Alias card name
      */
-    public function setCardAlias($alias)
+    public function setCardAlias(string $alias): void
     {
         $this->options['aliascb'] = $alias;
     }
@@ -133,7 +154,7 @@ class Payment implements Method
      *
      * @param bool $value Enable or disable submission
      */
-    public function setForceCard($value = true)
+    public function setForceCard(bool $value = true): void
     {
         $this->options['forcesaisiecb'] = ($value) ? '1' : '0';
     }
@@ -143,7 +164,7 @@ class Payment implements Method
      *
      * @param bool $value Enable or disable bypass
      */
-    public function setDisable3DS($value = true)
+    public function setDisable3DS(bool $value = true): void
     {
         $this->options['3dsdebrayable'] = ($value) ? '1' : '0';
     }
@@ -151,44 +172,59 @@ class Payment implements Method
     /**
      * 3DSecure V2 Choice
      *
-     * @param bool $choice
-     * @throws PaymentException
+     * @param string $choice
+     * @throws PurchaseException
      */
-    public function setThreeDSecureChallenge($choice)
+    public function setThreeDSecureChallenge(string $choice): void
     {
-        if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES)) {
-            throw PaymentException::invalidThreeDSecureChallenge($choice);
+        if (!in_array($choice, self::THREE_D_SECURE_CHALLENGES, true)) {
+            throw PurchaseException::invalidThreeDSecureChallenge($choice);
         }
 
         $this->options['threeDsecureChallenge'] = $choice;
     }
-
 
     /**
      * Change company sign label on payment interface
      *
      * @param string $label New sign label content
      */
-    public function setSignLabel($label)
+    public function setSignLabel(string $label): void
     {
         $this->options['libelleMonetique'] = $label;
     }
 
-
-    public function setAddressBilling(AddressBilling $addressBilling)
+    /**
+     * @param BillingAddressResource $billingAddress
+     */
+    public function setBillingAddress(BillingAddressResource $billingAddress): void
     {
-        $this->addressBilling = $addressBilling;
+        $this->billingAddress = $billingAddress;
     }
 
 
-    public function setAddressShipping(AddressShipping $addressShipping)
+    /**
+     * @param ShippingAddressResource $shippingAddress
+     */
+    public function setShippingAddress(ShippingAddressResource $shippingAddress): void
     {
-        $this->addressShipping = $addressShipping;
+        $this->shippingAddress = $shippingAddress;
     }
 
-    public function setClient(Client $client)
+    /**
+     * @param ClientResource $client
+     */
+    public function setClient(ClientResource $client): void
     {
         $this->client = $client;
+    }
+
+    /**
+     * @param CartResource $cart
+     */
+    public function setCart(CartResource $cart): void
+    {
+        $this->cart = $cart;
     }
 
     /**
@@ -196,17 +232,17 @@ class Payment implements Method
      *
      * @param array[string] $ways List of payment ways to disable
      */
-    public function setDisabledPaymentWays($ways = [])
+    public function setDisabledPaymentWays(array $ways = []): void
     {
         $_ways = [];
 
         foreach ($ways as $way) {
-            if (in_array($way, self::PAYMENT_WAYS)) {
-                array_push($_ways, $way);
+            if (in_array($way, self::PAYMENT_WAYS, true)) {
+                $_ways[] = $way;
             }
         }
 
-        $this->options['desactivemoyenpaiement'] = join(',', $_ways);
+        $this->options['desactivemoyenpaiement'] = implode(',', $_ways);
     }
 
     /**
@@ -214,26 +250,38 @@ class Payment implements Method
      *
      * @return string
      */
-    public function orderContextBase64()
+    public function orderContextBase64(): string
     {
-        $contextCommand = [
-            'billing' => (isset($this->addressBilling)) ? $this->addressBilling->data : [],
-            'shipping' => (isset($this->addressShipping)) ? $this->addressShipping->data : [],
-            'client' => (isset($this->client)) ? $this->client->data : [],
-        ];
+        $contextCommand = [];
 
-        return base64_encode(json_encode($contextCommand));
+        if ($this->billingAddress) {
+            $contextCommand['billing'] = $this->billingAddress->getParameters();
+        }
+
+        if ($this->shippingAddress) {
+            $contextCommand['shipping'] = $this->shippingAddress->getParameters();
+        }
+
+        if ($this->client) {
+            $contextCommand['client'] = $this->client->getParameters();
+        }
+
+        if ($this->cart) {
+            $contextCommand['shoppingCart'] = $this->cart->getParameters();
+        }
+
+        return base64_encode(json_encode($contextCommand, JSON_UNESCAPED_UNICODE));
     }
 
     /**
-     * @param $eptCode
-     * @param $companyCode
-     * @param $version
+     * @param string $eptCode
+     * @param string $companyCode
+     * @param string $version
      * @return array
      */
-    private function baseFields($eptCode, $companyCode, $version)
+    private function baseFields(string $eptCode, string $companyCode, string $version): array
     {
-        return [
+        $fields = [
             'TPE' => $eptCode,
             'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'contexte_commande' => $this->orderContextBase64(),
@@ -245,28 +293,25 @@ class Payment implements Method
             'texte-libre' => $this->description,
             'version' => $version
         ];
+
+        return $fields;
     }
 
-
     /**
-     * @param $returnUrl
-     * @param $successUrl
-     * @param $errorUrl
      * @return array
      */
-    private function urlFields($returnUrl, $successUrl, $errorUrl)
+    private function urlFields(): array
     {
         return [
-            'url_retour' => $returnUrl,
-            'url_retour_ok' => $successUrl . '?reference=' . $this->reference,
-            'url_retour_err' => $errorUrl . '?reference=' . $this->reference,
+            'url_retour_ok' => $this->successUrl,
+            'url_retour_err' => $this->errorUrl,
         ];
     }
 
     /**
      * @return array
      */
-    private function commitmentsFields()
+    private function commitmentsFields(): array
     {
         $commitmentsCount = count($this->commitments);
         $commitments = [
@@ -284,25 +329,31 @@ class Payment implements Method
     /**
      * @return array
      */
-    private function optionsFields()
+    private function optionsFields(): array
     {
         return [
-            'ThreeDSecureChallenge' => (isset($this->options['threeDsecureChallenge'])) ? $this->options['threeDsecureChallenge'] : '',
-            '3dsdebrayable' => (isset($this->options['3dsdebrayable'])) ? $this->options['3dsdebrayable'] : '',
-            'aliascb' => (isset($this->options['aliascb'])) ? $this->options['aliascb'] : '',
-            'desactivemoyenpaiement' => (isset($this->options['desactivemoyenpaiement'])) ? $this->options['desactivemoyenpaiement'] : '',
-            'forcesaisiecb' => (isset($this->options['forcesaisiecb'])) ? $this->options['forcesaisiecb'] : '',
-            'libelleMonetique' => (isset($this->options['libelleMonetique'])) ? $this->options['libelleMonetique'] : '',
+            'ThreeDSecureChallenge' => $this->options['threeDsecureChallenge'] ?? '',
+            '3dsdebrayable' => $this->options['3dsdebrayable'] ?? '',
+            'aliascb' => $this->options['aliascb'] ?? '',
+            'desactivemoyenpaiement' => $this->options['desactivemoyenpaiement'] ?? '',
+            'forcesaisiecb' => $this->options['forcesaisiecb'] ?? '',
+            'libelleMonetique' => $this->options['libelleMonetique'] ?? '',
         ];
     }
 
-    public function fieldsToArray($eptCode, $version, $companyCode, $returnUrl, $successUrl, $errorUrl)
+    /**
+     * @param string $eptCode
+     * @param string $companyCode
+     * @param string $version
+     * @return array
+     */
+    public function fieldsToArray(string $eptCode, string $companyCode, string $version): array
     {
         return array_merge(
             $this->baseFields($eptCode, $companyCode, $version),
             $this->optionsFields(),
             $this->commitmentsFields(),
-            $this->urlFields($returnUrl, $successUrl, $errorUrl)
+            $this->urlFields()
         );
     }
 }

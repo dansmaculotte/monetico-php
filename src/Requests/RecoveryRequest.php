@@ -1,18 +1,13 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Recovery;
+namespace DansMaCulotte\Monetico\Requests;
 
-use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
-use DansMaCulotte\Monetico\Method;
 use DateTime;
 
-class Recovery implements Method
+class RecoveryRequest extends AbstractRequest
 {
-    use BaseMethod;
-
-
     /** @var \DateTime */
     public $dateTime;
 
@@ -64,6 +59,8 @@ class Recovery implements Method
     /** @var string */
     const DATE_FORMAT = 'd/m/Y';
 
+    /** @var string */
+    const REQUEST_URI = 'capture_paiement.cgi';
 
     /**
      * Recovery constructor.
@@ -71,7 +68,7 @@ class Recovery implements Method
      * @throws RecoveryException
      * @throws Exception
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
         $this->dateTime = $data['dateTime'];
 
@@ -95,7 +92,7 @@ class Recovery implements Method
      * @throws Exception
      * @throws RecoveryException
      */
-    public function validate()
+    public function validate(): bool
     {
         if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
@@ -109,39 +106,48 @@ class Recovery implements Method
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
 
         if ($this->amountLeft + $this->amountRecovered + $this->amountToRecover !== $this->amount) {
             throw RecoveryException::invalidAmounts($this->amount, $this->amountToRecover, $this->amountRecovered, $this->amountLeft);
         }
+
+        return true;
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getRequestUri(): string
+    {
+        return self::REQUEST_URI;
     }
 
     /**
      * @param bool $value
      */
-    public function setStopRecurrence($value = true)
+    public function setStopRecurrence(bool $value = true): void
     {
         $this->stopRecurrence = ($value) ? 'oui' : '0';
     }
 
     /**
-     * @param $value
+     * @param string $value
      */
-    public function setFileNumber($value)
+    public function setFileNumber(string $value): void
     {
         $this->fileNumber = $value;
     }
 
     /**
      * @param string $invoiceType
-     *
      * @throws Exception
      */
-    public function setInvoiceType(string $invoiceType)
+    public function setInvoiceType(string $invoiceType): void
     {
-        if (!in_array($invoiceType, self::INVOICE_TYPES)) {
+        if (!in_array($invoiceType, self::INVOICE_TYPES, true)) {
             throw Exception::invalidInvoiceType($invoiceType);
         }
         $this->invoiceType = $invoiceType;
@@ -150,13 +156,19 @@ class Recovery implements Method
     /**
      * @param bool $value
      */
-    public function setPhone(bool $value = true)
+    public function setPhone(bool $value = true): void
     {
         $this->phone = ($value) ? 'oui' : '0';
     }
 
 
-    public function fieldsToArray($eptCode, $version, $companyCode)
+    /**
+     * @param string $eptCode
+     * @param string $companyCode
+     * @param string $version
+     * @return array
+     */
+    public function fieldsToArray(string $eptCode, string $companyCode, string $version): array
     {
         $fields = array_merge([
             'TPE' => $eptCode,

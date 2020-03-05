@@ -1,14 +1,14 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Refund\Response;
+use DansMaCulotte\Monetico\Responses\RefundResponse;
 use PHPUnit\Framework\TestCase;
 
 class RefundResponseTest extends TestCase
 {
     public function testRefundResponseConstruct()
     {
-        $response = new Response([
+        $response = new RefundResponse([
             'version' => '1.0',
             'reference' => '000000000145',
             'cdr' => '1',
@@ -17,14 +17,14 @@ class RefundResponseTest extends TestCase
             'type_facture' => 'complementaire'
         ]);
 
-        $this->assertTrue($response instanceof Response);
+        $this->assertInstanceOf(RefundResponse::class, $response);
     }
 
     public function testRefundResponseConstructExceptionMissingResponseKey()
     {
         $this->expectExceptionObject(Exception::missingResponseKey('cdr'));
 
-        new Response([
+        new RefundResponse([
             'version' => '1.0',
             'reference' => '000000000145',
             'lib' => 'paiement accepte',
@@ -38,7 +38,7 @@ class RefundResponseTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidResponseFileNumber('thisisatoolongreference'));
 
-        new Response([
+        new RefundResponse([
             'version' => '1.0',
             'reference' => 'ABC',
             'cdr' => '1',
@@ -52,7 +52,7 @@ class RefundResponseTest extends TestCase
     {
         $this->expectExceptionObject(Exception::invalidResponseInvoiceType('invalid'));
 
-        new Response([
+        new RefundResponse([
             'version' => '1.0',
             'reference' => 'ABC',
             'cdr' => '1',

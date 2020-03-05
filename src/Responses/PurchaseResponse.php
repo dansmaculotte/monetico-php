@@ -1,16 +1,17 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Payment;
+namespace DansMaCulotte\Monetico\Responses;
 
+use DansMaCulotte\Monetico\Exceptions\AuthenticationException;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
-use DansMaCulotte\Monetico\Resources\Authentication;
+use DansMaCulotte\Monetico\Exceptions\PurchaseException;
+use DansMaCulotte\Monetico\Resources\AuthenticationResource;
 use DateTime;
 
-class Response
+class PurchaseResponse extends AbstractResponse
 {
     /** @var string */
-    private $eptCode;
+    public $eptCode;
 
     /** @var \DateTime */
     public $dateTime;
@@ -19,16 +20,7 @@ class Response
     public $amount;
 
     /** @var string */
-    public $reference;
-
-    /** @var string */
     public $seal;
-
-    /** @var string */
-    public $description;
-
-    /** @var string */
-    public $returnCode;
 
     /** @var string */
     public $cardVerificationStatus;
@@ -49,13 +41,10 @@ class Response
     public $cardHash;
 
     /** @var bool */
-    public $cardBookmarked = null;
+    public $cardSaved = null;
 
     /** @var string */
     public $cardMask = null;
-
-    /** @var int */
-    public $DDDSStatus;
 
     /** @var string */
     public $rejectReason = null;
@@ -68,12 +57,6 @@ class Response
 
     /** @var string */
     public $transactionCountry;
-
-    /** @var string */
-    public $veresStatus;
-
-    /** @var string */
-    public $paresStatus;
 
     /** @var string */
     public $paymentMethod = null;
@@ -90,11 +73,20 @@ class Response
     /** @var string */
     public $filteredStatus = null;
 
-    /** @var Authentication */
+    /** @var AuthenticationResource */
     public $authentication = null;
 
     /** @var string */
     public $authenticationHash = null;
+
+    /** @var string */
+    public $cardType;
+
+    /** @var string */
+    public $accountType;
+
+    /** @var string */
+    public $virtualCard;
 
     /** @var string */
     const DATETIME_FORMAT = 'd/m/Y_\a_H:i:s';
@@ -127,8 +119,6 @@ class Response
         'na' => 'Non disponible',
     ];
 
-
-
     /** @var array  */
     const REJECT_REASONS = [
         'Appel Phonie',
@@ -158,120 +148,90 @@ class Response
      * OutputPayload constructor.
      *
      * @param array $data
-     *
      * @throws \Exception
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
-        $this->validateRequiredKeys($data);
+        parent::__construct($data);
 
-        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $data['date']);
+        $this->dateTime = DateTime::createFromFormat(self::DATETIME_FORMAT, $this->dateTime);
         if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidResponseDateTime();
         }
 
-        $this->eptCode = $data['TPE'];
-
-        // ToDo: Split amount and currency with ISO4217
-        $this->amount = $data['montant'];
-        $this->reference = $data['reference'];
-        $this->seal = $data['MAC'];
-        $this->description = $data['texte-libre'];
-        $this->authenticationHash = $data['authentification'];
-
-        $this->returnCode = $data['code-retour'];
-        if (!in_array($this->returnCode, self::RETURN_CODES)) {
-            throw PaymentException::invalidResponseReturnCode($this->returnCode);
+        if (!in_array($this->returnCode, self::RETURN_CODES, true)) {
+            throw PurchaseException::invalidResponseReturnCode($this->returnCode);
         }
 
-        $this->cardVerificationStatus = $data['cvx'];
-        if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES)) {
-            throw PaymentException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
+        if (!in_array($this->cardVerificationStatus, self::CARD_VERIFICATION_STATUSES, true)) {
+            throw PurchaseException::invalidResponseCardVerificationStatus($this->cardVerificationStatus);
         }
 
-        $this->cardExpirationDate = $data['vld'];
-
-        $this->cardBrand = $data['brand'];
-        if (!in_array($this->cardBrand, array_keys(self::CARD_BRANDS))) {
-            throw PaymentException::invalidResponseCardBrand($this->cardBrand);
+        if (!array_key_exists($this->cardBrand, self::CARD_BRANDS)) {
+            throw PurchaseException::invalidResponseCardBrand($this->cardBrand);
         }
 
-        // ToDo: Check Country
-        $this->cardCountry = $data['originecb'];
-        $this->authNumber = $data['numauto'];
-        $this->cardBIN = $data['bincb'];
-        $this->cardHash = $data['hpancb'];
-        $this->clientIp = $data['ipclient'];
-
-        // ToDo: Check Country
-        $this->transactionCountry = $data['originetr'];
-
-        $this->setAuthentication($data['authentification']);
+        $this->setAuthentication($this->authenticationHash);
         $this->setOptions($data);
         $this->setErrorsOptions($data);
     }
 
-
-    /**
-     * @param $data
-     * @throws Exception
-     */
-    private function validateRequiredKeys($data)
+    public function getRequiredKeys(): array
     {
-        $requiredKeys = [
-            'TPE',
-            'date',
-            'montant',
-            'reference',
-            'MAC',
-            'authentification',
-            'texte-libre',
-            'code-retour',
-            'cvx',
-            'vld',
-            'brand',
-            'numauto',
-            'originecb',
-            'bincb',
-            'hpancb',
-            'ipclient',
-            'originetr',
+        return [
+            'TPE' => 'eptCode',
+            'date' => 'dateTime',
+            'montant' => 'amount',
+            'reference' => 'reference',
+            'MAC' => 'seal',
+            'authentification' => 'authenticationHash',
+            'texte-libre' => 'description',
+            'code-retour' => 'returnCode',
+            'cvx' => 'cardVerificationStatus',
+            'vld' => 'cardExpirationDate',
+            'brand' => 'cardBrand',
+            'originecb' => 'cardCountry',
+            'bincb' => 'cardBIN',
+            'hpancb' => 'cardHash',
+            'ipclient' => 'clientIp',
+            'originetr' => 'transactionCountry',
+            'usage' => 'cardType',
+            'typecompte' => 'accountType',
+            'ecard' => 'virtualCard',
         ];
-
-        foreach ($requiredKeys as $key) {
-            if (!in_array($key, array_keys($data))) {
-                throw Exception::missingResponseKey($key);
-            }
-        }
     }
 
     /**
-     * @param $authentication
-     * @throws \DansMaCulotte\Monetico\Exceptions\AuthenticationException
+     * @param string $authentication
+     * @throws AuthenticationException
      */
-    private function setAuthentication($authentication)
+    private function setAuthentication(string $authentication): void
     {
         $authentication = base64_decode($authentication);
-        $authentication = json_decode($authentication);
+        $authentication = json_decode($authentication, true);
 
-        $this->authentication = new Authentication(
-            $authentication->protocol,
-            $authentication->status,
-            $authentication->version,
-            (array) $authentication->details
+        $this->authentication = new AuthenticationResource(
+            $authentication['protocol'],
+            $authentication['status'],
+            $authentication['version'],
+            $authentication->details ?? []
         );
     }
 
     /**
-     * @param $data
-     * @throws PaymentException
+     * @param array $data
+     * @throws PurchaseException
      */
-    private function setOptions($data)
+    private function setOptions(array $data): void
     {
+        if (isset($data['numauto'])) {
+            $this->authNumber = $data['numauto'];
+        }
+
         if (isset($data['modepaiement'])) {
             $this->paymentMethod = $data['modepaiement'];
-            if (!in_array($this->paymentMethod, self::PAYMENT_METHODS)) {
-                throw PaymentException::invalidResponsePaymentMethod($this->paymentMethod);
+            if (!in_array($this->paymentMethod, self::PAYMENT_METHODS, true)) {
+                throw PurchaseException::invalidResponsePaymentMethod($this->paymentMethod);
             }
         }
 
@@ -281,7 +241,7 @@ class Response
         }
 
         if (isset($data['cbenregistree'])) {
-            $this->cardBookmarked = (bool) $data['cbenregistree'];
+            $this->cardSaved = (bool) $data['cbenregistree'];
         }
 
         if (isset($data['cbmasquee'])) {
@@ -290,22 +250,22 @@ class Response
     }
 
     /**
-     * @param $data
-     * @throws PaymentException
+     * @param array $data
+     * @throws PurchaseException
      */
-    private function setErrorsOptions($data)
+    private function setErrorsOptions(array $data): void
     {
         if (isset($data['filtragecause'])) {
             $this->filteredReason = (int) $data['filtragecause'];
-            if (!in_array($this->filteredReason, self::FILTERED_REASONS)) {
-                throw PaymentException::invalidResponseFilteredReason($this->filteredReason);
+            if (!in_array($this->filteredReason, self::FILTERED_REASONS, true)) {
+                throw PurchaseException::invalidResponseFilteredReason($this->filteredReason);
             }
         }
 
         if (isset($data['motifrefus'])) {
             $this->rejectReason = $data['motifrefus'];
-            if (!in_array($this->rejectReason, self::REJECT_REASONS)) {
-                throw PaymentException::invalidResponseRejectReason($this->rejectReason);
+            if (!in_array($this->rejectReason, self::REJECT_REASONS, true)) {
+                throw PurchaseException::invalidResponseRejectReason($this->rejectReason);
             }
         }
 
@@ -318,10 +278,12 @@ class Response
         }
     }
 
-    private function fieldsToArray($eptCode)
+    /**
+     * @return array
+     */
+    public function toArray(): array
     {
         $fields = [
-            'TPE' => $eptCode,
             'authentification' => $this->authenticationHash,
             'bincb' => $this->cardBIN,
             'brand' => $this->cardBrand,
@@ -332,13 +294,19 @@ class Response
             'ipclient' => $this->clientIp,
             'modepaiement' => $this->paymentMethod,
             'montant' => $this->amount,
-            'numauto' => $this->authNumber,
             'originecb' => $this->cardCountry,
             'originetr' => $this->transactionCountry,
             'reference' => $this->reference,
             'texte-libre' => $this->description,
             'vld' => $this->cardExpirationDate,
+            'usage' => $this->cardType,
+            'typecompte' => $this->accountType,
+            'ecard' => $this->virtualCard,
         ];
+
+        if (isset($this->authNumber)) {
+            $fields['numauto'] = $this->authNumber;
+        }
 
         if (isset($this->rejectReason)) {
             $fields['motifrefus'] = $this->rejectReason;
@@ -347,6 +315,14 @@ class Response
 
         if (isset($this->commitmentAmount)) {
             $fields['montantech'] = $this->commitmentAmount;
+        }
+
+        if (isset($this->folderNumber)) {
+            $fields['numerodossier'] = $this->folderNumber;
+        }
+
+        if (isset($this->invoiceType)) {
+            $fields['typefacture'] = $this->invoiceType;
         }
 
         if (isset($this->filteredReason)) {
@@ -361,12 +337,16 @@ class Response
             $fields['filtrage_etat'] = $this->filteredStatus;
         }
 
-        if (isset($this->cardBookmarked)) {
-            $fields['cbenregistree'] = $this->cardBookmarked;
+        if (isset($this->cardSaved)) {
+            $fields['cbenregistree'] = $this->cardSaved;
         }
 
         if (isset($this->cardMask)) {
             $fields['cbmasquee'] = $this->cardMask;
+        }
+
+        if (isset($this->paymentMethod)) {
+            $fields['modepaiement'] = $this->paymentMethod;
         }
 
         return $fields;
@@ -377,13 +357,16 @@ class Response
      *
      * @param string $eptCode
      * @param string $securityKey
-     * @param string $version
-     *
      * @return bool
      */
-    public function validateSeal($eptCode, $securityKey, $version)
+    public function validateSeal(string $eptCode, string $securityKey): bool
     {
-        $fields = $this->fieldsToArray($eptCode);
+        $fields = array_merge(
+            [
+                'TPE' => $eptCode,
+            ],
+            $this->toArray()
+        );
 
         ksort($fields);
 
@@ -396,6 +379,6 @@ class Response
             $securityKey
         ));
 
-        return $hash == $this->seal;
+        return $hash === $this->seal;
     }
 }

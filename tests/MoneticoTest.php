@@ -2,12 +2,12 @@
 
 use \DansMaCulotte\Monetico\Exceptions\Exception;
 use Carbon\Carbon;
-use DansMaCulotte\Monetico\Cancel\Cancel;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Payment\Payment;
-use DansMaCulotte\Monetico\Payment\Response;
-use DansMaCulotte\Monetico\Recovery\Recovery;
-use DansMaCulotte\Monetico\Refund\Refund;
+use DansMaCulotte\Monetico\Requests\CancelRequest;
+use DansMaCulotte\Monetico\Requests\PurchaseRequest;
+use DansMaCulotte\Monetico\Requests\RecoveryRequest;
+use DansMaCulotte\Monetico\Requests\RefundRequest;
+use DansMaCulotte\Monetico\Responses\PurchaseResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
@@ -19,13 +19,10 @@ class MoneticoTest extends TestCase
         $monetico = new Monetico(
             EPT_CODE,
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
 
-        $this->assertTrue($monetico instanceof Monetico);
+        $this->assertInstanceOf(Monetico::class, $monetico);
     }
 
     public function testMoneticoExceptionEptCode()
@@ -35,10 +32,7 @@ class MoneticoTest extends TestCase
         new Monetico(
             'error',
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
     }
 
@@ -49,109 +43,8 @@ class MoneticoTest extends TestCase
         new Monetico(
             EPT_CODE,
             'error',
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
-    }
-
-    public function testMoneticoPaymentUrl()
-    {
-        $monetico = new Monetico(
-            EPT_CODE,
-            SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
-        );
-
-        $url = $monetico->getPaymentUrl();
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/paiement.cgi');
-
-        $url = $monetico->getPaymentUrl(true);
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
-    }
-
-    public function testMoneticoRecoveryUrl()
-    {
-        $monetico = new Monetico(
-            EPT_CODE,
-            SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
-        );
-
-        $url = $monetico->getRecoveryUrl();
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
-
-        $url = $monetico->getRecoveryUrl(true);
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
-    }
-
-    public function testMoneticoRefundUrl()
-    {
-        $monetico = new Monetico(
-            EPT_CODE,
-            SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
-        );
-
-        $url = $monetico->getRefundUrl();
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/recredit_paiement.cgi');
-
-        $url = $monetico->getRefundUrl(true);
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/recredit_paiement.cgi');
-    }
-
-    public function testMoneticoCancelUrl()
-    {
-        $monetico = new Monetico(
-            EPT_CODE,
-            SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
-        );
-
-        $url = $monetico->getCancelUrl();
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/capture_paiement.cgi');
-
-        $url = $monetico->getCancelUrl(true);
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/capture_paiement.cgi');
-    }
-
-    public function testMoneticoDebugMode()
-    {
-        $monetico = new Monetico(
-            EPT_CODE,
-            SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
-        );
-
-        $monetico->setDebug();
-
-        $url = $monetico->getPaymentUrl(true);
-
-        $this->assertTrue($url === 'https://p.monetico-services.com/test/paiement.cgi');
     }
 
     public function testMoneticoPaymentFields()
@@ -159,13 +52,10 @@ class MoneticoTest extends TestCase
         $monetico = new Monetico(
             EPT_CODE,
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
 
-        $payment = new Payment([
+        $capture = new PurchaseRequest([
             'reference' => 'AYCDEF123',
             'description' => 'PHPUnit',
             'language' => 'FR',
@@ -173,9 +63,11 @@ class MoneticoTest extends TestCase
             'amount' => 42.42,
             'currency' => 'EUR',
             'dateTime' => Carbon::create(2019, 7, 17),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
         ]);
 
-        $fields = $monetico->getPaymentFields($payment);
+        $fields = $monetico->getFields($capture);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -184,7 +76,6 @@ class MoneticoTest extends TestCase
         $this->assertArrayHasKey('montant', $fields);
         $this->assertArrayHasKey('reference', $fields);
         $this->assertArrayHasKey('MAC', $fields);
-        $this->assertArrayHasKey('url_retour', $fields);
         $this->assertArrayHasKey('url_retour_ok', $fields);
         $this->assertArrayHasKey('url_retour_err', $fields);
         $this->assertArrayHasKey('lgue', $fields);
@@ -198,10 +89,7 @@ class MoneticoTest extends TestCase
         $monetico = new Monetico(
             EPT_CODE,
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
 
         $data = [
@@ -222,6 +110,9 @@ class MoneticoTest extends TestCase
             'reference' => 'D2345677',
             'texte-libre' => 'PHPUnit',
             'vld' => '1219',
+            'usage' => 'credit',
+            'typecompte' => 'particulier',
+            'ecard' => 'non',
         ];
 
         ksort($data);
@@ -237,9 +128,9 @@ class MoneticoTest extends TestCase
 
         $data['MAC'] = $seal;
 
-        $response = new Response($data);
+        $response = new PurchaseResponse($data);
 
-        $isValid = $monetico->validateSeal($response);
+        $isValid = $monetico->validate($response);
         $this->assertTrue($isValid);
     }
 
@@ -248,13 +139,10 @@ class MoneticoTest extends TestCase
         $monetico = new Monetico(
             EPT_CODE,
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
 
-        $recovery = new Recovery([
+        $recovery = new RecoveryRequest([
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
@@ -271,7 +159,7 @@ class MoneticoTest extends TestCase
         $recovery->setPhone();
         $recovery->setStopRecurrence();
 
-        $fields = $monetico->getRecoveryFields($recovery);
+        $fields = $monetico->getFields($recovery);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -297,13 +185,10 @@ class MoneticoTest extends TestCase
         $monetico = new Monetico(
             EPT_CODE,
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
 
-        $cancel = new Cancel([
+        $cancel = new CancelRequest([
             'reference' => 'AXCDEF123',
             'language' => 'FR',
             'amount' => 42.42,
@@ -313,7 +198,7 @@ class MoneticoTest extends TestCase
             'dateTime' => Carbon::create(2019, 07, 17),
         ]);
 
-        $fields = $monetico->getCancelFields($cancel);
+        $fields = $monetico->getFields($cancel);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);
@@ -335,16 +220,13 @@ class MoneticoTest extends TestCase
         $monetico = new Monetico(
             EPT_CODE,
             SECURITY_KEY,
-            COMPANY_CODE,
-            RETURN_URL,
-            RETURN_SUCCESS_URL,
-            RETURN_ERROR_URL
+            COMPANY_CODE
         );
 
-        $refund = new Refund([
-            'datetime' => Carbon::create(2019, 2, 1),
-            'orderDatetime' => Carbon::create(2019, 1, 1),
-            'recoveryDatetime' => Carbon::create(2019, 1, 1),
+        $refund = new RefundRequest([
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'recoveryDate' => Carbon::create(2019, 1, 1),
             'authorizationNumber' => '1222',
             'reference' => 'ABC123',
             'language' => 'FR',
@@ -357,7 +239,7 @@ class MoneticoTest extends TestCase
         $refund->setInvoiceType('preauto');
         $refund->setFileNumber('ABC');
 
-        $fields = $monetico->getRefundFields($refund);
+        $fields = $monetico->getFields($refund);
 
         $this->assertIsArray($fields);
         $this->assertArrayHasKey('version', $fields);

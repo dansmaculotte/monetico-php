@@ -1,18 +1,14 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Refund;
+namespace DansMaCulotte\Monetico\Requests;
 
-use DansMaCulotte\Monetico\BaseMethod;
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Method;
 use DateTime;
 
-class Refund implements Method
+class RefundRequest extends AbstractRequest
 {
-    use BaseMethod;
-
     /** @var \DateTime */
-    public $datetime;
+    public $dateTime;
 
     /** @var \DateTime */
     public $orderDate;
@@ -59,6 +55,9 @@ class Refund implements Method
     /** @var string */
     const DATE_FORMAT = 'd/m/Y';
 
+    /** @var string */
+    const REQUEST_URI = 'recredit_paiement.cgi';
+
     /**
      * Refund constructor.
      * @param array $data
@@ -66,9 +65,9 @@ class Refund implements Method
      */
     public function __construct($data = [])
     {
-        $this->datetime = $data['datetime'];
-        $this->orderDate = $data['orderDatetime'];
-        $this->recoveryDate = $data['recoveryDatetime'];
+        $this->dateTime = $data['dateTime'];
+        $this->orderDate = $data['orderDate'];
+        $this->recoveryDate = $data['recoveryDate'];
         $this->authorizationNumber = $data['authorizationNumber'];
         $this->currency = $data['currency'];
         $this->amount = $data['amount'];
@@ -78,6 +77,14 @@ class Refund implements Method
         $this->language = $data['language'];
 
         $this->validate();
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getRequestUri(): string
+    {
+        return self::REQUEST_URI;
     }
 
     /**
@@ -95,17 +102,23 @@ class Refund implements Method
      */
     public function setInvoiceType(string $invoiceType)
     {
-        if (!in_array($invoiceType, self::INVOICE_TYPES)) {
+        if (!in_array($invoiceType, self::INVOICE_TYPES, true)) {
             throw Exception::invalidInvoiceType($invoiceType);
         }
         $this->invoiceType = $invoiceType;
     }
 
-    public function fieldsToArray($eptCode, $version, $companyCode)
+    /**
+     * @param string $eptCode
+     * @param string $version
+     * @param string $companyCode
+     * @return array
+     */
+    public function fieldsToArray(string $eptCode, string $version, string $companyCode): array
     {
         $fields = array_merge([
             'TPE' => $eptCode,
-            'date' => $this->datetime->format(self::DATETIME_FORMAT),
+            'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'date_commande' => $this->orderDate->format(self::DATE_FORMAT),
             'date_remise' => $this->recoveryDate->format(self::DATE_FORMAT),
             'num_autorisation' => $this->authorizationNumber,
@@ -132,9 +145,9 @@ class Refund implements Method
     /**
      * @throws Exception
      */
-    public function validate()
+    public function validate(): bool
     {
-        if (!$this->datetime instanceof DateTime) {
+        if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
         }
 
@@ -150,8 +163,10 @@ class Refund implements Method
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
+
+        return true;
     }
 }

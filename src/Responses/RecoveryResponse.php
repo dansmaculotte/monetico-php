@@ -1,28 +1,13 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Recovery;
+namespace DansMaCulotte\Monetico\Responses;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
 use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use DateTime;
 
-class Response
+class RecoveryResponse extends AbstractResponse
 {
-    /** @var float */
-    const SERVICE_VERSION = 1.0;
-
-    /** @var int */
-    public $returnCode;
-
-    /** @var string */
-    public $description;
-
-    /** @var float */
-    public $version;
-
-    /** @var string */
-    public $reference;
-
     /** @var string */
     public $authorisationNumber;
 
@@ -63,50 +48,23 @@ class Response
      * RecoveryResponse constructor.
      *
      * @param array $data
-     *
      * @throws Exception
      * @throws RecoveryException
      */
-    public function __construct($data = [])
+    public function __construct(array $data = [])
     {
-        $this->validateRequiredKeys($data);
-
-        $this->version = self::SERVICE_VERSION;
-
-        $this->returnCode = $data['cdr'];
-        $this->description = $data['lib'];
-        $this->reference = $data['reference'];
+        parent::__construct($data);
 
         $this->setOptions($data);
         $this->setDates($data);
         $this->setAmounts($data);
     }
 
-
     /**
-     * @param $data
-     * @throws Exception
-     */
-    private function validateRequiredKeys($data)
-    {
-        $requiredKeys = [
-            'cdr',
-            'lib',
-            'reference',
-        ];
-
-        foreach ($requiredKeys as $key) {
-            if (!in_array($key, array_keys($data))) {
-                throw Exception::missingResponseKey($key);
-            }
-        }
-    }
-
-    /**
-     * @param $data
+     * @param array $data
      * @throws RecoveryException
      */
-    private function setDates($data)
+    private function setDates($data): void
     {
         if (isset($data['date_autorisation'])) {
             $this->authorisationDate = DateTime::createFromFormat(self::DATE_FORMAT, $data['date_autorisation']);
@@ -124,10 +82,10 @@ class Response
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @throws Exception
      */
-    public function setOptions($data)
+    public function setOptions(array $data): void
     {
         if (isset($data['aut'])) {
             $this->authorisationNumber = $data['aut'];
@@ -142,7 +100,7 @@ class Response
 
         if (isset($data['type_facture'])) {
             $this->invoiceType = $data['type_facture'];
-            if (!in_array($this->invoiceType, self::INVOICE_TYPES)) {
+            if (!in_array($this->invoiceType, self::INVOICE_TYPES, true)) {
                 throw Exception::invalidResponseInvoiceType($this->invoiceType);
             }
         }
@@ -153,9 +111,9 @@ class Response
     }
 
     /**
-     * @param $data
+     * @param array $data
      */
-    private function setAmounts($data)
+    private function setAmounts(array $data): void
     {
         if (isset($data['montant_estime'])) {
             $this->estimatedAmount = $data['montant_estime'];

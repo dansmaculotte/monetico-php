@@ -1,14 +1,14 @@
 <?php
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Exceptions\PaymentException;
+use DansMaCulotte\Monetico\Exceptions\PurchaseException;
 use DansMaCulotte\Monetico\Monetico;
-use DansMaCulotte\Monetico\Payment\Response;
+use DansMaCulotte\Monetico\Responses\PurchaseResponse;
 use PHPUnit\Framework\TestCase;
 
 require_once 'Credentials.fake.php';
 
-class PaymentResponseTest extends TestCase
+class PurchaseResponseTest extends TestCase
 {
     private function generateSeal($data)
     {
@@ -44,19 +44,22 @@ class PaymentResponseTest extends TestCase
         'texte-libre' => 'PHPUnit',
         'TPE' => '9344512',
         'vld' => '1219',
+        'usage' => 'credit',
+        'typecompte' => 'particulier',
+        'ecard' => 'non',
     ];
 
     public function testPaymentResponseConstruct()
     {
-        $response = new Response($this->data);
-        $this->assertTrue($response instanceof Response);
+        $response = new PurchaseResponse($this->data);
+        $this->assertInstanceOf(PurchaseResponse::class, $response);
     }
 
     public function testPaymentResponseMissingResponseKey()
     {
         $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
-        new Response([]);
+        new PurchaseResponse([]);
     }
 
     public function testPaymentResponseExceptionDateTime()
@@ -66,68 +69,68 @@ class PaymentResponseTest extends TestCase
         $data = $this->data;
         $data['date'] = 'oups';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
 
     public function testPaymentResponseExceptionReturnCode()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseReturnCode('foo'));
+        $this->expectExceptionObject(PurchaseException::invalidResponseReturnCode('foo'));
 
         $data = $this->data;
         $data['code-retour'] = 'foo';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
     public function testPaymentResponseExceptionCardVerificationStatus()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseCardVerificationStatus('nope'));
+        $this->expectExceptionObject(PurchaseException::invalidResponseCardVerificationStatus('nope'));
 
         $data = $this->data;
         $data['cvx'] = 'nope';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
     public function testPaymentResponseExceptionCardBrand()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseCardBrand('foo'));
+        $this->expectExceptionObject(PurchaseException::invalidResponseCardBrand('foo'));
 
         $data = $this->data;
         $data['brand'] = 'foo';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
     public function testPaymentResponseExceptionRejectReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseRejectReason('foobar'));
+        $this->expectExceptionObject(PurchaseException::invalidResponseRejectReason('foobar'));
 
         $data = $this->data;
         $data['motifrefus'] = 'foobar';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
     public function testPaymentResponseExceptionPaymentMethod()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponsePaymentMethod('bar'));
+        $this->expectExceptionObject(PurchaseException::invalidResponsePaymentMethod('bar'));
 
         $data = $this->data;
         $data['modepaiement'] = 'bar';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
     public function testPaymentResponseExceptionFilteredReason()
     {
-        $this->expectExceptionObject(PaymentException::invalidResponseFilteredReason('10'));
+        $this->expectExceptionObject(PurchaseException::invalidResponseFilteredReason('10'));
 
         $data = $this->data;
         $data['filtragecause'] = '10';
 
-        new Response($data);
+        new PurchaseResponse($data);
     }
 
     public function testPaymentWithOptionals()
@@ -144,12 +147,12 @@ class PaymentResponseTest extends TestCase
         $data['cbenregistree'] = '1';
 
 
-        $response = new Response($data);
+        $response = new PurchaseResponse($data);
 
         $this->assertTrue($response->commitmentAmount === '50EUR');
         $this->assertTrue($response->filteredValue === 'foobar');
         $this->assertTrue($response->filteredStatus === 'test');
-        $this->assertTrue($response->cardBookmarked === true);
+        $this->assertTrue($response->cardSaved === true);
         $this->assertTrue($response->cardMask === '1234XXXXXXXXXXX1234');
     }
 
@@ -157,14 +160,12 @@ class PaymentResponseTest extends TestCase
     {
         $data = $this->data;
 
-        $response = new Response($data);
+        $response = new PurchaseResponse($data);
 
         $this->assertEquals('3DSecure', $response->authentication->protocol);
         $this->assertEquals('authenticated', $response->authentication->status);
         $this->assertEquals('1.0.2', $response->authentication->version);
-        $this->assertEquals('Y', $response->authentication->details['PARes']);
-        $this->assertEquals('Y', $response->authentication->details['VERes']);
-        $this->assertEquals('1', $response->authentication->details['status3DS']);
+        $this->assertEmpty($response->authentication->details);
     }
 
     public function testSealIsValid()
@@ -194,12 +195,15 @@ class PaymentResponseTest extends TestCase
             'cbmasquee' => '1234XXXXXXXXXXX1234',
             'motifrefus' => 'Interdit',
             'filtragecause' => '1',
+            'usage' => 'credit',
+            'typecompte' => 'particulier',
+            'ecard' => 'non',
         ];
 
         $data['MAC'] = $this->generateSeal($data);
 
-        $response = new Response($data);
-        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY), '3.0');
+        $response = new PurchaseResponse($data);
+        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
         $this->assertTrue($sealValid);
     }
 }

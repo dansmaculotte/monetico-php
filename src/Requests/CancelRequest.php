@@ -1,24 +1,32 @@
 <?php
 
-namespace DansMaCulotte\Monetico\Cancel;
+namespace DansMaCulotte\Monetico\Requests;
 
 use DansMaCulotte\Monetico\Exceptions\Exception;
-use DansMaCulotte\Monetico\Recovery\Recovery;
+use DansMaCulotte\Monetico\Exceptions\RecoveryException;
 use DateTime;
 
-class Cancel extends Recovery
+class CancelRequest extends RecoveryRequest
 {
+    /**
+     * Cancel constructor.
+     * @param array $data
+     * @throws Exception
+     * @throws RecoveryException
+     */
     public function __construct(array $data = [])
     {
         $data['amountLeft'] = 0;
         $data['amountToRecover'] = 0;
+
         parent::__construct($data);
     }
 
     /**
+     * @return bool
      * @throws Exception
      */
-    public function validate()
+    public function validate(): bool
     {
         if (!$this->dateTime instanceof DateTime) {
             throw Exception::invalidDatetime();
@@ -32,8 +40,10 @@ class Cancel extends Recovery
             throw Exception::invalidReference($this->reference);
         }
 
-        if (strlen($this->language) != 2) {
+        if (strlen($this->language) !== 2) {
             throw Exception::invalidLanguage($this->language);
         }
+
+        return true;
     }
 }

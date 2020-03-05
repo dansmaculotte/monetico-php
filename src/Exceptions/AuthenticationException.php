@@ -5,102 +5,100 @@ namespace DansMaCulotte\Monetico\Exceptions;
 class AuthenticationException extends \Exception
 {
     /**
-     * @param $protocol
+     * @param string $protocol
      * @return AuthenticationException
      */
-    public static function invalidProtocol($protocol)
+    public static function invalidProtocol(string $protocol): self
     {
         return new self("protocol value is invalid: ${protocol}");
     }
 
     /**
-     * @param $status
+     * @param string $status
      * @return AuthenticationException
      */
-    public static function invalidStatus($status)
+    public static function invalidStatus(string $status): self
     {
         return new self("status value is invalid: ${status}");
     }
 
     /**
-     * @param $version
+     * @param string $version
      * @return AuthenticationException
      */
-    public static function invalidVersion($version)
+    public static function invalidVersion(string $version): self
     {
         return new self("version value is invalid: ${version}");
     }
 
     /**
-     * @param $liabilityShift
+     * @param string $liabilityShift
      * @return AuthenticationException
      */
-    public static function invalidLiabilityShift($liabilityShift)
+    public static function invalidLiabilityShift(string $liabilityShift): self
     {
         return new self("liabilityShift value is invalid: ${liabilityShift}");
     }
 
     /**
-     * @param $VERes
+     * @param string $VERes
      * @return AuthenticationException
      */
-    public static function invalidVERes($VERes)
+    public static function invalidVERes(string $VERes): self
     {
         return new self("VERes value is invalid: ${VERes}");
     }
 
     /**
-     * @param $PARes
+     * @param string $PARes
      * @return AuthenticationException
      */
-    public static function invalidPARes($PARes)
+    public static function invalidPARes(string $PARes): self
     {
         return new self("PARes value is invalid: ${PARes}");
     }
 
     /**
-     * @param $ARes
+     * @param string $ARes
      * @return AuthenticationException
      */
-    public static function invalidARes($ARes)
+    public static function invalidARes(string $ARes): self
     {
         return new self("ARes value is invalid: ${ARes}");
     }
 
     /**
-     * @param $CRes
+     * @param string $CRes
      * @return AuthenticationException
      */
-    public static function invalidCRes($CRes)
+    public static function invalidCRes(string $CRes): self
     {
         return new self("CRes value is invalid: ${CRes}");
     }
 
     /**
-     * @param $merchantPreference
+     * @param string $merchantPreference
      * @return AuthenticationException
      */
-    public static function invalidMerchantPreference($merchantPreference)
+    public static function invalidMerchantPreference(string $merchantPreference): self
     {
         return new self("merchantPreference value is invalid: ${merchantPreference}");
     }
 
     /**
      * @param string $DDDSStatus
-     *
      * @return AuthenticationException
      */
-    public static function invalidDDDSStatus($DDDSStatus)
+    public static function invalidDDDSStatus(string $DDDSStatus): self
     {
         return new self("status3DS value is invalid: ${DDDSStatus}");
     }
 
     /**
      * @param string $disablingReason
-     *
      * @return AuthenticationException
      */
-    public static function invalidDisablingReason($disablingReason)
+    public static function invalidDisablingReason(string $disablingReason): self
     {
         return new self("disablingReason value is invalid: ${disablingReason}");
     }

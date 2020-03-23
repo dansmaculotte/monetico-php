@@ -121,6 +121,7 @@ class PurchaseResponse extends AbstractResponse
 
     /** @var array  */
     const REJECT_REASONS = [
+        '',
         'Appel Phonie',
         'Refus',
         'Interdit',

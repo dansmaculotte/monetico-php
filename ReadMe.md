@@ -66,7 +66,7 @@ $billingAddress = new BillingAddressResource([
     'addressLine1' => '42 rue des serviettes',
     'city' => 'Coupeville',
     'postalCode' => '42000',
-    'country' => 'France',
+    'country' => 'FR',
 ]);
 $purchase->setBillingAddress($billingAddress);
 
@@ -75,7 +75,7 @@ $shippingAddress = new ShippingAddressResource([
     'addressLine1' => '42 rue des serviettes',
     'city' => 'Coupeville',
     'postalCode' => '42000',
-    'country' => 'France',
+    'country' => 'FR',
 ]);
 $purchase->setShippingAddress($shippingAddress);
 

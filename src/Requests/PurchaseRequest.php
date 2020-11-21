@@ -336,7 +336,6 @@ class PurchaseRequest extends AbstractRequest
             'desactivemoyenpaiement' => $this->options['desactivemoyenpaiement'] ?? '',
             'forcesaisiecb' => $this->options['forcesaisiecb'] ?? '',
             'libelleMonetique' => $this->options['libelleMonetique'] ?? '',
-            'protocole' => $this->options['protocole'] ?? '',
         ];
     }
 

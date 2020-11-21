@@ -279,9 +279,9 @@ class PurchaseRequest extends AbstractRequest
      * @param string $version
      * @return array
      */
-    private function baseFields(string $eptCode, string $companyCode, string $version): array
+    protected function baseFields(string $eptCode, string $companyCode, string $version): array
     {
-        $fields = [
+        return [
             'TPE' => $eptCode,
             'date' => $this->dateTime->format(self::DATETIME_FORMAT),
             'contexte_commande' => $this->orderContextBase64(),
@@ -293,14 +293,12 @@ class PurchaseRequest extends AbstractRequest
             'texte-libre' => $this->description,
             'version' => $version
         ];
-
-        return $fields;
     }
 
     /**
      * @return array
      */
-    private function urlFields(): array
+    protected function urlFields(): array
     {
         return [
             'url_retour_ok' => $this->successUrl,
@@ -311,7 +309,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return array
      */
-    private function commitmentsFields(): array
+    protected function commitmentsFields(): array
     {
         $commitmentsCount = count($this->commitments);
         $commitments = [
@@ -329,7 +327,7 @@ class PurchaseRequest extends AbstractRequest
     /**
      * @return array
      */
-    private function optionsFields(): array
+    protected function optionsFields(): array
     {
         return [
             'ThreeDSecureChallenge' => $this->options['threeDsecureChallenge'] ?? '',
@@ -338,6 +336,7 @@ class PurchaseRequest extends AbstractRequest
             'desactivemoyenpaiement' => $this->options['desactivemoyenpaiement'] ?? '',
             'forcesaisiecb' => $this->options['forcesaisiecb'] ?? '',
             'libelleMonetique' => $this->options['libelleMonetique'] ?? '',
+            'protocole' => $this->options['protocole'] ?? '',
         ];
     }
 

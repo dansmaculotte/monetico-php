@@ -27,6 +27,7 @@ class AuthenticationResource
         'authentication_attempted',
         'not_enrolled',
         'disabled',
+        'error',
     ];
 
     /** @var string */

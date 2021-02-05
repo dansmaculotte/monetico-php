@@ -228,4 +228,16 @@ class AuthenticationResourceTest extends TestCase
             ]
         );
     }
+
+    public function testAutenticationConstructWithErrorStatus()
+    {
+        $authentication = new AuthenticationResource(
+            '3DSecure',
+            'error',
+            '2.1.0',
+            []
+        );
+
+        $this->assertInstanceOf(AuthenticationResource::class, $authentication);
+    }
 }

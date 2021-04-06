@@ -18,8 +18,25 @@ abstract class AbstractRequest
     {
         ksort($fields);
 
-        $query = http_build_query($fields, null, '*');
-        $query = urldecode($query);
+        //$query = http_build_query($fields, null, '*');
+        //$query = urldecode($query);
+		
+		$query = implode(
+            '*',
+            [
+                "TPE={$fields['TPE']}",
+                "contexte_commande={$fields['contexte_commande']}",
+                "date={$fields['date']}",
+                "lgue={$fields['lgue']}",
+                "mail={$fields['mail']}",
+                "montant={$fields['montant']}",
+                "reference={$fields['reference']}",
+                "societe={$fields['societe']}",
+                "texte-libre={$fields['texte-libre']}",
+                "url_retour_err={$fields['url_retour_err']}",
+                "url_retour_ok={$fields['url_retour_ok']}",
+                "version={$fields['version']}"
+            ]);
 
         return strtoupper(hash_hmac(
             'sha1',

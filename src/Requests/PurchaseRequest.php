@@ -195,6 +195,16 @@ class PurchaseRequest extends AbstractRequest
     }
 
     /**
+     * Change company sign region label on payment interface
+     *
+     * @param string $label New sign label content
+     */
+    public function setRegionSignLabel(string $label): void
+    {
+        $this->options['libelleMonetiqueLocalite'] = $label;
+    }
+
+    /**
      * @param BillingAddressResource $billingAddress
      */
     public function setBillingAddress(BillingAddressResource $billingAddress): void
@@ -338,6 +348,7 @@ class PurchaseRequest extends AbstractRequest
             'desactivemoyenpaiement' => $this->options['desactivemoyenpaiement'] ?? '',
             'forcesaisiecb' => $this->options['forcesaisiecb'] ?? '',
             'libelleMonetique' => $this->options['libelleMonetique'] ?? '',
+            'libelleMonetiqueLocalite' => $this->options['libelleMonetiqueLocalite'] ?? '',
         ];
     }
 

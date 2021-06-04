@@ -131,6 +131,10 @@ class PurchaseRequestTest extends TestCase
         $this->assertArrayHasKey('libelleMonetique', $capture->options);
         $this->assertSame($capture->options['libelleMonetique'], 'FooBar');
 
+        $capture->setRegionSignLabel('BarBaz');
+        $this->assertArrayHasKey('libelleMonetiqueLocalite', $capture->options);
+        $this->assertSame($capture->options['libelleMonetiqueLocalite'], 'BarBaz');
+
         $capture->setDisabledPaymentWays([
             '1euro',
             '3xcb',

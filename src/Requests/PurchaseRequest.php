@@ -80,6 +80,15 @@ class PurchaseRequest extends AbstractRequest
         'no_challenge_requested_risk_analysis'
     ];
 
+    /** @var array */
+    const PROTOCOLES = [
+        '1euro',
+        '3xcb',
+        '4xcb',
+        'paypal',
+        'lyfpay'
+    ];
+
     /** @var string */
     const DATETIME_FORMAT = 'd/m/Y:H:i:s';
 
@@ -202,6 +211,20 @@ class PurchaseRequest extends AbstractRequest
     public function setRegionSignLabel(string $label): void
     {
         $this->options['libelleMonetiqueLocalite'] = $label;
+    }
+
+    /**
+     * Change payment mode partner to use
+     *
+     * @param string $protocole New payment partner / protocol
+     */
+    public function setProtocole(string $protocole): void
+    {
+        if (!in_array($protocole, self::PROTOCOLES, true)) {
+            throw PurchaseException::invalidProtocole($protocole);
+        }
+
+        $this->options['protocole'] = $protocole;
     }
 
     /**

@@ -68,4 +68,14 @@ class PurchaseException extends \Exception
     {
         return new self("filtragecause value is invalid: ${filteredReason}");
     }
+
+    /**
+     * @param string $protocole
+     *
+     * @return PurchaseException
+     */
+    public static function invalidProtocole(string $protocole): self
+    {
+        return new self("protocole value is invalid: ${protocole}");
+    }
 }

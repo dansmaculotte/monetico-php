@@ -156,6 +156,29 @@ class PurchaseRequestTest extends TestCase
         $this->assertSame($capture->options['desactivemoyenpaiement'], '1euro,3xcb,4xcb,fivory');
     }
 
+    public function testProtocoleOptionSettings()
+    {
+        $capture = new PurchaseRequest([
+            'reference' => 'ABCDEF123',
+            'description' => 'PHPUnit',
+            'language' => 'FR',
+            'email' => 'john@english.fr',
+            'amount' => 42.42,
+            'currency' => 'EUR',
+            'dateTime' => Carbon::create(2019, 1, 1),
+            'successUrl' => 'https://127.0.0.1/success',
+            'errorUrl' => 'https://127.0.0.1/error'
+        ]);
+
+        foreach (['1euro', '3xcb', '4xcb', 'paypal', 'lyfpay'] as $protocole) {
+            $capture->setProtocole($protocole);
+            $this->assertEquals($capture->options['protocole'], $protocole);
+        }
+
+        $this->expectExceptionObject(PurchaseException::invalidProtocole('invalid_choice'));
+        $capture->setProtocole('invalid_choice');
+    }
+
     public function testPaymentCommitments()
     {
         $capture = new PurchaseRequest(

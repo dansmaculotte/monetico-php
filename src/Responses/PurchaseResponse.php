@@ -50,6 +50,10 @@ class PurchaseResponse extends AbstractResponse
     public $rejectReason = null;
 
     /** @var string */
+    public $authorisationRejectReason = null;
+
+
+    /** @var string */
     public $authNumber;
 
     /** @var string */
@@ -270,6 +274,14 @@ class PurchaseResponse extends AbstractResponse
             }
         }
 
+        if (isset($data['motifrefusautorisation'])) {
+            $this->authorisationRejectReason = $data['motifrefusautorisation'];
+            // TODO 
+            //if (!in_array($this->rejectReason, self::REJECT_REASONS, true)) {
+            //    throw PurchaseException::invalidResponseRejectReason($this->rejectReason);
+            //}
+        }
+
         if (isset($data['filtragevaleur'])) {
             $this->filteredValue = $data['filtragevaleur'];
         }
@@ -313,6 +325,9 @@ class PurchaseResponse extends AbstractResponse
             $fields['motifrefus'] = $this->rejectReason;
         }
 
+        if (isset($this->authorisationRejectReason)) {
+            $fields['motifrefusautorisation'] = $this->authorisationRejectReason;
+        } 
 
         if (isset($this->commitmentAmount)) {
             $fields['montantech'] = $this->commitmentAmount;

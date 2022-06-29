@@ -276,10 +276,6 @@ class PurchaseResponse extends AbstractResponse
 
         if (isset($data['motifrefusautorisation'])) {
             $this->authorisationRejectReason = $data['motifrefusautorisation'];
-            // TODO 
-            //if (!in_array($this->rejectReason, self::REJECT_REASONS, true)) {
-            //    throw PurchaseException::invalidResponseRejectReason($this->rejectReason);
-            //}
         }
 
         if (isset($data['filtragevaleur'])) {

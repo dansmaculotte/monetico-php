@@ -237,21 +237,4 @@ class PurchaseResponseTest extends TestCase
         $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
         $this->assertTrue($sealValid);
     }
-
-
-
-    /*
-
-        https://api.dansmaculotte.com:443/v1/payment/ipn/monetico?TPE=6784452&date=10%2F06%2F2022_a_23%3A22%3A55&montant=191.52EUR&reference=4KKHUGNUNOGG&texte-libre=Commande%20DMC6HMYGVDJSXPF&code-retour=Annulation&cvx=oui&vld=0924&brand=CB&motifrefus=3DSecure&motifrefusautorisation=-&usage=debit&typecompte=particulier&ecard=non&originecb=FRA&bincb=49704072&hpancb=0B6902BD6054919CA97A3DF36F332191FE22CB35&ipclient=193.58.85.18&originetr=FRA&modepaiement=CB&authentification=ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJBUmVzIiA6ICJDIiwKICAgICAgIkNSZXMiIDogIk4iLAogICAgICAibGlhYmlsaXR5U2hpZnQiIDogIk5BIiwKICAgICAgIm1lcmNoYW50UHJlZmVyZW5jZSIgOiAibm9fcHJlZmVyZW5jZSIsCiAgICAgICJ0cmFuc2FjdGlvbklEIiA6ICI5NGM1YjZkNy0xOWI0LTRlMjktOWU2Ni1mZmQyOWQwODY4YjgiCiAgIH0sCiAgICJwcm90b2NvbCIgOiAiM0RTZWN1cmUiLAogICAic3RhdHVzIiA6ICJub3RfYXV0aGVudGljYXRlZCIsCiAgICJ2ZXJzaW9uIiA6ICIyLjEuMCIKfQo=&MAC=8ED41ACC698A23B859CD3FC5591033D65F10B73F
-
-
-
-    MONETICO_EPT_CODE="6784452"
-        MONETICO_SECURITY_KEY="CEF3630E10B0B25823CE9FF9F51AC40200C92991"
-     
-     */
-
-
-
-
 }

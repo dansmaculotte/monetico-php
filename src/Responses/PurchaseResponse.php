@@ -215,12 +215,14 @@ class PurchaseResponse extends AbstractResponse
         $authentication = base64_decode($authentication);
         $authentication = json_decode($authentication, true);
 
-        $this->authentication = new AuthenticationResource(
-            $authentication['protocol'],
-            $authentication['status'],
-            $authentication['version'],
-            $authentication->details ?? []
-        );
+        if ($authentication) {
+            $this->authentication = new AuthenticationResource(
+                $authentication['protocol'],
+                $authentication['status'],
+                $authentication['version'],
+                $authentication->details ?? []
+            );
+        }
     }
 
     /**
@@ -360,6 +362,9 @@ class PurchaseResponse extends AbstractResponse
         if (isset($this->paymentMethod)) {
             $fields['modepaiement'] = $this->paymentMethod;
         }
+
+        // if(isset($this->authentication)) {
+        //}
 
         return $fields;
     }

@@ -251,4 +251,36 @@ class PurchaseResponseTest extends TestCase
         $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
         $this->assertTrue($sealValid);
     }
+
+    /** @test */
+    public function should_validate_payment_even_if_authentification_string_is_empty()
+    {
+        $data = [
+            'TPE' => EPT_CODE,
+            'date' => '18/11/2022_a_12:10:48',
+            'montant' => '11.90EUR',
+            'reference' => 'JXNWHZLUY65F',
+            'texte-libre' => 'PHP Unit',
+            'code-retour' => 'paiement',
+            'cvx' => 'oui',
+            'vld' => '1125',
+            'brand' => 'MC',
+            'numauto' => '248650',
+            'usage' => 'debit',
+            'typecompte' => 'particulier',
+            'ecard' => 'non',
+            'originecb' => 'ESP',
+            'bincb' => '51638300',
+            'hpancb' => '6FF1313F3B6FE9B053B21CBDEE516603CB8CF01E',
+            'ipclient' => '127.0.0.1',
+            'originetr' => 'FRA',
+            'cbmasquee' => '51638300******66',
+            'modepaiement' => 'CB',
+            'authentification' => 'bnVsbAo=',
+            'MAC' => '31F710AC5A6A73CC13FF20FD936AA59C099B155E',
+        ];
+        $response = new PurchaseResponse($data);
+        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
+        $this->assertTrue($sealValid);
+    }
 }

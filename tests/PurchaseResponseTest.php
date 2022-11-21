@@ -49,20 +49,23 @@ class PurchaseResponseTest extends TestCase
         'ecard' => 'non',
     ];
 
-    public function testPaymentResponseConstruct()
+    /** @test */
+    public function should_construct_PaymentResponse_from_test_data()
     {
         $response = new PurchaseResponse($this->data);
         $this->assertInstanceOf(PurchaseResponse::class, $response);
     }
 
-    public function testPaymentResponseMissingResponseKey()
+    /** @test */
+    public function should_throw_an_exception_when_a_key_is_missing()
     {
         $this->expectExceptionObject(Exception::missingResponseKey('TPE'));
 
         new PurchaseResponse([]);
     }
 
-    public function testPaymentResponseExceptionDateTime()
+    /** @test */
+    public function should_throw_an_exception_when_date_format_is_incorrect()
     {
         $this->expectExceptionObject(Exception::invalidResponseDateTime());
 
@@ -73,7 +76,8 @@ class PurchaseResponseTest extends TestCase
     }
 
 
-    public function testPaymentResponseExceptionReturnCode()
+    /** @test */
+    public function should_throw_an_exception_when_code_retour_is_unknown()
     {
         $this->expectExceptionObject(PurchaseException::invalidResponseReturnCode('foo'));
 
@@ -83,7 +87,8 @@ class PurchaseResponseTest extends TestCase
         new PurchaseResponse($data);
     }
 
-    public function testPaymentResponseExceptionCardVerificationStatus()
+    /** @test */
+    public function should_throw_an_exception_when_the_card_verification_status_is_unknown()
     {
         $this->expectExceptionObject(PurchaseException::invalidResponseCardVerificationStatus('nope'));
 
@@ -93,7 +98,7 @@ class PurchaseResponseTest extends TestCase
         new PurchaseResponse($data);
     }
 
-    public function testPaymentResponseExceptionCardBrand()
+    public function should_throw_an_exception_when_the_card_brand_is_unknown()
     {
         $this->expectExceptionObject(PurchaseException::invalidResponseCardBrand('foo'));
 
@@ -103,7 +108,8 @@ class PurchaseResponseTest extends TestCase
         new PurchaseResponse($data);
     }
 
-    public function testPaymentResponseExceptionRejectReason()
+    /** @test */
+    public function should_throw_an_exception_when_motif_refus_is_unknown()
     {
         $this->expectExceptionObject(PurchaseException::invalidResponseRejectReason('foobar'));
 
@@ -113,7 +119,8 @@ class PurchaseResponseTest extends TestCase
         new PurchaseResponse($data);
     }
 
-    public function testPaymentResponseExceptionPaymentMethod()
+    /** @test */
+    public function should_throw_an_exception_when_mode_paiement_is_unknown()
     {
         $this->expectExceptionObject(PurchaseException::invalidResponsePaymentMethod('bar'));
 
@@ -123,7 +130,8 @@ class PurchaseResponseTest extends TestCase
         new PurchaseResponse($data);
     }
 
-    public function testPaymentResponseExceptionFilteredReason()
+    /** @test */
+    public function should_thrown_an_exception_when_filtrage_cause_is_unknown()
     {
         $this->expectExceptionObject(PurchaseException::invalidResponseFilteredReason('10'));
 
@@ -133,7 +141,8 @@ class PurchaseResponseTest extends TestCase
         new PurchaseResponse($data);
     }
 
-    public function testPaymentWithOptionals()
+    /** @test */
+    public function should_handle_payments_with_optional_data()
     {
         $data = $this->data;
 
@@ -156,7 +165,9 @@ class PurchaseResponseTest extends TestCase
         $this->assertTrue($response->cardMask === '1234XXXXXXXXXXX1234');
     }
 
-    public function testAuthenticationDecode()
+
+    /** @test */
+    public function should_decode_authentification_string()
     {
         $data = $this->data;
 
@@ -168,7 +179,8 @@ class PurchaseResponseTest extends TestCase
         $this->assertEmpty($response->authentication->details);
     }
 
-    public function testSealIsValid()
+    /** @test */
+    public function should_validate_seal_string()
     {
         $data = [
             'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJBUmVzIiA6ICJZIiwKICAgICAgImF1dGhlbnRpY2F0aW9uVmFsdWUiIDogIlFVRkNRa05EUkVSRlJVWkdRVUZDUWtORFJFUT0iLAogICAgICAibGlhYmlsaXR5U2hpZnQiIDogIlkiLAogICAgICAibWVyY2hhbnRQcmVmZXJlbmNlIiA6ICJub19wcmVmZXJlbmNlIiwKICAgICAgInRyYW5zYWN0aW9uSUQiIDogIjdjOTgyNTVhLWE5YzctNDYxYy1hZDEyLWM3NjM5MzczZDljYiIKICAgfSwKICAgInByb3RvY29sIiA6ICIzRFNlY3VyZSIsCiAgICJzdGF0dXMiIDogImF1dGhlbnRpY2F0ZWQiLAogICAidmVyc2lvbiIgOiAiMi4xLjAiCn0K',
@@ -206,7 +218,9 @@ class PurchaseResponseTest extends TestCase
         $this->assertTrue($sealValid);
     }
 
-    public function testSealIsValidForCancelledPayment()
+
+    /** @test */
+    public function should_validate_seal_on_canceled_payment()
     {
         $data = [
             'TPE' => '9344512',

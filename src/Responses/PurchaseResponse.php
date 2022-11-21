@@ -325,7 +325,7 @@ class PurchaseResponse extends AbstractResponse
 
         if (isset($this->authorisationRejectReason)) {
             $fields['motifrefusautorisation'] = $this->authorisationRejectReason;
-        } 
+        }
 
         if (isset($this->commitmentAmount)) {
             $fields['montantech'] = $this->commitmentAmount;

@@ -4,7 +4,6 @@ namespace DansMaCulotte\Monetico\Exceptions;
 
 class RecoveryException extends \Exception
 {
-
     /**
      * @param string $total
      * @param string $toRecover

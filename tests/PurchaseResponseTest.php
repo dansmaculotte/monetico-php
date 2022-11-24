@@ -283,4 +283,38 @@ class PurchaseResponseTest extends TestCase
         $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
         $this->assertTrue($sealValid);
     }
+
+    /** @test */
+    public function should_xxx()
+    {
+        $data = [
+            'TPE' => EPT_CODE,
+            'date' => '15/11/2022_a_17:42:23',
+            'montant' => '17.75EUR',
+            'reference' => 'KFPHFV7NCXWB',
+            'texte-libre' => 'php unit',
+            'code-retour' => 'Annulation',
+            'cvx' => 'oui',
+            'vld' => '0125',
+            'brand' => 'VI',
+            'motifrefus' => '-',
+            'motifrefusautorisation' => '-',
+            'usage' => 'debit',
+            'typecompte' => 'particulier',
+            'ecard' => 'non',
+            'originecb' => 'FRA',
+            'bincb' => '46334308',
+            'hpancb' => '07CDB0331260C06818027855F795C9F726585286',
+            'ipclient' => '127.0.0.1',
+            'originetr' => 'FRA',
+            'cbmasquee' => '1234XXXXXXXXXXX1234',
+            'modepaiement' => 'CB',
+            'authentification' => 'ewogICAiZGV0YWlscyIgOiB7CiAgICAgICJBUmVzIiA6ICJDIiwKICAgICAgIkNSZXMiIDogIk4iLAogICAgICAibGlhYmlsaXR5U2hpZnQiIDogIk5BIiwKICAgICAgIm1lcmNoYW50UHJlZmVyZW5jZSIgOiAibm9fcHJlZmVyZW5jZSIsCiAgICAgICJ0cmFuc2FjdGlvbklEIiA6ICIwMGRmMzY0Ni0yMzE4LTRjOTItYjgzMC03MThlZjQ4Y2NjMTUiCiAgIH0sCiAgICJwcm90b2NvbCIgOiAiM0RTZWN1cmUiLAogICAic3RhdHVzIiA6ICJhdXRoZW50aWNhdGlvbl9ub3RfcGVyZm9ybWVkIiwKICAgInZlcnNpb24iIDogIjIuMS4wIgp9Cg==',
+            'MAC' => 'C3526D4B3B8AEFDC73483B559FF641C592203643',
+        ];
+        $response = new PurchaseResponse($data);
+        $sealValid = $response->validateSeal(EPT_CODE, Monetico::getUsableKey(SECURITY_KEY));
+        $this->assertTrue($sealValid);
+    }
 }
+

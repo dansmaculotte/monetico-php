@@ -317,4 +317,3 @@ class PurchaseResponseTest extends TestCase
         $this->assertTrue($sealValid);
     }
 }
-

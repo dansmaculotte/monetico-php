@@ -89,12 +89,12 @@ class RecoveryRequestTest extends TestCase
 
     public function testRecoveryConstructExceptionInvalidReference()
     {
-        $this->expectExceptionObject(Exception::invalidReference('thisisatoolongreference'));
+        $this->expectExceptionObject(Exception::invalidReference('thisisabigerroryouknowthisisabigerroryouknowthisisabigerroryouknow'));
 
         new RecoveryRequest([
             'dateTime' => Carbon::create(2019, 2, 1),
             'orderDate' => Carbon::create(2019, 1, 1),
-            'reference' => 'thisisatoolongreference',
+            'reference' => 'thisisabigerroryouknowthisisabigerroryouknowthisisabigerroryouknow',
             'language' => 'FR',
             'currency' => 'EUR',
             'amount' => 100,
@@ -102,6 +102,23 @@ class RecoveryRequestTest extends TestCase
             'amountRecovered' => 0,
             'amountLeft' => 50
         ]);
+    }
+
+    /** @test */
+    public function should_handle_reference_with_more_than_12_chars()
+    {
+        $request = new RecoveryRequest([
+            'dateTime' => Carbon::create(2019, 2, 1),
+            'orderDate' => Carbon::create(2019, 1, 1),
+            'reference' => 'thisisanottoolongreference',
+            'language' => 'FR',
+            'currency' => 'EUR',
+            'amount' => 100,
+            'amountToRecover' => 50,
+            'amountRecovered' => 0,
+            'amountLeft' => 50
+        ]);
+        $this->assertEquals('thisisanottoolongreference', $request->reference);
     }
 
     public function testRecoveryConstructExceptionInvalidLanguage()

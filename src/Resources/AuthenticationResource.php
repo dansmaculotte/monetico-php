@@ -38,6 +38,7 @@ class AuthenticationResource
         '1.0.2',
         '2.1.0',
         '2.2.0',
+        '3.0'
     ];
 
     /** @var array */
